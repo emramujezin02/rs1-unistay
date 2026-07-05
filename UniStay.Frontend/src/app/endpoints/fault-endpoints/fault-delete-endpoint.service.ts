@@ -1,0 +1,13 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class FaultDeleteEndpointService {
+  private apiUrl = 'http://localhost:5177/api/faults';
+  constructor(private http: HttpClient) {}
+
+  deleteFault(id: number): Observable<any> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+}

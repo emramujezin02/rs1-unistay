@@ -1,0 +1,72 @@
+*<div class="equipment-edit-container">
+
+  <mat-card @formAnimation>
+
+    <h2>Edit Equipment</h2>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="loading">
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+
+    <!-- FORM -->
+    <form *ngIf="!loading"
+          (ngSubmit)="saveEquipment()"
+          class="form-layout">
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Name</mat-label>
+        <input matInput
+               [(ngModel)]="equipment.name"
+               name="name"
+               required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Description</mat-label>
+        <textarea matInput
+                  rows="3"
+                  [(ngModel)]="equipment.description"
+                  name="description">
+        </textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Rental Price</mat-label>
+        <input matInput
+               type="number"
+               [(ngModel)]="equipment.rentalPrice"
+               name="rentalPrice">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Type</mat-label>
+        <input matInput
+               [(ngModel)]="equipment.equipmentType"
+               name="equipmentType">
+      </mat-form-field>
+
+      <!-- BUTTONS -->
+      <div class="button-group">
+        <button mat-raised-button
+                color="primary"
+                type="submit" @fieldAnimation>
+          Save
+        </button>
+
+        <button mat-stroked-button
+                color="warn"
+                type="button"
+                (click)="back()" @fieldAnimation>
+          Back
+        </button>
+      </div>
+
+    </form>
+
+  </mat-card>
+
+</div>

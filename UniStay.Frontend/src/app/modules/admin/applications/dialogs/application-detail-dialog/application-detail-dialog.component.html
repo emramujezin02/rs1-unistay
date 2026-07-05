@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{ 'ADMIN.APPLICATIONS.DETAIL_TITLE' | translate }} - {{ application.studentUsername }}</h2>
+
+<mat-dialog-content class="detail-content">
+  <div class="status-row">
+    <mat-chip [color]="statusColor()" selected>
+      {{ ('ADMIN.APPLICATIONS.STATUS_' + application.status.toUpperCase()) | translate }}
+    </mat-chip>
+    <span>{{ 'ADMIN.APPLICATIONS.APPLIED_LABEL' | translate }}: {{ application.appliedAt | date:'mediumDate' }}</span>
+    <span *ngIf="application.decisionAt">{{ 'ADMIN.APPLICATIONS.DECISION_LABEL' | translate }}: {{ application.decisionAt | date:'mediumDate' }}</span>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <dl class="detail-grid">
+    <dt>{{ 'ADMIN.APPLICATIONS.COL_STUDENT' | translate }}</dt><dd>{{ application.studentUsername }} ({{ application.studentEmail }})</dd>
+    <dt>{{ 'ADMIN.APPLICATIONS.YEAR_OF_STUDY' | translate }}</dt><dd>{{ application.yearOfStudy || '-' }}</dd>
+    <dt>GPA</dt><dd>{{ application.gpaScore != null ? (application.gpaScore | number:'1.2-2') : '-' }}</dd>
+    <dt>{{ 'ADMIN.APPLICATIONS.PHONE' | translate }}</dt><dd>{{ application.phoneNumber || '-' }}</dd>
+    <dt>{{ 'ADMIN.APPLICATIONS.PREFERRED_ROOM_TYPE' | translate }}</dt><dd>{{ application.preferredRoomType }}</dd>
+    <dt>{{ 'ADMIN.APPLICATIONS.SPECIFIC_ROOM' | translate }}</dt><dd>{{ application.preferredRoomId || '-' }}</dd>
+    <dt>{{ 'ADMIN.APPLICATIONS.ASSIGNED_ROOM' | translate }}</dt><dd>{{ application.assignedRoomId || '-' }}</dd>
+    <dt>{{ 'ADMIN.APPLICATIONS.SPECIAL_REQUIREMENTS' | translate }}</dt><dd>{{ application.specialRequirements || '-' }}</dd>
+    <dt>{{ 'ADMIN.APPLICATIONS.COL_NOTES' | translate }}</dt><dd>{{ application.notes || '-' }}</dd>
+  </dl>
+
+  <h3>{{ 'ADMIN.APPLICATIONS.DOCUMENTS_TITLE' | translate }}</h3>
+  <p *ngIf="documents.length === 0">{{ 'ADMIN.APPLICATIONS.NO_DOCUMENTS' | translate }}</p>
+  <div class="document" *ngFor="let document of documents">
+    <mat-icon>insert_drive_file</mat-icon>
+    <span>{{ document }}</span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="close()">{{ 'ADMIN.APPLICATIONS.CLOSE' | translate }}</button>
+</mat-dialog-actions>

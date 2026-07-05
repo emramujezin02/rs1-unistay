@@ -1,0 +1,158 @@
+<div class="equipment-list-container">
+
+  <mat-card>
+
+    <div class="list-header">
+      <h2>Equipment List</h2>
+      <button mat-raised-button color="primary" (click)="addEquipment()">
+        <mat-icon>add</mat-icon>
+        Add Equipment
+      </button>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--name">
+        <mat-label>Name</mat-label>
+        <input matInput
+               [(ngModel)]="filters.name"
+               (input)="applyFilters()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--type">
+        <mat-label>Type</mat-label>
+        <input matInput
+               [(ngModel)]="filters.type"
+               (input)="applyFilters()">
+      </mat-form-field>
+
+      <button mat-stroked-button
+              class="filter-action"
+              (click)="clearFilters()">
+        Refresh filter
+      </button>
+
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="loading">
+      <mat-progress-spinner diameter="40" mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+
+    <!-- TABLE -->
+    <div *ngIf="!loading" class="table-wrapper">
+
+      <table mat-table [dataSource]="pagedEquipment" matSort>
+
+        <!-- Name -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="name">Name</th>
+          <td mat-cell *matCellDef="let equipment"
+              class="clickable"
+              (click)="openItems(equipment.equipmentID)">
+            {{ equipment.name }}
+          </td>
+        </ng-container>
+
+        <!-- Type -->
+        <ng-container matColumnDef="equipmentType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="equipmentType">Type</th>
+          <td mat-cell *matCellDef="let equipment">
+            {{ equipment.equipmentType }}
+          </td>
+        </ng-container>
+
+        <!-- Description -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let equipment">
+            {{ equipment.description }}
+          </td>
+        </ng-container>
+
+        <!-- Quantity -->
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="quantity">Qty</th>
+          <td mat-cell *matCellDef="let equipment">
+            {{ equipment.quantity }}
+          </td>
+        </ng-container>
+
+        <!-- Available -->
+        <ng-container matColumnDef="availableQuantity">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="availableQuantity">Available</th>
+          <td mat-cell *matCellDef="let equipment">
+            {{ equipment.availableQuantity }}
+          </td>
+        </ng-container>
+
+        <!-- Rental Price -->
+        <ng-container matColumnDef="rentalPrice">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="rentalPrice">Rental Price</th>
+          <td mat-cell *matCellDef="let equipment">
+            {{ equipment.rentalPrice }}
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let equipment">
+
+            <button mat-icon-button
+                    color="primary"
+                    (click)="updateEquipment(equipment.equipmentID)">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button mat-icon-button
+                    color="warn"
+                    (click)="deleteEquipment(equipment.equipmentID)">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [@fadeIn]></tr>
+
+      </table>
+
+    </div>
+
+    <div class="equipment-paginator" *ngIf="filteredEquipment.length > 0">
+      <div class="equipment-paginator__size">
+        <span>Show</span>
+        <mat-form-field appearance="outline">
+          <mat-select [(ngModel)]="pageSize" panelClass="equipment-list-select-panel" (selectionChange)="changePageSize(pageSize)">
+            <mat-option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <span>per page</span>
+      </div>
+
+      <div class="equipment-paginator__pages">
+        <button mat-button type="button" class="equipment-paginator__nav" [disabled]="currentPage === 1" (click)="previousPage()" aria-label="Previous page">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button
+          mat-button
+          type="button"
+          class="equipment-paginator__page"
+          *ngFor="let page of pageNumbers"
+          [class.equipment-paginator__page--active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+        <button mat-button type="button" class="equipment-paginator__nav" [disabled]="currentPage === totalPages" (click)="nextPage()" aria-label="Next page">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </mat-card>
+
+</div>

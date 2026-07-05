@@ -1,0 +1,37 @@
+<div class="verify-container">
+
+  <mat-card>
+
+    <h3>Enter verification code</h3>
+
+    <p class="info-text">
+      We sent a code to your registered email.
+    </p>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>6-digit code or backup code</mat-label>
+      <input matInput
+             [(ngModel)]="code"
+             maxlength="20"
+             autocomplete="one-time-code">
+    </mat-form-field>
+
+    <div class="button-group">
+
+      <button mat-raised-button
+              color="primary"
+              (click)="verify()">
+        Verify
+      </button>
+
+      <button mat-stroked-button
+              color="accent"
+              (click)="resend()">
+        Resend
+      </button>
+
+    </div>
+
+  </mat-card>
+
+</div>

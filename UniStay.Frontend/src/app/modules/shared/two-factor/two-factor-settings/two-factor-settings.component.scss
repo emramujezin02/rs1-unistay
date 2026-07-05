@@ -1,0 +1,63 @@
+.twofa-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 16px;
+}
+
+mat-card {
+  padding: 25px;
+}
+
+h3 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.enabled {
+  color: green;
+}
+
+.disabled {
+  color: red;
+}
+
+.action-buttons {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.backup-section {
+  margin-top: 20px;
+}
+
+mat-list-item {
+  font-family: monospace;
+}
+
+.test-section {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  min-width: 180px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+
+  .twofa-container {
+    margin: 20px 10px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .action-buttons,
+  .test-section {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,174 @@
+.edit-equipment-item-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+mat-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+}
+
+.form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+th.mat-header-cell, td.mat-cell {
+  vertical-align: middle;
+}
+
+.edit-equipment-item-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+mat-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+}
+
+.form-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+th.mat-header-cell, td.mat-cell {
+  vertical-align: middle;
+}
+
+::ng-deep body.dark .mat-mdc-select-panel {
+  background: #0f172a !important;
+}
+
+::ng-deep body.dark .mat-mdc-option {
+  color: #f8fafc !important;
+}
+
+::ng-deep body.dark .mat-mdc-button-touch-target{
+  background-color: black;
+}
+
+/* Mobile */
+@media (max-width: 1024px) {
+  .edit-equipment-item-container {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  mat-card {
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 600px) {
+  .edit-equipment-item-container {
+    padding: 24px 12px;
+  }
+
+  mat-card {
+    padding: 20px;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+
+  .button-row button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 390px) {
+  .edit-equipment-item-container {
+    padding: 16px 8px;
+  }
+
+  mat-card {
+    padding: 16px;
+  }
+}
+
+
+/* Mobile */
+@media (max-width: 1024px) {
+  .edit-equipment-item-container {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  mat-card {
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 600px) {
+  .edit-equipment-item-container {
+    padding: 24px 12px;
+  }
+
+  mat-card {
+    padding: 20px;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+
+  .button-row button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 390px) {
+  .edit-equipment-item-container {
+    padding: 16px 8px;
+  }
+
+  mat-card {
+    padding: 16px;
+  }
+}

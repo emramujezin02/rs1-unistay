@@ -1,0 +1,68 @@
+<!--<h2>Security Questions</h2>
+<div class="security-container" *ngIf="questions.length">
+
+  <div class="card">
+
+    <h3>{{ getQuestionText(questions[currentIndex]) }}</h3>
+
+    <input
+      [(ngModel)]="answers[currentIndex].answer"
+      placeholder="Unesite odgovor"
+    />
+
+  </div>
+
+  <div class="navigation">
+    <button (click)="prev()" [disabled]="currentIndex === 0">←</button>
+    <button (click)="next()" [disabled]="currentIndex === questions.length - 1">→</button>
+  </div>
+
+  <button (click)="submit()">Sačuvaj</button>
+
+</div>
+-->
+
+<section class="security-shell">
+  <header class="security-header">
+    <p class="security-kicker">Account security</p>
+    <h2>Security Questions</h2>
+    <p>Set recovery answers for your account.</p>
+  </header>
+
+  <div class="security-container" *ngIf="questions.length; else noQuestions">
+    <div class="card">
+      <span class="question-counter">
+        Question {{ currentIndex + 1 }} of {{ questions.length }}
+      </span>
+
+      <h3>{{ getQuestionText(questions[currentIndex]) }}</h3>
+
+      <input
+        [(ngModel)]="answers[currentIndex].answer"
+        placeholder="Enter your answer"
+      />
+    </div>
+
+    <div class="navigation">
+      <button type="button" class="secondary" (click)="prev()" [disabled]="currentIndex === 0">
+        ← Previous
+      </button>
+
+      <button type="button" class="secondary" (click)="next()" [disabled]="currentIndex === questions.length - 1">
+        Next →
+      </button>
+    </div>
+
+    <button type="button" class="primary" (click)="submit()">
+      Save answers
+    </button>
+  </div>
+
+  <ng-template #noQuestions>
+    <div class="security-container security-container--empty">
+      <mat-icon>verified_user</mat-icon>
+      <h3>No security questions available.</h3>
+      <p>You have already answered all available security questions.</p>
+    </div>
+  </ng-template>
+</section>

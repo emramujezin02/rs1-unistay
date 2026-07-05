@@ -1,0 +1,64 @@
+<div class="hall-edit-container">
+
+  <mat-card @formAnimation>
+
+    <h2>Edit hall</h2>
+
+    <div *ngIf="loading" class="loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <form *ngIf="!loading" (ngSubmit)="saveHall()" #formRef="ngForm">
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="hall.name" name="name" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Capacity</mat-label>
+        <input matInput type="number" [(ngModel)]="hall.capacity" name="capacity" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" [(ngModel)]="hall.description" name="description"></textarea>
+      </mat-form-field>
+
+      <div class="date-row">
+
+        <mat-form-field appearance="outline" @fieldAnimation>
+          <mat-label>Available from</mat-label>
+          <input matInput type="date" [(ngModel)]="hall.availableFrom" name="availableFrom">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" @fieldAnimation>
+          <mat-label>Available until</mat-label>
+          <input matInput type="date" [(ngModel)]="hall.availableTo" name="availableTo">
+        </mat-form-field>
+
+      </div>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="hall.isAvailable" name="isAvailable" panelClass="hall-edit-select-panel">
+          <mat-option [value]="true">Available</mat-option>
+          <mat-option [value]="false">Occupied</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="button-row">
+        <button mat-raised-button color="primary" type="submit" class="submit-btn" @fieldAnimation>
+          Save
+        </button>
+
+        <button mat-stroked-button type="button" class="close-btn" (click)="back()" @fieldAnimation>
+          Back
+        </button>
+      </div>
+
+    </form>
+
+  </mat-card>
+
+</div>

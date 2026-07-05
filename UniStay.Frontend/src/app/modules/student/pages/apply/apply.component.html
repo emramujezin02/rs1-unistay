@@ -1,0 +1,289 @@
+<div class="apply-page">
+  <div class="apply-page__header">
+    <button mat-icon-button type="button" class="apply-page__back" (click)="back()" aria-label="Back to dashboard">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="apply-page__title">Accommodation application</h1>
+      <p class="apply-page__subtitle">Submit your competition application and supporting documents.</p>
+    </div>
+    <span *ngIf="draftSaved()" class="draft-saved-badge">
+      <mat-icon>save</mat-icon>
+      Draft saved
+    </span>
+  </div>
+
+  <app-loading-spinner *ngIf="facade.loading()"></app-loading-spinner>
+
+  <mat-stepper linear orientation="vertical" #stepper *ngIf="!facade.loading()">
+    <mat-step [stepControl]="academicForm" label="Academic information">
+      <form [formGroup]="academicForm" class="step-form">
+        <div class="step-form__row">
+          <mat-form-field appearance="outline" class="step-form__field">
+            <mat-label>Year of study</mat-label>
+            <mat-select formControlName="yearOfStudy">
+              <mat-option *ngFor="let year of yearOptions" [value]="year">
+                Year {{ year }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="academicForm.get('yearOfStudy')?.hasError('required')">
+              Year of study is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="step-form__field">
+            <mat-label>GPA</mat-label>
+            <input matInput type="number" min="0" max="10" step="0.01" formControlName="gpaScore" placeholder="8.50" />
+            <mat-spinner *ngIf="gpaPending" matSuffix diameter="18" class="field-spinner"></mat-spinner>
+            <mat-hint *ngIf="!gpaPending">Minimum GPA is checked automatically.</mat-hint>
+            <mat-hint *ngIf="gpaPending">Checking GPA...</mat-hint>
+            <mat-error *ngIf="academicForm.get('gpaScore')?.hasError('min') || academicForm.get('gpaScore')?.hasError('max')">
+              GPA must be between 0 and 10.
+            </mat-error>
+            <mat-error *ngIf="academicForm.get('gpaScore')?.hasError('gpaTooLow')">
+              GPA is below the minimum of {{ academicForm.get('gpaScore')?.getError('gpaTooLow')?.min }}.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="step-form__field step-form__field--half">
+          <mat-label>Phone number</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input matInput formControlName="phoneNumber" placeholder="+387 61 000 000" />
+        </mat-form-field>
+
+        <div class="step-actions">
+          <button mat-raised-button color="primary" type="button" matStepperNext [disabled]="academicForm.invalid || gpaPending">
+            <mat-spinner *ngIf="gpaPending" diameter="18"></mat-spinner>
+            <ng-container *ngIf="!gpaPending">
+              Next
+              <mat-icon>chevron_right</mat-icon>
+            </ng-container>
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step [stepControl]="roomForm" label="Room preference">
+      <form [formGroup]="roomForm" class="step-form">
+        <mat-form-field appearance="outline" class="step-form__field step-form__field--half">
+          <mat-label>Preferred room type</mat-label>
+          <mat-select formControlName="preferredRoomType">
+            <mat-option *ngFor="let type of roomTypes" [value]="type">
+              {{ type }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="roomForm.get('preferredRoomType')?.hasError('required')">
+            Preferred room type is required.
+          </mat-error>
+        </mat-form-field>
+
+        <div class="selected-room" *ngIf="roomForm.value.selectedRoomId">
+          <mat-icon class="selected-room__icon">check_circle</mat-icon>
+          <div class="selected-room__info">
+            <span class="selected-room__label">Selected room</span>
+            <strong class="selected-room__number">Room {{ roomForm.value.selectedRoomNumber }}</strong>
+          </div>
+          <button mat-icon-button type="button" (click)="clearSelectedRoom()" matTooltip="Clear selected room">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="browse-cta">
+          <p class="browse-cta__hint">You can select a specific room from Search Rooms, or submit only a room type preference.</p>
+          <button mat-stroked-button color="primary" type="button" (click)="goToRoomBrowser()">
+            <mat-icon>search</mat-icon>
+            Browse rooms
+          </button>
+        </div>
+
+        <div class="step-actions">
+          <button mat-stroked-button type="button" matStepperPrevious>
+            <mat-icon>chevron_left</mat-icon>
+            Back
+          </button>
+          <button mat-raised-button color="primary" type="button" matStepperNext [disabled]="roomForm.invalid">
+            Next
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step label="Preferences and notes">
+      <form [formGroup]="prefsForm" class="step-form">
+        <mat-form-field appearance="outline" class="step-form__field">
+          <mat-label>Special requirements</mat-label>
+          <textarea matInput formControlName="specialRequirements" rows="3" placeholder="Accessibility needs, quiet room, near exit..."></textarea>
+          <mat-hint>Optional</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="step-form__field">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes" rows="3" placeholder="Additional information for administration"></textarea>
+        </mat-form-field>
+
+        <div class="step-actions">
+          <button mat-stroked-button type="button" matStepperPrevious>
+            <mat-icon>chevron_left</mat-icon>
+            Back
+          </button>
+          <button mat-raised-button color="primary" type="button" matStepperNext>
+            Next
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step label="Documents">
+      <div class="step-form">
+        <p class="step-form__intro">Upload the required documents before submitting the application.</p>
+
+        <div class="doc-list">
+          <div
+            class="doc-item"
+            *ngFor="let doc of documents; let i = index"
+            [class.doc-item--uploading]="doc.uploading"
+            [class.doc-item--done]="doc.uploadedUrl && !doc.uploading"
+            [class.doc-item--error]="doc.uploadError">
+            <div class="doc-item__info">
+              <mat-icon
+                class="doc-item__icon"
+                [class.doc-item__icon--done]="doc.uploadedUrl && !doc.uploading"
+                [class.doc-item__icon--uploading]="doc.uploading"
+                [class.doc-item__icon--error]="doc.uploadError">
+                {{ doc.uploading ? 'cloud_upload' : doc.uploadedUrl ? 'check_circle' : doc.uploadError ? 'error_outline' : doc.required ? 'upload_file' : 'attach_file' }}
+              </mat-icon>
+              <div class="doc-item__text">
+                <span class="doc-item__label">
+                  {{ doc.label }}
+                  <span class="doc-item__req" *ngIf="doc.required">*</span>
+                </span>
+
+                <ng-container *ngIf="doc.uploading">
+                  <p class="doc-item__filename">{{ doc.fileName }}</p>
+                  <div class="doc-item__progress-wrap">
+                    <mat-progress-bar mode="determinate" [value]="doc.progress" class="doc-item__bar"></mat-progress-bar>
+                    <span class="doc-item__percent">{{ doc.progress }}%</span>
+                  </div>
+                </ng-container>
+
+                <p class="doc-item__filename doc-item__filename--done" *ngIf="doc.uploadedUrl && !doc.uploading">
+                  <mat-icon class="doc-item__tick">check</mat-icon>
+                  {{ doc.fileName }}
+                </p>
+                <p class="doc-item__error" *ngIf="doc.uploadError">{{ doc.uploadError }}</p>
+                <p class="doc-item__hint" *ngIf="!doc.uploading && !doc.uploadedUrl && !doc.uploadError && !doc.fileName">
+                  PDF, JPG, PNG, DOC or DOCX.
+                </p>
+              </div>
+            </div>
+
+            <label class="doc-item__btn" [class.doc-item__btn--disabled]="doc.uploading">
+              <input
+                type="file"
+                hidden
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                [disabled]="doc.uploading"
+                (change)="onFileSelected($event, i)" />
+              <span>
+                <mat-icon>{{ doc.uploadedUrl ? 'refresh' : 'upload' }}</mat-icon>
+                {{ doc.uploadedUrl ? 'Change' : doc.uploadError ? 'Retry' : 'Upload' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <p class="step-form__note">Required documents must finish uploading before the application can be submitted.</p>
+
+        <div class="step-actions">
+          <button mat-stroked-button type="button" matStepperPrevious [disabled]="anyUploading">
+            <mat-icon>chevron_left</mat-icon>
+            Back
+          </button>
+          <button mat-raised-button color="primary" type="button" matStepperNext [disabled]="requiredDocsMissing || anyUploading">
+            <mat-spinner *ngIf="anyUploading" diameter="18"></mat-spinner>
+            <ng-container *ngIf="!anyUploading">
+              Next
+              <mat-icon>chevron_right</mat-icon>
+            </ng-container>
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step label="Review and submit">
+      <div class="step-form review">
+        <div class="review-section">
+          <h3 class="review-section__title">Academic information</h3>
+          <div class="review-row">
+            <span>Year of study</span>
+            <strong>Year {{ academicForm.value.yearOfStudy }}</strong>
+          </div>
+          <div class="review-row" *ngIf="academicForm.value.gpaScore">
+            <span>GPA</span>
+            <strong>{{ academicForm.value.gpaScore }}</strong>
+          </div>
+          <div class="review-row" *ngIf="academicForm.value.phoneNumber">
+            <span>Phone</span>
+            <strong>{{ academicForm.value.phoneNumber }}</strong>
+          </div>
+        </div>
+
+        <div class="review-section">
+          <h3 class="review-section__title">Room preference</h3>
+          <div class="review-row">
+            <span>Room type</span>
+            <strong>{{ roomForm.value.preferredRoomType }}</strong>
+          </div>
+          <div class="review-row" *ngIf="roomForm.value.selectedRoomNumber">
+            <span>Selected room</span>
+            <strong>{{ roomForm.value.selectedRoomNumber }}</strong>
+          </div>
+        </div>
+
+        <div class="review-section" *ngIf="prefsForm.value.specialRequirements || prefsForm.value.notes">
+          <h3 class="review-section__title">Preferences and notes</h3>
+          <div class="review-row" *ngIf="prefsForm.value.specialRequirements">
+            <span>Special requirements</span>
+            <strong>{{ prefsForm.value.specialRequirements }}</strong>
+          </div>
+          <div class="review-row" *ngIf="prefsForm.value.notes">
+            <span>Notes</span>
+            <strong>{{ prefsForm.value.notes }}</strong>
+          </div>
+        </div>
+
+        <div class="review-section">
+          <h3 class="review-section__title">Documents</h3>
+          <div class="review-row" *ngFor="let doc of documents">
+            <span>{{ doc.label }}</span>
+            <strong [class.review-missing]="doc.required && !doc.fileName">{{ doc.fileName || 'Not provided' }}</strong>
+          </div>
+        </div>
+
+        <p *ngIf="facade.error()" class="apply-page__error">{{ facade.error() }}</p>
+
+        <div class="step-actions">
+          <button mat-stroked-button type="button" matStepperPrevious>
+            <mat-icon>chevron_left</mat-icon>
+            Back
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="submit()"
+            [disabled]="academicForm.invalid || roomForm.invalid || anyUploading || facade.loading()">
+            <mat-spinner *ngIf="facade.loading()" diameter="18"></mat-spinner>
+            <ng-container *ngIf="!facade.loading()">
+              <mat-icon>send</mat-icon>
+              Submit application
+            </ng-container>
+          </button>
+        </div>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>

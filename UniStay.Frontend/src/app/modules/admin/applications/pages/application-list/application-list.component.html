@@ -1,0 +1,111 @@
+<div class="page-header">
+  <h1>{{ 'ADMIN.APPLICATIONS.PAGE_TITLE' | translate }}</h1>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline">
+    <mat-label>{{ 'ADMIN.APPLICATIONS.SEARCH_LABEL' | translate }}</mat-label>
+    <input matInput #searchInput [placeholder]="'ADMIN.APPLICATIONS.SEARCH_PLACEHOLDER' | translate" (keyup.enter)="facade.search(searchInput.value)" />
+    <button mat-icon-button matSuffix type="button" (click)="facade.search(searchInput.value)">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-button-toggle-group [value]="selectedStatus"
+                           (change)="selectedStatus = $event.value; facade.filterByStatus($event.value)">
+    <mat-button-toggle *ngFor="let status of statuses" [value]="status">
+      {{ (status ? 'ADMIN.APPLICATIONS.STATUS_' + status.toUpperCase() : 'ADMIN.APPLICATIONS.FILTER_ALL') | translate }}
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
+<mat-spinner *ngIf="facade.loading()" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!facade.loading()">
+  <p *ngIf="facade.error()">{{ facade.error() }}</p>
+  <p *ngIf="facade.isEmpty()">{{ 'ADMIN.APPLICATIONS.EMPTY' | translate }}</p>
+
+  <div class="applications-table-wrapper" *ngIf="facade.hasItems()">
+    <mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="student">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.APPLICATIONS.COL_STUDENT' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">
+          <span><strong>{{ application.studentUsername }}</strong><br>{{ application.studentEmail }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="academic">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.APPLICATIONS.COL_ACADEMIC' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">
+          {{ 'God ' + application.yearOfStudy  }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="room">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.APPLICATIONS.COL_ROOM_TYPE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">{{ application.preferredRoomType }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="documents">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.APPLICATIONS.COL_DOCS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">
+          {{ application.documentNames ? application.documentNames.split(',').length : '-' }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="notes">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.APPLICATIONS.COL_NOTES' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">
+          <span class="notes" [matTooltip]="application.specialRequirements || application.notes || ''">
+            {{ application.specialRequirements || application.notes || '-' }}
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.APPLICATIONS.COL_STATUS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">
+          <mat-chip [color]="statusColor(application.status)" selected>
+            {{ ('ADMIN.APPLICATIONS.STATUS_' + application.status.toUpperCase()) | translate }}
+          </mat-chip>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="appliedAt">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.APPLICATIONS.COL_APPLIED' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">
+          {{ application.appliedAt ? (application.appliedAt | date:'mediumDate') : '-' }}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.APPLICATIONS.COL_ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let application">
+          <ng-container *ngIf="application.status === 'Pending'">
+            <button mat-icon-button type="button" color="primary" [matTooltip]="'ADMIN.APPLICATIONS.APPROVE_TOOLTIP' | translate"
+                    (click)="approve(application, $event)">
+              <mat-icon>check_circle_outline</mat-icon>
+            </button>
+            <button mat-icon-button type="button" color="warn" [matTooltip]="'ADMIN.APPLICATIONS.REJECT_TOOLTIP' | translate"
+                    (click)="reject(application, $event)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </ng-container>
+          <span *ngIf="application.status !== 'Pending'">
+            {{ application.decisionAt ? (application.decisionAt | date:'mediumDate') : '-' }}
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="showDetails(row, $event)"></mat-row>
+    </mat-table>
+  </div>
+
+  <mat-paginator *ngIf="facade.hasItems()"
+                 [length]="facade.totalCount()"
+                 [pageSize]="facade.filters().pageSize"
+                 [pageIndex]="facade.filters().page - 1"
+                 (page)="facade.changePage($event.pageIndex)">
+  </mat-paginator>
+</ng-container>

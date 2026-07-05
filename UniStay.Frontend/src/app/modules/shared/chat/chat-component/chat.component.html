@@ -1,0 +1,97 @@
+<div class="chat-container">
+
+  <!-- LEFT PANEL -->
+  <mat-card class="chat-list">
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search users</mat-label>
+      <input matInput
+             [(ngModel)]="search"
+             (input)="searchNewUsers()">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <!-- SEARCH RESULTS -->
+    <div *ngIf="search.length > 0" class="search-results">
+      <mat-list>
+        <mat-list-item *ngFor="let u of searchResults"
+                       (click)="startNewChat(u)"
+                       class="result-item">
+          {{ u.displayName }} (new)
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- CONVERSATIONS -->
+    <mat-nav-list>
+      <mat-list-item
+        *ngFor="let c of conversations"
+        (click)="openConversation(c)"
+        [class.active]="isActiveConversation(c)">
+
+        <span matLine>{{ c.displayName }}</span>
+
+      </mat-list-item>
+    </mat-nav-list>
+
+  </mat-card>
+
+
+  <!-- RIGHT PANEL -->
+  <mat-card class="chat-window" *ngIf="receiverId; else noChat">
+
+    <div class="chat-header">
+      Chat with {{ activeUserName }}
+    </div>
+
+    <div class="messages">
+
+      <div *ngFor="let m of messages"
+           class="message"
+           [class.me]="isOwnMessage(m)">
+
+        <div class="sender-name"
+             *ngIf="!isOwnMessage(m)">
+          {{m.senderName}}
+        </div>
+
+        <div class="message-content">
+          {{m.content}}
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="typing-indicator" *ngIf="isTyping">
+      {{activeUserName}} is typing...
+    </div>
+
+    <div class="chat-input">
+
+      <mat-form-field appearance="outline" class="input-field">
+        <input matInput
+               [(ngModel)]="message"
+               placeholder="Type a message..."
+               (input)="onTyping()">
+      </mat-form-field>
+
+      <button mat-raised-button
+              color="primary"
+              (click)="send()">
+        Send
+      </button>
+
+    </div>
+
+  </mat-card>
+
+  <ng-template #noChat>
+    <mat-card class="empty-chat">
+      Select a conversation
+    </mat-card>
+  </ng-template>
+
+</div>

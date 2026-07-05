@@ -1,0 +1,20 @@
+<section id="announcements" class="announcements">
+  <div class="section-heading">
+    <span>Announcements</span>
+    <h2>Latest housing updates</h2>
+  </div>
+
+  <article class="announcement-card" *ngIf="current() as announcement">
+    <p class="announcement-card__date">{{ formatDate(announcement.createdAt) }}</p>
+    <h3>{{ announcement.title }}</h3>
+    <p>{{ announcement.content }}</p>
+    <div class="announcement-card__actions">
+      <button mat-icon-button type="button" aria-label="Previous announcement" (click)="prev()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button mat-icon-button type="button" aria-label="Next announcement" (click)="next()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </article>
+</section>

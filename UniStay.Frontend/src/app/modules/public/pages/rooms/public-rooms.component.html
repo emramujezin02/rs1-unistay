@@ -1,0 +1,103 @@
+<header class="public-rooms-nav">
+  <div class="public-rooms-nav__inner">
+    <a class="public-rooms-nav__brand" routerLink="/">UniStay</a>
+    <nav class="public-rooms-nav__links" aria-label="Main navigation">
+      <a routerLink="/">Home</a>
+      <a class="public-rooms-nav__login" routerLink="/login">Login</a>
+    </nav>
+  </div>
+</header>
+
+<div class="rooms-container">
+  <aside class="filters">
+    <h3>Filters</h3>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Floor</mat-label>
+      <mat-select [(ngModel)]="floorFilter" (selectionChange)="onFloorFilter()">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option [value]="1">1</mat-option>
+        <mat-option [value]="2">2</mat-option>
+        <mat-option [value]="3">3</mat-option>
+        <mat-option [value]="4">4</mat-option>
+        <mat-option [value]="5">5</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Number of persons</mat-label>
+      <mat-select [(ngModel)]="maxOccupancyFilter" (selectionChange)="onFilterChange()">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option [value]="1">1</mat-option>
+        <mat-option [value]="2">2</mat-option>
+        <mat-option [value]="3">3</mat-option>
+        <mat-option [value]="4">4</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox [(ngModel)]="nearExitFilter" (change)="onFilterChange()">
+      Near Exit
+    </mat-checkbox>
+
+    <mat-checkbox [(ngModel)]="wheelchairAccessibleFilter" (change)="onFilterChange()">
+      Wheelchair Accessible
+    </mat-checkbox>
+
+    <mat-checkbox [(ngModel)]="elevatorAccessFilter" (change)="onFilterChange()">
+      Elevator Access
+    </mat-checkbox>
+  </aside>
+
+  <main class="rooms-content">
+    <div class="rooms-spinner" *ngIf="loading()">
+      <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+    </div>
+
+    <section class="rooms-grid" *ngIf="!loading()">
+      <p *ngIf="rooms().length === 0" class="rooms-empty">
+        <mat-icon>search_off</mat-icon>
+        No rooms match the selected filters.
+      </p>
+
+      <article
+        class="room-card"
+        *ngFor="let room of getCurrentPageRooms()"
+        (click)="viewDetail(room.id)">
+        <img
+          *ngIf="room.images?.length"
+          [src]="room.images[0]"
+          alt=""
+          class="room-image">
+
+        <div class="room-info">
+          <div class="room-title">Room {{ room.roomNumber }}</div>
+          <div class="room-meta">
+            Floor {{ room.floor }} - Max {{ room.maxOccupancy }}
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="rooms-pagination" *ngIf="!loading() && rooms().length > 0 && totalPages > 1">
+      <button
+        type="button"
+        class="pagination-button"
+        (click)="previousPage()"
+        [disabled]="currentPage === 1">
+        Previous
+      </button>
+
+      <span class="pagination-status">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+
+      <button
+        type="button"
+        class="pagination-button"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages">
+        Next
+      </button>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,55 @@
+<div class="page-header">
+  <h1>{{ 'ADMIN.PAYMENTS.PAGE_TITLE' | translate }}</h1>
+</div>
+
+<mat-spinner *ngIf="facade.loading()" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!facade.loading()">
+  <p *ngIf="facade.error()">{{ facade.error() }}</p>
+  <p *ngIf="facade.isEmpty()">{{ 'ADMIN.PAYMENTS.EMPTY' | translate }}</p>
+
+  <div class="admin-payments-table-wrapper" *ngIf="facade.hasInvoices()">
+    <mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="invoiceId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.PAYMENTS.COL_INVOICE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">{{ invoice.invoiceId }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="totalAmount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.PAYMENTS.COL_AMOUNT' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">{{ invoice.totalAmount | currency:'BAM':'symbol':'1.2-2' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="paid">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.PAYMENTS.COL_STATUS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">
+          <mat-chip [color]="statusColor(invoice.paid)" selected>
+            {{ (invoice.paid ? 'ADMIN.PAYMENTS.STATUS_PAID' : 'ADMIN.PAYMENTS.STATUS_UNPAID') | translate }}
+          </mat-chip>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="issuedAt">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.PAYMENTS.COL_ISSUED' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">{{ invoice.issuedAt | date:'mediumDate' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="paidAt">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.PAYMENTS.COL_PAID_AT' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">{{ invoice.paidAt ? (invoice.paidAt | date:'mediumDate') : '-' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.PAYMENTS.COL_ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let invoice">
+          <button mat-icon-button type="button" (click)="onDownloadPdf(invoice)" [matTooltip]="'ADMIN.PAYMENTS.DOWNLOAD_PDF' | translate">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+</ng-container>

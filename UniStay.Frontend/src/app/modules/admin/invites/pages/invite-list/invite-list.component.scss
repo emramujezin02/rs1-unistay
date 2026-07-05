@@ -1,0 +1,86 @@
+.admin-invite-page {
+  width: 100%;
+  max-width: 560px;
+}
+
+.admin-invite-page app-invite-friend {
+  display: block;
+  width: 100%;
+}
+
+.dashboard-card {
+  max-width: 560px;
+  padding: 24px;
+}
+
+.dashboard-title {
+  margin: 0 0 18px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-color, #18212f);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-group {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.save-btn {
+  min-width: 128px;
+}
+
+@media (max-width: 1024px) {
+  .admin-invite-page {
+    box-sizing: border-box;
+    max-width: 560px;
+  }
+
+  .admin-invite-page ::ng-deep .invite-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-invite-page ::ng-deep .invite-card {
+    padding: 22px;
+  }
+
+  .admin-invite-page ::ng-deep .invite-card__subtitle {
+    margin-bottom: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-invite-page ::ng-deep .invite-card {
+    padding: 18px;
+  }
+
+  .admin-invite-page ::ng-deep .invite-card__title {
+    font-size: 1.25rem;
+  }
+
+  .admin-invite-page ::ng-deep .invite-card__form {
+    gap: 12px;
+  }
+
+  .admin-invite-page ::ng-deep .invite-card__button {
+    width: 100%;
+    justify-self: stretch;
+  }
+}
+
+@media (max-width: 390px) {
+  .admin-invite-page ::ng-deep .invite-card {
+    padding: 16px;
+  }
+
+  .admin-invite-page ::ng-deep .invite-card__subtitle {
+    font-size: .9rem;
+  }
+}

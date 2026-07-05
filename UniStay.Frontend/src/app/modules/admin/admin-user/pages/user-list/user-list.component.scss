@@ -1,0 +1,156 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.search-field {
+  width: min(420px, 100%);
+}
+
+.users-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.user-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-cell small {
+  color: #667085;
+}
+
+.empty-state {
+  color: #888;
+}
+
+.error-state {
+  color: #b00020;
+}
+
+:host-context(body.dark) .page-header h1 {
+  color: #e5e7eb;
+}
+
+:host-context(body.dark) .search-field {
+  --mdc-outlined-text-field-outline-color: #334155;
+  --mdc-outlined-text-field-hover-outline-color: #60a5fa;
+  --mdc-outlined-text-field-focus-outline-color: #60a5fa;
+  --mdc-outlined-text-field-label-text-color: #cbd5e1;
+  --mdc-outlined-text-field-input-text-color: #f8fafc;
+  --mdc-outlined-text-field-caret-color: #60a5fa;
+  --mat-form-field-leading-icon-color: #cbd5e1;
+  --mat-form-field-trailing-icon-color: #cbd5e1;
+}
+
+:host-context(body.dark) .users-table-wrapper {
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+}
+
+:host-context(body.dark) mat-table {
+  background: #0f172a;
+}
+
+:host-context(body.dark) mat-header-row {
+  background: #111827;
+  border-bottom-color: #334155;
+}
+
+:host-context(body.dark) mat-header-cell {
+  color: #e5e7eb;
+  font-weight: 700;
+}
+
+:host-context(body.dark) mat-row {
+  border-bottom-color: #1f2937;
+}
+
+:host-context(body.dark) mat-row:hover {
+  background: #172033;
+}
+
+:host-context(body.dark) mat-cell {
+  color: #dbeafe;
+}
+
+:host-context(body.dark) .user-cell strong {
+  color: #f8fafc;
+}
+
+:host-context(body.dark) .user-cell small {
+  color: #94a3b8;
+}
+
+:host-context(body.dark) button[mat-icon-button] {
+  color: #fca5a5;
+}
+
+:host-context(body.dark) .empty-state {
+  color: #cbd5e1;
+}
+
+:host-context(body.dark) .error-state {
+  color: #fca5a5;
+}
+
+:host-context(body.dark) mat-paginator {
+  background: #0f172a;
+  color: #dbeafe;
+}
+
+@media (max-width: 1024px) {
+  .users-table-wrapper {
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  mat-table {
+    min-width: 880px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .75rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.35rem;
+  }
+
+  mat-table {
+    min-width: 820px;
+  }
+}
+
+@media (max-width: 390px) {
+  .page-header {
+    margin-bottom: .75rem;
+  }
+}

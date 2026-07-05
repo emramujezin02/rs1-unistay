@@ -1,0 +1,148 @@
+<div class="hall-list-container" *ngIf="!loading; else loadingTpl">
+
+  <mat-card>
+    <div class="list-header">
+      <h2>Hall list</h2>
+      <button mat-raised-button color="primary" (click)="addHall()">
+        <mat-icon>add</mat-icon>
+        Add Hall
+      </button>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--name">
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="filters.name" (input)="applyFilters()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--capacity">
+        <mat-label>Capacity ≥</mat-label>
+        <input matInput type="number" [(ngModel)]="filters.capacity" (input)="applyFilters()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--status">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="filters.isAvailable" panelClass="hall-list-select-panel" (selectionChange)="applyFilters()">
+          <mat-option value="">All</mat-option>
+          <mat-option value="true">Available</mat-option>
+          <mat-option value="false">Occupied</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--date">
+        <mat-label>Available from</mat-label>
+        <input matInput type="date" [(ngModel)]="filters.availableFrom" (change)="applyFilters()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--date">
+        <mat-label>Available to</mat-label>
+        <input matInput type="date" [(ngModel)]="filters.availableTo" (change)="applyFilters()">
+      </mat-form-field>
+
+      <button mat-stroked-button class="filter-action" (click)="clearFilters()">
+        Refresh filter
+      </button>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="pagedHalls" matSort>
+
+        <!-- Name -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="name"> Name </th>
+          <td mat-cell *matCellDef="let hall"> {{ hall.name }} </td>
+        </ng-container>
+
+        <!-- Capacity -->
+        <ng-container matColumnDef="capacity">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="capacity"> Capacity </th>
+          <td mat-cell *matCellDef="let hall"> {{ hall.capacity }} </td>
+        </ng-container>
+
+        <!-- Available From -->
+        <ng-container matColumnDef="availableFrom">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="availableFrom"> Available from </th>
+          <td mat-cell *matCellDef="let hall">
+            {{ hall.availableFrom | date:'shortDate' }}
+          </td>
+        </ng-container>
+
+        <!-- Available To -->
+        <ng-container matColumnDef="availableTo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="availableTo"> Available until </th>
+          <td mat-cell *matCellDef="let hall">
+            {{ hall.availableTo | date:'shortDate' }}
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="isAvailable"> Status </th>
+          <td mat-cell *matCellDef="let hall">
+            <span [class.available]="hall.isAvailable"
+                  [class.unavailable]="!hall.isAvailable">
+              {{ hall.isAvailable ? 'Available' : 'Occupied' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef > Actions </th>
+          <td mat-cell *matCellDef="let hall">
+            <button mat-button color="primary" (click)="updateHall(hall.hallID)">
+              Edit
+            </button>
+            <button mat-button color="warn" (click)="deleteHall(hall.hallID)">
+              Delete
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['name','capacity','availableFrom','availableTo','status','actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name','capacity','availableFrom','availableTo','status','actions'];" [@fadeIn]></tr>
+
+      </table>
+    </div>
+
+    <div class="hall-paginator" *ngIf="filteredHalls.length > 0">
+      <div class="hall-paginator__size">
+        <span>Show</span>
+        <mat-form-field appearance="outline">
+          <mat-select [(ngModel)]="pageSize" panelClass="hall-list-select-panel" (selectionChange)="changePageSize(pageSize)">
+            <mat-option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <span>per page</span>
+      </div>
+
+      <div class="hall-paginator__pages">
+        <button mat-button type="button" class="hall-paginator__nav" [disabled]="currentPage === 1" (click)="previousPage()" aria-label="Previous page">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button
+          mat-button
+          type="button"
+          class="hall-paginator__page"
+          *ngFor="let page of pageNumbers"
+          [class.hall-paginator__page--active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+        <button mat-button type="button" class="hall-paginator__nav" [disabled]="currentPage === totalPages" (click)="nextPage()" aria-label="Next page">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </mat-card>
+
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading...</div>
+</ng-template>

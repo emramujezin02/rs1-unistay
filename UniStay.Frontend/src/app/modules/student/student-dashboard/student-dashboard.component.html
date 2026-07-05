@@ -1,0 +1,57 @@
+<div class="student-shell">
+  <aside class="student-sidebar">
+    <div class="student-sidebar__brand">
+      <span class="student-sidebar__brand-text">UniStay</span>
+      <span class="student-sidebar__badge">Student</span>
+    </div>
+
+    <nav class="student-sidebar__nav" aria-label="Student dashboard navigation">
+      <button
+        *ngFor="let item of visibleNavItems()"
+        type="button"
+        class="student-sidebar__nav-item"
+        [class.student-sidebar__nav-item--active]="isActive(item.path)"
+        (click)="navigate(item.path)">
+        <mat-icon class="student-sidebar__nav-icon">{{ item.icon }}</mat-icon>
+        <span class="student-sidebar__nav-label">{{ item.label }}</span>
+      </button>
+    </nav>
+
+    <div class="student-sidebar__footer">
+      <div class="student-sidebar__profile">
+        <div class="student-sidebar__avatar">{{ userInitial }}</div>
+        <div class="student-sidebar__user">
+          <span class="student-sidebar__user-email">{{ userEmail }}</span>
+          <span class="student-sidebar__user-role">Student</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="student-sidebar__logout"
+        aria-label="Log out"
+        title="Log out"
+        (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </aside>
+
+  <main class="student-main">
+    <header class="student-topbar">
+      <div>
+        <p  style="color:blue">UniStay</p>
+        <h2></h2>
+      </div>
+
+      <div class="student-topbar__actions">
+        <app-notification-bell></app-notification-bell>
+        <div class="student-topbar__avatar">{{ userInitial }}</div>
+      </div>
+    </header>
+
+    <section class="student-content">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>

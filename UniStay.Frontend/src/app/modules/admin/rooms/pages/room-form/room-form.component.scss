@@ -1,0 +1,97 @@
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.form-card {
+  max-width: 760px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.room-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.flags,
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-actions {
+  justify-content: flex-end;
+}
+
+.submit-room-action {
+  color: #2563eb;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.submit-room-action.mat-mdc-button {
+  --mdc-text-button-container-color: transparent;
+  --mdc-text-button-label-text-color: #2563eb;
+  --mat-text-button-state-layer-color: #2563eb;
+  border: 0;
+  box-shadow: none;
+}
+
+.submit-room-action:hover {
+  color: #1d4ed8;
+}
+
+:host-context(body.dark) .page-header h1 {
+  color: #e5e7eb;
+}
+
+:host-context(body.dark) .form-card {
+  border-color: #334155;
+  background: #0f172a;
+  color: #dbeafe;
+}
+
+:host-context(body.dark) .room-form mat-form-field {
+  --mdc-outlined-text-field-outline-color: #334155;
+  --mdc-outlined-text-field-hover-outline-color: #60a5fa;
+  --mdc-outlined-text-field-focus-outline-color: #60a5fa;
+  --mdc-outlined-text-field-label-text-color: #cbd5e1;
+  --mdc-outlined-text-field-input-text-color: #f8fafc;
+  --mdc-outlined-text-field-caret-color: #60a5fa;
+  --mat-form-field-error-text-color: #fca5a5;
+}
+
+:host-context(body.dark) .form-actions button[mat-button]:not(.submit-room-action) {
+  color: #cbd5e1;
+}
+
+:host-context(body.dark) .submit-room-action,
+:host-context(body.dark) .submit-room-action.mat-mdc-button {
+  --mdc-text-button-label-text-color: #93c5fd;
+  --mat-text-button-state-layer-color: #93c5fd;
+  color: #93c5fd;
+}
+
+:host-context(body.dark) .submit-room-action:hover {
+  color: #bfdbfe;
+}
+
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

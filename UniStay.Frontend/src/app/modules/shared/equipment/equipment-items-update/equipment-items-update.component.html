@@ -1,0 +1,76 @@
+<div class="edit-equipment-item-container">
+
+  <mat-card @formAnimation>
+
+    <h2>Edit Equipment Item</h2>
+
+    <div *ngIf="loading" class="loading">
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+
+    <form *ngIf="!loading"
+          [formGroup]="form"
+          (ngSubmit)="save()"
+          class="form-layout">
+
+      <!-- Serial -->
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Serial number</mat-label>
+        <input matInput formControlName="serialNumber">
+      </mat-form-field>
+
+      <!-- Available -->
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Available</mat-label>
+        <mat-select formControlName="isAvailable">
+          <mat-option [value]="true">Yes</mat-option>
+          <mat-option [value]="false">No</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Assigned -->
+<mat-form-field appearance="outline" @fieldAnimation>
+  <mat-label>Assigned At</mat-label>
+        <input
+          matInput
+          type="date"
+          formControlName="assignedAt"
+          >
+</mat-form-field>
+
+<!-- Returned -->
+<mat-form-field appearance="outline" @fieldAnimation>
+  <mat-label>Returned At</mat-label>
+        <input
+          matInput
+          type="date"
+          formControlName="returnedAt"
+          >
+</mat-form-field>
+
+<!-- Location -->
+<mat-form-field appearance="outline" @fieldAnimation>
+  <mat-label>Location</mat-label>
+  <input matInput formControlName="location">
+</mat-form-field>
+
+      <div class="button-row">
+        <button mat-stroked-button type="button"
+                (click)="back()" @fieldAnimation>
+          Back
+        </button>
+        <button mat-raised-button color="primary" type="submit" @fieldAnimation>
+          Save
+        </button>
+
+        
+      </div>
+
+    </form>
+
+  </mat-card>
+
+</div>

@@ -1,0 +1,251 @@
+/* ================= GLOBAL ================= */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Initial hidden state for scroll animations */
+[appAnimateOnScroll] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* ================= THEMES ================= */
+
+/* LIGHT THEME */
+body.light {
+  --bg-color: #f5f7fa;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --text-color: #1e1e1e;
+  --border-color: #e0e0e0;
+  --message-bg: #f0f2f5;
+  --message-own-bg: #1976d2;
+  --message-own-text: #ffffff;
+}
+
+/* DARK THEME */
+body.dark {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --input-bg: #2a2a2a;
+  --text-color: #f5f5f5;
+  --border-color: #333333;
+  --message-bg: #2a2a2a;
+  --message-own-bg: #1565c0;
+  --message-own-text: #ffffff;
+}
+
+/* Apply theme variables globally */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* ================= CARDS / TABLES ================= */
+.mat-mdc-card,
+.card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+table,
+.mat-mdc-table {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+th {
+  background-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+td {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.mat-mdc-header-row {
+  background-color: var(--border-color) !important;
+}
+
+/* ================= FORMS / INPUTS ================= */
+.mat-mdc-form-field,
+.mat-mdc-text-field-wrapper {
+  background-color: var(--input-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-input-element {
+  color: var(--text-color) !important;
+}
+
+input,
+textarea,
+select {
+  background-color: var(--input-bg) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mat-mdc-form-field-label,
+.mat-mdc-floating-label {
+  color: var(--text-color) !important;
+}
+
+/* ================= TOOLBAR / SIDENAV ================= */
+.mat-toolbar {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.mat-sidenav {
+  background-color: var(--card-bg) !important;
+}
+
+/* ================= SPAN / TEXT ================= */
+span,
+p,
+label,
+h1, h2, h3, h4, h5 {
+  color: var(--text-color) !important;
+}
+
+/* ================= DROPDOWN SELECT ================= */
+.mat-mdc-select,
+.mat-mdc-form-field {
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: var(--card-bg) !important;
+}
+
+.mat-mdc-select-panel {
+  background-color: var(--card-bg) !important;
+}
+
+.mat-mdc-option {
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-option:hover {
+  background-color: var(--border-color) !important;
+}
+
+/* ================= CHECKBOX ================= */
+.mat-mdc-checkbox label {
+  color: var(--text-color) !important;
+}
+
+/* ================= CHAT MESSAGES ================= */
+
+/* Poruke druge osobe */
+.message:not(.me) {
+  background-color: var(--message-bg) !important;
+  color: var(--text-color) !important;
+}
+
+/* Moje poruke */
+.message.me {
+  background-color: var(--message-own-bg) !important;
+  color: var(--message-own-text) !important;
+}
+
+/* Sve unutar poruke naslijedi boju */
+.message * {
+  color: inherit !important;
+  background: transparent !important;
+}
+
+/* Specifično za .message-content */
+.message:not(.me) .message-content {
+  background-color: var(--message-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.message.me .message-content {
+  background-color: var(--message-own-bg) !important;
+  color: var(--message-own-text) !important;
+}
+
+/* ================= SEND BUTTON ================= */
+.send-message-button,
+.mat-mdc-button.send-message-button {
+  background-color: #ffffff !important; /* bijelo dugme */
+  color: #000000 !important;           /* crni tekst dugmeta */
+  border-radius: 30% !important;
+}
+
+/* ================= LOGIN CARD FIX ================= */
+.login-card,
+.mat-mdc-card.login-card {
+  background-color: #ffffff !important;
+  color: #1e1e1e !important;
+}
+
+body.dark .login-container{
+  background-color:#1e1e1e ;
+  color: #ffffff !important;
+}
+
+body.dark .mdc-button__label{
+  background-color:#1e1e1e ;
+  color: #ffffff !important;
+
+}
+
+body.dark table td{
+  color:#ffffff !important;
+}
+
+body.ligth table td{
+  color:#1e1e1e !important;
+}
+
+.product-page {
+  display: flex;
+  gap: 40px;
+}
+
+.gallery {
+  width: 50%;
+}
+
+.main-image {
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.main-image img {
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.main-image.zoom img {
+  transform: scale(1.8);
+  cursor: zoom-out;
+}
+
+.thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.thumbnails img {
+  width: 80px;
+  cursor: pointer;
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+  gap: 20px;
+}

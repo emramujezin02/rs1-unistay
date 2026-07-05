@@ -1,0 +1,69 @@
+<div *ngIf="loading" class="announcement-carousel__loading">
+  <mat-spinner diameter="28"></mat-spinner>
+</div>
+
+<p *ngIf="!loading && !hasItems" class="announcement-carousel__empty">
+  No announcements at this time.
+</p>
+
+<ng-container *ngIf="!loading && hasItems">
+  <div class="announcement-carousel">
+    <button
+      class="announcement-carousel__button"
+      type="button"
+      (click)="prev(); $event.stopPropagation()"
+      aria-label="Previous announcement">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <div class="announcement-carousel__track">
+      <article
+        *ngIf="current as announcement"
+        class="announcement-carousel__card"
+        role="button"
+        tabindex="0"
+        (click)="openDetail(announcement)"
+        (keydown.enter)="openDetail(announcement)">
+        <div class="announcement-carousel__card-top">
+          <span class="announcement-carousel__tag">Announcement</span>
+          <time class="announcement-carousel__date">{{ announcement.createdAt | date:'mediumDate' }}</time>
+        </div>
+
+        <h3 class="announcement-carousel__title">{{ announcement.title }}</h3>
+        <div class="announcement-carousel__body ql-content" [innerHTML]="announcement.content"></div>
+
+        <span class="announcement-carousel__read-more">
+          Read more
+          <mat-icon>arrow_forward</mat-icon>
+        </span>
+      </article>
+    </div>
+
+    <button
+      class="announcement-carousel__button"
+      type="button"
+      (click)="next(); $event.stopPropagation()"
+      aria-label="Next announcement">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div class="announcement-carousel__footer">
+    <div class="announcement-carousel__dots" role="tablist">
+      <button
+        *ngFor="let dot of dots"
+        class="announcement-carousel__dot"
+        type="button"
+        [class.announcement-carousel__dot--active]="dot === currentIndex()"
+        (click)="goTo(dot)"
+        [attr.aria-label]="'Announcement ' + (dot + 1)"
+        role="tab">
+      </button>
+    </div>
+
+    <a *ngIf="viewAllRoute" class="announcement-carousel__view-all" [routerLink]="viewAllRoute">
+      View all
+      <mat-icon>chevron_right</mat-icon>
+    </a>
+  </div>
+</ng-container>

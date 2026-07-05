@@ -1,0 +1,49 @@
+<header class="site-header">
+  <nav class="header__nav">
+    <div class="header__brand">
+      <a [routerLink]="">UniStay</a>
+    </div>
+    <div class="header__nav-links">
+      <a [routerLink]="['/']" class="header__nav-link">Home</a>
+      <a [routerLink]="['/about']" class="header__nav-link">About</a>
+      <a [routerLink]="['/features']" class="header__nav-link">Features</a>
+      <a [routerLink]="['/meal-plan']" class="header__nav-link">Meal Plan</a>
+      <a [routerLink]="['/staff']" class="header__nav-link">Staff</a>
+      <a (click)="scrollToContact()" class="header__nav-link" style="cursor: pointer;">Contact</a>
+    </div>
+    <div class="header__actions">
+      <a (click)="openSignUp()" class="header__action header__action--secondary">
+        Sign Up
+      </a>
+      <a [routerLink]="['/login']" class="header__action header__action--primary">
+        Login
+      </a>
+    </div>
+    <div class="header__mobile-toggle">
+      <button (click)="toggleMenu()" class="header__mobile-toggle-button" aria-label="Toggle menu">
+        <svg class="header__mobile-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+      </button>
+    </div>
+  </nav>
+  <!-- Mobile Menu -->
+  @if (isMenuOpen) {
+    <div class="header__mobile-menu">
+      <a href="#" class="header__mobile-link">Home</a>
+      <a href="#about" class="header__mobile-link">About</a>
+      <a href="#features" class="header__mobile-link">Features</a>
+      <a href="#" class="header__mobile-link">Meal Plan</a>
+      <a href="#" class="header__mobile-link">Staff</a>
+      <a href="#contact" class="header__mobile-link">Contact</a>
+      <div class="header__mobile-actions">
+        <div class="header__mobile-actions-container">
+          <a href="#" class="header__mobile-action header__action--secondary">
+            Sign Up
+          </a>
+          <a [routerLink]="['/login']" class="header__mobile-action header__action--primary">
+            Login
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+</header>

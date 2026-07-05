@@ -1,0 +1,23 @@
+<mat-card class="invite-card">
+  <h2 class="invite-card__title">Invite friend</h2>
+  <p class="invite-card__subtitle">Send a UniStay invitation link to a friend by email.</p>
+
+  <form [formGroup]="form" class="invite-card__form" (ngSubmit)="sendInvite()">
+    <mat-form-field appearance="outline" class="invite-card__field">
+      <mat-label>Friend email</mat-label>
+      <input matInput formControlName="email" type="email" autocomplete="email">
+      <mat-error *ngIf="form.controls['email'].hasError('required')">Friend email is required.</mat-error>
+      <mat-error *ngIf="form.controls['email'].hasError('email')">Enter a valid email address.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="invite-card__field">
+      <mat-label>Invite link</mat-label>
+      <input matInput [value]="inviteLink" readonly>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" class="invite-card__button" type="submit" [disabled]="submitting">
+      <mat-icon>person_add</mat-icon>
+      <span>{{ submitting ? 'Sending...' : 'Send Invite' }}</span>
+    </button>
+  </form>
+</mat-card>

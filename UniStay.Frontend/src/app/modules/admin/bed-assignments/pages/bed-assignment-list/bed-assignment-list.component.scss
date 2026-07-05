@@ -1,0 +1,222 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.assign-action {
+  color: #0891b2 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 .25rem !important;
+  min-width: 0;
+  font-weight: 600;
+
+  mat-icon {
+    margin-right: .25rem;
+  }
+
+  &:hover {
+    background: rgba(8, 145, 178, .08) !important;
+  }
+}
+
+.search-field {
+  width: 320px;
+}
+
+.bed-assignments-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.student-cell {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.student-cell small,
+.empty-state {
+  color: #888;
+}
+
+.bed-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #e3f2fd;
+  color: #1565c0;
+  font-weight: 600;
+}
+
+.error-state {
+  color: #b00020;
+}
+
+mat-chip {
+  margin-right: .5rem;
+}
+
+:host-context(body.dark) {
+  .page-header h1 {
+    color: #e8f0f8 !important;
+  }
+
+  .assign-action {
+    color: #22d3ee !important;
+
+    &:hover {
+      background: rgba(8, 145, 178, .16) !important;
+    }
+  }
+
+  .search-field {
+    ::ng-deep .mdc-text-field,
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      background: #0d1e30 !important;
+    }
+
+    ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+    ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+    ::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+      border-color: #1a3352 !important;
+    }
+
+    ::ng-deep .mat-mdc-input-element,
+    ::ng-deep .mat-mdc-floating-label,
+    ::ng-deep .mat-mdc-form-field-icon-suffix {
+      color: #d0dde8 !important;
+    }
+  }
+
+  .bed-assignments-table-wrapper {
+    border: 1px solid #1a3352;
+    border-radius: 8px;
+    background: #0d1e30;
+  }
+
+  mat-table,
+  .mat-mdc-table {
+    background: #0d1e30 !important;
+  }
+
+  mat-header-row,
+  .mat-mdc-header-row {
+    background: #0d1e30 !important;
+    border-bottom: 1px solid #1a3352;
+  }
+
+  mat-header-cell,
+  .mat-mdc-header-cell {
+    background: #0d1e30 !important;
+    color: #7a9ab8 !important;
+    border-bottom-color: #1a3352 !important;
+    font-weight: 700;
+  }
+
+  mat-row,
+  .mat-mdc-row {
+    border-bottom-color: #1a3352 !important;
+
+    &:hover mat-cell,
+    &:hover .mat-mdc-cell {
+      background: rgba(255, 255, 255, .03) !important;
+    }
+  }
+
+  mat-cell,
+  .mat-mdc-cell {
+    color: #b0c4d6 !important;
+    border-bottom-color: #1a3352 !important;
+  }
+
+  .student-cell strong {
+    color: #e8f0f8 !important;
+  }
+
+  .student-cell small,
+  .empty-state {
+    color: #7a9ab8 !important;
+  }
+
+  .bed-badge {
+    background: rgba(8, 145, 178, .16);
+    color: #67e8f9;
+  }
+
+  mat-chip {
+    background: rgba(8, 145, 178, .18) !important;
+    color: #d0f2ff !important;
+  }
+
+  .error-state {
+    color: #fca5a5;
+  }
+
+  mat-paginator,
+  .mat-mdc-paginator {
+    background: #0d1e30 !important;
+    color: #b0c4d6 !important;
+    border-top: 1px solid #1a3352;
+  }
+}
+
+@media (max-width: 1024px) {
+  .bed-assignments-table-wrapper mat-table {
+    min-width: 820px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.45rem;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    flex-direction: column;
+  }
+
+  .page-header button {
+    width: 100%;
+  }
+
+  .bed-assignments-table-wrapper mat-table {
+    min-width: 760px;
+  }
+
+  mat-paginator {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 390px) {
+  .page-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .bed-assignments-table-wrapper mat-table {
+    min-width: 720px;
+  }
+}

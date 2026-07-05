@@ -1,0 +1,39 @@
+.layout-landing {
+  min-height: calc(100vh - 134px);
+  display: flex;
+  align-items: center;
+  padding: 4rem 2rem;
+  background:
+    linear-gradient(90deg, rgba(8, 18, 35, .82), rgba(8, 18, 35, .32)),
+    url('/images/college-dormitory.avif') center / cover;
+}
+
+.layout-landing__content {
+  max-width: 680px;
+  color: #fff;
+}
+
+.layout-landing__eyebrow {
+  font-size: .78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: .75rem 0 1rem;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+p {
+  max-width: 590px;
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.layout-landing__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: 1.5rem;
+}

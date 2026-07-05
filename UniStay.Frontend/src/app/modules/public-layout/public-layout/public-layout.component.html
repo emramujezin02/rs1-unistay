@@ -1,0 +1,23 @@
+<div class="public-layout">
+  <header class="public-layout__header">
+    <a class="public-layout__brand" routerLink="/public-layout">
+      <mat-icon>apartment</mat-icon>
+      <span>UniStay</span>
+    </a>
+
+    <nav class="public-layout__nav" aria-label="Public layout navigation">
+      <a routerLink="/public-home">Home</a>
+      <a routerLink="/rooms">Rooms</a>
+      <a routerLink="/login">Login</a>
+    </nav>
+  </header>
+
+  <main class="public-layout__content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="public-layout__footer">
+    <span>UniStay public layout</span>
+    <span>{{ currentYear }}</span>
+  </footer>
+</div>

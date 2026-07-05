@@ -1,0 +1,45 @@
+.announcements {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.section-heading span {
+  color: #0d47a1;
+  font-size: .78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.section-heading h2 {
+  margin: .35rem 0 1.25rem;
+  font-size: 2rem;
+}
+
+.announcement-card {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, .08);
+  border-radius: 8px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, .08);
+  padding: 1.5rem;
+}
+
+.announcement-card__date {
+  color: #64748b;
+  font-size: .88rem;
+}
+
+.announcement-card h3 {
+  margin: .35rem 0 .6rem;
+  color: #123c69;
+}
+
+.announcement-card p {
+  line-height: 1.65;
+}
+
+.announcement-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+}

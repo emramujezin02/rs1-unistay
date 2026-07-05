@@ -1,0 +1,37 @@
+<div class="announcement-detail">
+  <div class="announcement-detail__header">
+    <div class="announcement-detail__icon">
+      <mat-icon>campaign</mat-icon>
+    </div>
+
+    <h2 class="announcement-detail__title">{{ announcement.title }}</h2>
+
+    <button mat-icon-button type="button" class="announcement-detail__close" (click)="close()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="announcement-detail__meta">
+    <span class="announcement-detail__meta-item">
+      <mat-icon>calendar_today</mat-icon>
+      {{ announcement.createdAt | date:'longDate' }}
+    </span>
+
+    <span class="announcement-detail__meta-separator">.</span>
+
+    <span class="announcement-detail__meta-item">
+      <mat-icon>person_outline</mat-icon>
+      {{ announcement.createdByUsername || 'UniStay' }}
+    </span>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <mat-dialog-content class="announcement-detail__content">
+    <div class="announcement-detail__body ql-content" [innerHTML]="announcement.content"></div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="close()">Close</button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,15 @@
+<div class="autocomplete-wrapper">
+  <input
+    type="text"
+    [formControl]="searchControl"
+    [placeholder]="placeholder"
+    (blur)="onBlur()"
+  />
+
+  <ul *ngIf="showDropdown" class="dropdown">
+    <li *ngFor="let item of suggestions"
+        (click)="selectSuggestion(item)">
+      {{ item }}
+    </li>
+  </ul>
+</div>

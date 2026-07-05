@@ -1,0 +1,101 @@
+<header class="public-rooms-nav">
+  <div class="public-rooms-nav__inner">
+    <a class="public-rooms-nav__brand" routerLink="/">UniStay</a>
+    <nav class="public-rooms-nav__links" aria-label="Main navigation">
+      <a routerLink="/">Home</a>
+      <a class="public-rooms-nav__login" routerLink="/login">Login</a>
+    </nav>
+  </div>
+</header>
+
+<div class="detail-spinner" *ngIf="loading()">
+  <mat-progress-spinner mode="indeterminate" diameter="56"></mat-progress-spinner>
+</div>
+
+<div class="detail-notfound" *ngIf="notFound()">
+  <mat-icon>search_off</mat-icon>
+  <h2>Room was not found</h2>
+  <button mat-flat-button color="primary" type="button" (click)="goBack()">Back to rooms</button>
+</div>
+
+<ng-container *ngIf="!loading() && !notFound() && room() as r">
+  <div class="page-layout">
+    <main class="main-content">
+      <section class="product-page">
+        <div class="gallery" *ngIf="r.images.length">
+          <div
+            class="main-image"
+            [class.zoom]="zoomed()"
+            (click)="toggleZoom()">
+            <button
+              class="nav outside left"
+              type="button"
+              *ngIf="r.images.length > 1"
+              (click)="prevImage(); $event.stopPropagation()">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <img [src]="selectedImage()" alt="">
+
+            <button
+              class="nav outside right"
+              type="button"
+              *ngIf="r.images.length > 1"
+              (click)="nextImage(); $event.stopPropagation()">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <div class="thumbnails" *ngIf="r.images.length > 1">
+            <img
+              *ngFor="let img of r.images; let i = index"
+              [src]="img"
+              alt=""
+              [class.active]="i === currentIndex()"
+              (click)="setSelectedImage(img, i)">
+          </div>
+        </div>
+
+        <div class="info">
+          <h1>Room {{ r.roomNumber }}</h1>
+          <p>{{ r.description }}</p>
+
+          <p><strong>Capacity:</strong> {{ r.maxOccupancy }}</p>
+          <p><strong>Floor:</strong> {{ r.floor }}</p>
+        </div>
+      </section>
+    </main>
+
+    <aside class="reviews-section">
+      <h2>Reviews</h2>
+
+      <div class="reviews-loading" *ngIf="reviewsLoading()">
+        <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+      </div>
+
+      <p class="reviews-empty" *ngIf="!reviewsLoading() && reviews().length === 0">
+        No reviews yet.
+      </p>
+
+      <article *ngFor="let review of reviews()" class="review-card">
+        <div class="review-header">
+          <strong>{{ review.user || 'Guest' }}</strong>
+          <div class="stars">
+            <span
+              *ngFor="let s of [1,2,3,4,5]"
+              class="star"
+              [class.filled]="s <= review.rating">
+            </span>
+          </div>
+        </div>
+
+        <p>{{ review.comment }}</p>
+
+        <div class="review-counts">
+          <span>Likes {{ review.likes ?? 0 }}</span>
+          <span>Dislikes {{ review.dislikes ?? 0 }}</span>
+        </div>
+      </article>
+    </aside>
+  </div>
+</ng-container>

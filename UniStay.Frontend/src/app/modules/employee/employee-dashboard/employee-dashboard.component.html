@@ -1,0 +1,113 @@
+<section class="employee-dashboard">
+  <div class="employee-dashboard__layout">
+    <aside class="employee-panel" aria-label="Employee menu">
+      <div class="employee-panel__brand">
+        <span class="employee-panel__brand-text">UniStay</span>
+        <span class="employee-panel__badge">Employee</span>
+      </div>
+
+      <nav class="employee-panel__nav" aria-label="Employee dashboard navigation">
+        <button
+          *ngFor="let item of panelNavItems"
+          type="button"
+          class="employee-panel__nav-item"
+          [class.employee-panel__nav-item--active]="isActive(item.route)"
+          (click)="navigate(item.route)">
+          <mat-icon class="employee-panel__nav-icon">{{ item.icon }}</mat-icon>
+          <span class="employee-panel__nav-label">{{ item.title }}</span>
+        </button>
+      </nav>
+
+      <div class="employee-panel__footer">
+        <div class="employee-panel__user">
+          <div class="employee-panel__avatar">{{ userFirstName.charAt(0) }}</div>
+          <div class="employee-panel__user-info">
+            <span class="employee-panel__user-name">{{ userEmail }}</span>
+            <span class="employee-panel__user-role">{{ userRole || 'employee' }}</span>
+          </div>
+        </div>
+
+        <button type="button" class="employee-panel__logout" (click)="logout()" aria-label="Log out">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </aside>
+
+    <main class="employee-dashboard__main">
+      <header class="employee-topbar">
+  <span class="employee-topbar__brand">UniStay</span>
+
+  <div class="employee-topbar__toolbar">
+    <div class="employee-topbar__avatar" aria-label="Employee profile">
+      {{ userFirstName.charAt(0) }}
+    </div>
+    <app-notification-bell></app-notification-bell>
+  </div>
+</header>
+
+<br><br>
+
+      <ng-container *ngIf="isOverviewRoute; else employeeRouteContent">
+        <header class="employee-dashboard__hero">
+          <div class="employee-dashboard__hero-copy">
+            <h1>{{ greeting }}, {{ userFirstName }}</h1>
+            <p class="employee-dashboard__subtitle">
+              Manage residence halls, maintenance requests, equipment records, and daily student communication from one place.
+            </p>
+          </div>
+
+          <div class="employee-dashboard__hero-actions">
+            <div class="employee-dashboard__badge">
+              <mat-icon>badge</mat-icon>
+              <span>Employee</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="announcement-panel" aria-labelledby="employee-announcements-title">
+          <div class="section-heading">
+            <mat-icon>campaign</mat-icon>
+            <div>
+              <h2 id="employee-announcements-title">Latest announcements</h2>
+              <p>Updates relevant to employees and shared residence operations.</p>
+            </div>
+          </div>
+
+          <app-announcement-carousel
+            [announcements]="announcements()"
+            [loading]="loadingAnnouncements()">
+          </app-announcement-carousel>
+        </section>
+
+        <section class="dashboard-section" aria-labelledby="employee-main-actions-title">
+          <div class="section-heading">
+          
+
+          </div>
+
+          <div class="dashboard-grid">
+            <button
+              *ngFor="let action of primaryActions"
+              type="button"
+              class="dashboard-card"
+              [class]="'dashboard-card dashboard-card--' + action.color"
+              (click)="navigate(action.route)">
+              <span class="dashboard-card__icon">
+                <mat-icon>{{ action.icon }}</mat-icon>
+              </span>
+              <span class="dashboard-card__content">
+                <span class="dashboard-card__title">{{ action.title }}</span>
+                <span class="dashboard-card__description">{{ action.description }}</span>
+              </span>
+              <mat-icon class="dashboard-card__arrow">arrow_forward</mat-icon>
+            </button>
+          </div>
+        </section>
+      </ng-container>
+
+      <ng-template #employeeRouteContent>
+        <router-outlet></router-outlet>
+      </ng-template>
+    </main>
+  </div>
+</section>

@@ -1,0 +1,107 @@
+<div class="rooms-container">
+
+  <!-- FILTERS (1/3) -->
+  <div class="filters">
+
+    <h3>Filters</h3>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Search rooms</mat-label>
+      <input matInput
+             [ngModel]="searchTerm"
+             (ngModelChange)="onSearch($event)"
+             placeholder="Room number or description">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Floor</mat-label>
+      <mat-select [(ngModel)]="filters.floor" (selectionChange)="onFilterChange()">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option [value]="1">1</mat-option>
+        <mat-option [value]="2">2</mat-option>
+        <mat-option [value]="3">3</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+  <mat-label>Number of persons</mat-label>
+  <mat-select [(ngModel)]="filters.maxOccupancy"
+              (selectionChange)="onFilterChange()">
+
+    <mat-option [value]="null">All</mat-option>
+    <mat-option [value]="1">1</mat-option>
+    <mat-option [value]="2">2</mat-option>
+    <mat-option [value]="3">3</mat-option>
+    <mat-option [value]="4">4</mat-option>
+
+  </mat-select>
+</mat-form-field>
+
+    <mat-checkbox [(ngModel)]="filters.nearExit"
+                  (change)="onFilterChange()">
+      Near Exit
+    </mat-checkbox>
+
+    <mat-checkbox [(ngModel)]="filters.wheelchairAccessible"
+                  (change)="onFilterChange()">
+      Wheelchair Accessible
+    </mat-checkbox>
+
+    <mat-checkbox [(ngModel)]="filters.elevatorAccess"
+                  (change)="onFilterChange()">
+      Elevator Access
+    </mat-checkbox>
+
+  </div>
+
+  <div class="rooms-content">
+    <!-- ROOMS GRID (2/3) -->
+    <div class="rooms-grid">
+
+    <div class="room-card"
+         *ngFor="let room of rooms"
+         (click)="openRoom(room.roomID)"
+         [@fadeIn]>
+
+      <button
+        type="button"
+        class="room-card__favorite"
+        [class.room-card__favorite--active]="isFavorite(room)"
+        [attr.aria-label]="isFavorite(room) ? 'Remove from favorites' : 'Add to favorites'"
+        [matTooltip]="isFavorite(room) ? 'Remove from favorites' : 'Add to favorites'"
+        (click)="toggleFavorite(room, $event)">
+        <mat-icon>{{ isFavorite(room) ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+
+      
+      //  [src]="room.images?.[0] || defaultRoomImageUrl"
+      <img [src]="getRoomImage(room)"
+        (error)="onImageError($event)"
+        class="room-image">
+
+      <div class="room-info">
+        <div class="room-title">
+          Room {{room.roomNumber}}
+        </div>
+
+        <div class="room-meta">
+          Floor {{room.floor}} • Max {{room.maxOccupancy}}
+        </div>
+      </div>
+
+    </div>
+
+    </div>
+
+    <mat-paginator
+      *ngIf="totalItems > pageSize"
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageIndex]="pageNumber - 1"
+      [hidePageSize]="true"
+      (page)="onPageChange($event.pageIndex)">
+    </mat-paginator>
+  </div>
+
+</div>

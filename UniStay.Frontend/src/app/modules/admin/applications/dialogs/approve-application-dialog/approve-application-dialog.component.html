@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>{{ 'ADMIN.APPLICATIONS.APPROVE_TITLE' | translate }}</h2>
+
+<mat-dialog-content>
+  <p>
+    {{ 'ADMIN.APPLICATIONS.APPROVE_ASSIGN_PREFIX' | translate }} <strong>{{ data.application.studentUsername }}</strong>
+    ({{ data.application.studentEmail }}).
+  </p>
+
+  <p *ngIf="data.freeBeds.length === 0" class="error-message">{{ 'ADMIN.APPLICATIONS.NO_FREE_BEDS' | translate }}</p>
+
+  <form *ngIf="data.freeBeds.length > 0" [formGroup]="form">
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>{{ 'ADMIN.APPLICATIONS.BED_LABEL' | translate }}</mat-label>
+      <mat-select formControlName="bedId">
+        <mat-option *ngFor="let bed of data.freeBeds" [value]="bed.bedId.toString()">
+          {{ 'ADMIN.APPLICATIONS.BED_OPTION' | translate }} {{ bed.bedNumber }} - {{ 'ADMIN.APPLICATIONS.ROOM_OPTION' | translate }} {{ bed.roomNumber }} ({{ 'ADMIN.APPLICATIONS.FLOOR_OPTION' | translate }} {{ bed.floor }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.controls.bedId.hasError('required')">{{ 'ADMIN.APPLICATIONS.BED_REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="cancel()">{{ 'ADMIN.APPLICATIONS.CANCEL' | translate }}</button>
+  <button mat-raised-button type="button" color="primary" (click)="confirm()"
+          [disabled]="form.invalid || data.freeBeds.length === 0">
+    <mat-icon>check</mat-icon>
+    {{ 'ADMIN.APPLICATIONS.APPROVE_BTN' | translate }}
+  </button>
+</mat-dialog-actions>

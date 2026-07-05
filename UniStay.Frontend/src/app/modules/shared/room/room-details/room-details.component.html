@@ -1,0 +1,114 @@
+<div class="page-layout" *ngIf="room">
+
+  <!-- LIJEVO (GLAVNI SADRŽAJ) -->
+  <div class="main-content" [@fadeIn]>
+
+    <div class="product-page">
+
+      <div class="gallery">
+
+        <div class="main-image"
+             [class.zoom]="zoomed"
+             (click)="toggleZoom()">
+
+          <button class="nav outside left"
+            *ngIf="room.images?.length > 1"
+            (click)="prevImage(); $event.stopPropagation()">
+            ‹
+          </button>
+
+          <img [src]="selectedImage || defaultRoomImageUrl"
+               (error)="onImageError($event)" />
+
+          <button class="nav outside right"
+            *ngIf="room.images?.length > 1"
+            (click)="nextImage(); $event.stopPropagation()">
+            ›
+          </button>
+        </div>
+
+        <div class="thumbnails">
+          <img *ngFor="let img of room.images; let i = index"
+               [src]="img"
+               (error)="onImageError($event)"
+               [class.active]="i === currentIndex"
+               (click)="currentIndex = i; selectImage(img)">
+        </div>
+
+      </div>
+
+      <div class="info">
+
+        <h1>Room {{room.roomNumber}}</h1>
+        <p>{{room.description}}</p>
+
+        <p><strong>Capacity:</strong> {{room.maxOccupancy}}</p>
+        <p><strong>Floor:</strong> {{room.floor}}</p>
+
+        <button>Apply for room</button>
+        <button *ngIf="!isFavorite" (click)="addToFavorites()">Add to favorites</button>
+        <button *ngIf="isFavorite" (click)="removeFavorite()">Remove from favorites</button>
+
+      </div>
+
+    </div>
+
+    <!-- FORM ISPOD -->
+
+    <div class="review-form" [@fadeIn]>
+
+      <textarea [(ngModel)]="comment" placeholder="Write a comment"></textarea>
+
+      <div class="stars">
+        <div *ngFor="let s of [1,2,3,4,5]"
+             class="star"
+             [class.filled]="s <= rating"
+             (click)="rating = s">
+        </div>
+      </div>
+
+      <button (click)="addReview()">Post Review</button>
+
+    </div>
+
+  </div>
+
+  <!-- DESNO (REVIEWS) -->
+  <div class="reviews-section">
+
+    <div *ngFor="let r of reviews" class="review-card" [@fadeIn]>
+
+      <div class="review-header">
+        <strong>{{r.user}}</strong>
+
+        <div class="stars">
+          <div *ngFor="let s of [1,2,3,4,5]"
+               class="star"
+               [class.filled]="s <= r.rating">
+          </div>
+        </div>
+      </div>
+
+      <p>{{r.comment}}</p>
+
+      <div class="reactions">
+
+        <button 
+          [class.active]="r.userReaction === true"
+          (click)="react(r.roomReviewID,true)">
+          👍 {{r.likes}}
+        </button>
+
+        <button 
+          [class.active]="r.userReaction === false"
+          (click)="react(r.roomReviewID,false)">
+          👎 {{r.dislikes}}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

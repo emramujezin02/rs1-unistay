@@ -1,0 +1,133 @@
+<div class="dashboard">
+  <div class="dashboard__welcome">
+    <div class="dashboard__welcome-text">
+      <h1 class="dashboard__title">{{ greeting }}, {{ userFirstName }}</h1>
+      <p class="dashboard__subtitle">
+        Track your application status, read residence announcements, and open your student tools.
+      </p>
+    </div>
+
+    <div class="dashboard__welcome-badge">
+      <mat-icon>school</mat-icon>
+      <span>Student</span>
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card__header">
+      <div class="ann-card__title-row">
+        <mat-icon class="ann-card__icon">campaign</mat-icon>
+        <h2 class="ann-card__title">Latest announcements</h2>
+      </div>
+    </div>
+
+    <div *ngIf="loadingAnnouncements()" class="ann-card__loading">
+      <mat-spinner diameter="28"></mat-spinner>
+    </div>
+
+    <p *ngIf="!loadingAnnouncements() && announcements().length === 0" class="ann-card__empty">
+      No announcements at this time.
+    </p>
+
+    <div *ngIf="!loadingAnnouncements() && announcements().length > 0" class="ann-card__list">
+      <article *ngFor="let announcement of announcements()" class="ann-card__item">
+        <div class="ann-card__meta">
+          <span>{{ announcement.audience }}</span>
+          <time>{{ announcement.createdAt | date:'mediumDate' }}</time>
+        </div>
+        <h3>{{ announcement.title }}</h3>
+        <div class="ann-card__body" [innerHTML]="announcement.content"></div>
+      </article>
+    </div>
+  </div>
+
+  <div *ngIf="applicationFacade.loading()" class="dashboard__loading">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!applicationFacade.loading() && applicationFacade.applicationStatus() !== 'Approved'">
+    <div *ngIf="applicationFacade.applicationStatus() === null" class="gate gate--none">
+      <div class="gate__icon-wrap gate__icon-wrap--none">
+        <mat-icon>assignment</mat-icon>
+      </div>
+      <h2 class="gate__title">No active application</h2>
+      <p class="gate__desc">
+        Submit your accommodation application to enter the room assignment process.
+      </p>
+      <button mat-raised-button color="primary" class="gate__cta" type="button" (click)="goApply()">
+        <mat-icon>send</mat-icon>
+        Apply for accommodation
+      </button>
+    </div>
+
+    <div *ngIf="applicationFacade.applicationStatus() === 'Pending'" class="gate gate--pending">
+      <div class="gate__icon-wrap gate__icon-wrap--pending">
+        <mat-icon>hourglass_top</mat-icon>
+      </div>
+      <h2 class="gate__title">Application pending</h2>
+      <p class="gate__desc">Your accommodation application is waiting for review.</p>
+      <div class="gate__meta" *ngIf="applicationFacade.activeApplication() as app">
+        <span class="gate__meta-item">
+          <mat-icon>calendar_today</mat-icon>
+          Applied on: {{ app.appliedAt | date:'mediumDate' }}
+        </span>
+        <span class="gate__meta-item">
+          <mat-icon>bed</mat-icon>
+          Room type: {{ app.preferredRoomType }}
+        </span>
+      </div>
+      <span class="gate__chip gate__chip--pending">Pending</span>
+    </div>
+
+    <div *ngIf="applicationFacade.applicationStatus() === 'Rejected'" class="gate gate--rejected">
+      <div class="gate__icon-wrap gate__icon-wrap--rejected">
+        <mat-icon>cancel</mat-icon>
+      </div>
+      <h2 class="gate__title">Application rejected</h2>
+      <p class="gate__desc">
+        You can submit a new accommodation application for the next review cycle.
+      </p>
+      <div class="gate__meta" *ngIf="applicationFacade.activeApplication() as app">
+        <span class="gate__meta-item">
+          <mat-icon>bed</mat-icon>
+          Room type: {{ app.preferredRoomType }}
+        </span>
+      </div>
+      <button mat-raised-button color="primary" class="gate__cta" type="button" (click)="goApply()">
+        <mat-icon>refresh</mat-icon>
+        Apply again
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!applicationFacade.loading() && applicationFacade.applicationStatus() === 'Approved'">
+    <div class="approved-strip">
+      <mat-icon class="approved-strip__icon">check_circle</mat-icon>
+      <div class="approved-strip__body">
+        <strong>Application approved</strong>
+        <span>Your full student dashboard is available.</span>
+      </div>
+      <span class="approved-strip__chip">Approved</span>
+    </div>
+
+    <div class="dashboard__grid">
+      <button
+        *ngFor="let card of cards"
+        class="dash-card"
+        [class]="'dash-card dash-card--' + card.color"
+        type="button"
+        (click)="navigate(card.route)">
+        <div class="dash-card__icon-wrap">
+          <mat-icon class="dash-card__icon">{{ card.icon }}</mat-icon>
+        </div>
+        <div class="dash-card__body">
+          <h2 class="dash-card__title">{{ card.title }}</h2>
+          <p class="dash-card__desc">{{ card.description }}</p>
+        </div>
+        <div class="dash-card__arrow">
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </button>
+    </div>
+  </ng-container>
+</div>

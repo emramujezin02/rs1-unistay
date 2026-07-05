@@ -1,0 +1,145 @@
+<div class="equipment-list-container">
+
+  <mat-card>
+
+    <div class="header-row">
+      <h2>{{ equipmentName }} items</h2>
+
+      <button mat-raised-button color="primary"
+              (click)="addNewItem()">
+        <mat-icon>add</mat-icon>
+        Add New Item
+      </button>
+    </div>
+
+    <div class="filters">
+      <mat-form-field appearance="outline" class="filter-field filter-field--search">
+        <mat-label>Search by name</mat-label>
+        <input matInput
+               placeholder="Search by name"
+               [(ngModel)]="filters.search"
+               (input)="applyFilters()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field filter-field--status">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="filters.status" panelClass="equipment-items-select-panel" (selectionChange)="applyFilters()">
+          <mat-option value="">All</mat-option>
+          <mat-option value="available">Available</mat-option>
+          <mat-option value="taken">Occupied</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="table-wrapper">
+
+      <table mat-table [dataSource]="pagedItems" matSort>
+
+        <!-- Serial -->
+        <ng-container matColumnDef="serial">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="serial"> Serial </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.serialNumber }}
+          </td>
+        </ng-container>
+
+        <!-- Assigned -->
+        <ng-container matColumnDef="assigned">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="assigned"> Assigned </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.assignedAt ? (item.assignedAt | date:'dd.MM.yyyy') : '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Returned -->
+        <ng-container matColumnDef="returned">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="returned"> Returned </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.returnedAt ? (item.returnedAt | date:'dd.MM.yyyy') : '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Location -->
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="location"> Location </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.location || '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="status"> Status </th>
+          <td mat-cell *matCellDef="let item">
+            <span class="status"
+                  [class.available]="item.isAvailable"
+                  [class.taken]="!item.isAvailable">
+              {{ item.isAvailable ? 'Available' : 'Taken' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+  <th mat-header-cell *matHeaderCellDef> Actions </th>
+  <td mat-cell *matCellDef="let item" class="actions-cell">
+
+    <!-- ✏️ EDIT -->
+    <button mat-icon-button color="primary"
+            (click)="editItem(item.recordID)">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <!-- 🗑 DELETE -->
+    <button mat-icon-button color="warn"
+            (click)="delete(item.recordID)">
+      <mat-icon>delete</mat-icon>
+    </button>
+
+  </td>
+</ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [@fadeIn]></tr>
+
+      </table>
+
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && filteredItems.length === 0">
+      No equipment items found.
+    </div>
+
+    <div class="equipment-items-paginator" *ngIf="filteredItems.length > 0">
+      <div class="equipment-items-paginator__size">
+        <span>Show</span>
+        <mat-form-field appearance="outline">
+          <mat-select [(ngModel)]="pageSize" panelClass="equipment-items-select-panel" (selectionChange)="changePageSize(pageSize)">
+            <mat-option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <span>per page</span>
+      </div>
+
+      <div class="equipment-items-paginator__pages">
+        <button mat-button type="button" class="equipment-items-paginator__nav" [disabled]="currentPage === 1" (click)="previousPage()" aria-label="Previous page">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button
+          mat-button
+          type="button"
+          class="equipment-items-paginator__page"
+          *ngFor="let page of pageNumbers"
+          [class.equipment-items-paginator__page--active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+        <button mat-button type="button" class="equipment-items-paginator__nav" [disabled]="currentPage === totalPages" (click)="nextPage()" aria-label="Next page">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
+
+  </mat-card>
+
+</div>

@@ -1,0 +1,67 @@
+<div class="fault-add-container" *ngIf="!loading; else loadingTpl">
+
+  <mat-card @formAnimation>
+    <h2>{{ isAddMode ? 'Edit fault' : 'Add new fault' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-layout">
+
+      <!-- Fault name -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Fault name</mat-label>
+        <input matInput type="text" formControlName="title" [matAutocomplete]="auto">
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          class="fault-add-autocomplete-panel"
+          (optionSelected)="onNameSelected($event.option.value)"
+        >
+          <mat-option *ngFor="let option of nameSuggestions" [value]="option">{{option}}</mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="form.get('title')?.invalid && form.get('title')?.touched">
+          Required field
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Hidden -->
+      <input type="hidden" formControlName="reportedBy">
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+        <mat-error *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
+          Description must have at least 10 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Room -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Room</mat-label>
+        <mat-select formControlName="roomID" panelClass="fault-add-select-panel">
+          <mat-option value="">-- Select room --</mat-option>
+          <mat-option *ngFor="let room of rooms" [value]="room.roomID">
+            {{ room.roomNumber }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Button -->
+      <div class="button-row">
+        <button mat-stroked-button type="button" class="close-btn" (click)="back()" @fieldAnimation>
+          Close
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading" @fieldAnimation>
+          {{ isAddMode ? 'Save changes' : 'Add fault' }}
+        </button>
+      </div>
+
+    </form>
+  </mat-card>
+
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading...</div>
+</ng-template>
+
+<div *ngIf="isSaving" class="autosave-indicator">Saving...</div>

@@ -1,0 +1,28 @@
+<header class="public-nav" [class.public-nav--scrolled]="isScrolled()">
+  <a class="public-nav__brand" routerLink="/public-home">UniStay</a>
+
+  <nav class="public-nav__links" aria-label="Public home navigation">
+    <button type="button" *ngFor="let section of sections" [class.is-active]="activeSection() === section" (click)="scrollTo(section)">
+      {{ section === 'hero' ? 'Home' : (section | titlecase) }}
+    </button>
+    <a routerLink="/rooms">Rooms</a>
+  </nav>
+
+  <div class="public-nav__actions">
+    <button mat-stroked-button type="button" (click)="openSignUp()">Sign Up</button>
+    <button mat-flat-button color="primary" type="button" (click)="goToLogin()">Login</button>
+  </div>
+
+  <button mat-icon-button type="button" class="public-nav__toggle" aria-label="Toggle menu" (click)="toggleMenu()">
+    <mat-icon>{{ isMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+  </button>
+</header>
+
+<div class="public-nav-mobile" *ngIf="isMenuOpen()">
+  <button type="button" *ngFor="let section of sections" (click)="scrollTo(section)">
+    {{ section === 'hero' ? 'Home' : (section | titlecase) }}
+  </button>
+  <a routerLink="/rooms" (click)="closeMenu()">Rooms</a>
+  <button type="button" (click)="openSignUp()">Sign Up</button>
+  <button type="button" (click)="goToLogin()">Login</button>
+</div>

@@ -1,0 +1,97 @@
+<section class="hall-reservations">
+  <div class="page-header">
+    <div>
+      <p class="page-kicker">{{ 'ADMIN.HALL_RESERVATIONS.KICKER' | translate }}</p>
+      <h2>{{ 'ADMIN.HALL_RESERVATIONS.PAGE_TITLE' | translate }}</h2>
+    </div>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'ADMIN.HALL_RESERVATIONS.SEARCH_LABEL' | translate }}</mat-label>
+      <input matInput #searchInput (keyup.enter)="facade.search(searchInput.value)" [placeholder]="'ADMIN.HALL_RESERVATIONS.SEARCH_PLACEHOLDER' | translate" />
+      <button mat-icon-button matSuffix type="button" [attr.aria-label]="'ADMIN.HALL_RESERVATIONS.SEARCH_LABEL' | translate" (click)="facade.search(searchInput.value)">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <div class="state state--loading" *ngIf="facade.loading()">
+    <mat-spinner diameter="32"></mat-spinner>
+    <span>{{ 'ADMIN.HALL_RESERVATIONS.LOADING' | translate }}</span>
+  </div>
+
+  <ng-container *ngIf="!facade.loading()">
+    <p class="state state--error" *ngIf="facade.error() as error">{{ error | translate }}</p>
+    <p class="state state--empty" *ngIf="facade.isEmpty()">{{ 'ADMIN.HALL_RESERVATIONS.EMPTY' | translate }}</p>
+
+    <div class="table-wrap" *ngIf="facade.hasReservations()">
+      <mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="hall">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.HALL_RESERVATIONS.COL_HALL' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let reservation">
+            <span class="cell-main">{{ reservation.hallName }}</span>
+            <span class="cell-muted">{{ 'ADMIN.HALL_RESERVATIONS.CAPACITY' | translate }} {{ reservation.hallCapacity }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="student">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.HALL_RESERVATIONS.COL_STUDENT' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let reservation">
+            <span class="cell-main">{{ reservation.studentUsername || ('ADMIN.HALL_RESERVATIONS.STUDENT_FALLBACK' | translate:{ id: reservation.studentId }) }}</span>
+            <span class="cell-muted">{{ reservation.studentEmail || '-' }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dates">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.HALL_RESERVATIONS.COL_DATES' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let reservation">
+            {{ reservation.fromDate | date:'mediumDate' }} - {{ reservation.toDate | date:'mediumDate' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.HALL_RESERVATIONS.COL_STATUS' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let reservation">
+            <mat-chip [color]="statusColor(reservation.status)" selected>
+              {{ ('ADMIN.HALL_RESERVATIONS.STATUS_' + reservation.status.toUpperCase()) | translate }}
+            </mat-chip>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="created">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.HALL_RESERVATIONS.COL_CREATED' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let reservation">{{ reservation.createdAt | date:'mediumDate' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.HALL_RESERVATIONS.COL_ACTIONS' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let reservation">
+            <ng-container *ngIf="isPending(reservation); else completedActions">
+              <button mat-icon-button type="button" color="primary" [matTooltip]="'ADMIN.HALL_RESERVATIONS.APPROVE_TOOLTIP' | translate" (click)="approve(reservation)">
+                <mat-icon>check_circle_outline</mat-icon>
+              </button>
+              <button mat-icon-button type="button" color="warn" [matTooltip]="'ADMIN.HALL_RESERVATIONS.REJECT_TOOLTIP' | translate" (click)="reject(reservation)">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </ng-container>
+            <ng-template #completedActions>
+              <span class="action-done">{{ 'ADMIN.HALL_RESERVATIONS.DONE' | translate }}</span>
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+
+    <mat-paginator
+      *ngIf="facade.hasReservations()"
+      [length]="facade.totalCount()"
+      [pageSize]="facade.filters().pageSize"
+      [pageIndex]="facade.filters().page - 1"
+      (page)="facade.changePage($event.pageIndex)">
+    </mat-paginator>
+  </ng-container>
+</section>

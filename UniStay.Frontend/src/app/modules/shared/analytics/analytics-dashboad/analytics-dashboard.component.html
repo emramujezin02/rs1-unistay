@@ -1,0 +1,27 @@
+<div class="dashboard">
+
+  <mat-card class="stat-card active" [@fadeIn]>
+    <mat-icon class="stat-icon">person</mat-icon>
+    <div class="stat-content">
+      <h3>Active Users</h3>
+      <p>{{ analytics.activeUsers }}</p>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card total" [@fadeIn]>
+    <mat-icon class="stat-icon">groups</mat-icon>
+    <div class="stat-content">
+      <h3>Total Users</h3>
+      <p>{{ analytics.totalUsers }}</p>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card messages" [@fadeIn]>
+    <mat-icon class="stat-icon">chat</mat-icon>
+    <div class="stat-content">
+      <h3>Total Messages</h3>
+      <p>{{ analytics.totalMessages }}</p>
+    </div>
+  </mat-card>
+
+</div>
