@@ -23,18 +23,6 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.ROOMS.COL_ROOM' | translate }}</mat-header-cell>
         <mat-cell *matCellDef="let room">
 <div class="room-cell">
- <!--<img
-    class="room-cell__image"
-    [src]="firstRoomImage(room)"
-    (error)="onImageError($event)"
-    alt="Room image"
-  >--> 
-
-  <img
-  src="/images/room_1_1.jpg"
-  (error)="onImageError($event)"
-  class="room-image">
-
   <strong>{{ room.roomNumber }}</strong>
   
 </div>

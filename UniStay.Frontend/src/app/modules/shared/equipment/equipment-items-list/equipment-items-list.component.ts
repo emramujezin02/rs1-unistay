@@ -104,8 +104,15 @@ export class EquipmentItemsListComponent implements OnInit {
   }
 
   addNewItem(){
-    this.router.navigate(['/employee/equipment/equipment-items-create', this.equipmentId]);
+    const createRoute = this.router.url.startsWith('/admin')
+      ? '/admin/equipment-items-create'
+      : '/employee/equipment/equipment-items-create';
 
+    this.router.navigate([createRoute, this.equipmentId]);
+  }
+
+  backToEquipment(): void {
+    this.router.navigate(['../../equipment-list'], { relativeTo: this.route });
   }
 
   applyFilters(): void {
@@ -247,7 +254,11 @@ sortData() {
 }
 
 editItem(id: number) {
-  this.router.navigate(['/employee/equipment/equipment-items-update', id]);
+  const updateRoute = this.router.url.startsWith('/admin')
+    ? '/admin/equipment-items-update'
+    : '/employee/equipment/equipment-items-update';
+
+  this.router.navigate([updateRoute, id]);
 }
 
 

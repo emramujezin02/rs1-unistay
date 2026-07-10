@@ -4,6 +4,8 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { AdminHallModule } from './admin-hall/admin-hall.module';
 import { HallListComponent } from '../shared/hall/hall-list/hall-list.component';
 import { HallAddComponent } from '../shared/hall/hall-add/hall-add.component';
+import { EquipmentItemCreateComponent } from '../shared/equipment/equipment-items-create/equipment-items-create.component';
+import { EquipmentItemUpdateComponent } from '../shared/equipment/equipment-items-update/equipment-items-update.component';
 
 const routes: Routes = [
   {
@@ -16,6 +18,8 @@ const routes: Routes = [
       { path: 'fault', loadChildren: () => import('../shared/fault/fault.module').then(m => m.FaultModule) },
       //{ path: '', redirectTo: 'fault/list', pathMatch: 'full' }
       { path: 'equipment', loadChildren: () => import('../shared/equipment/equipment.module').then(m => m.EquipmentModule) },
+      { path: 'equipment-items-create/:id', component: EquipmentItemCreateComponent },
+      { path: 'equipment-items-update/:id', component: EquipmentItemUpdateComponent },
             { path:'chat',loadChildren:()=>import('../shared/chat/chat-module').then(m=>m.ChatModule)},
       { path: 'invites', loadChildren: () => import('./invites/invites.module').then(m => m.InvitesModule) },
       { path: 'payments', loadChildren: () => import('./payments/payments.module').then(m => m.PaymentsModule) },

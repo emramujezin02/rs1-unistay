@@ -1,17 +1,17 @@
 <section class="employee-students">
   <header class="employee-students__header">
     <div>
-      <h1>Student evidence</h1>
-      <p>Search and review student account records used in daily residence operations.</p>
+      <h1>{{ 'EMPLOYEE.STUDENT_RECORDS.TITLE' | translate }}</h1>
+      <p>{{ 'EMPLOYEE.STUDENT_RECORDS.SUBTITLE' | translate }}</p>
     </div>
   </header>
 
   <mat-form-field appearance="outline" class="employee-students__search">
-    <mat-label>Search students</mat-label>
+    <mat-label>{{ 'EMPLOYEE.STUDENT_RECORDS.SEARCH_LABEL' | translate }}</mat-label>
     <input
       matInput
       type="search"
-      placeholder="Name, username, email, or phone"
+      [placeholder]="'EMPLOYEE.STUDENT_RECORDS.SEARCH_PLACEHOLDER' | translate"
       (input)="onSearch($any($event.target).value)" />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
@@ -20,17 +20,17 @@
 
   <ng-container *ngIf="!loading()">
     <p *ngIf="loadError()" class="employee-students__empty employee-students__empty--error">
-      Student records could not be loaded.
+      {{ 'EMPLOYEE.STUDENT_RECORDS.LOAD_ERROR' | translate }}
     </p>
 
     <p *ngIf="!loadError() && students().length === 0" class="employee-students__empty">
-      No students found.
+      {{ 'EMPLOYEE.STUDENT_RECORDS.EMPTY' | translate }}
     </p>
 
     <div class="employee-students__table-wrap" *ngIf="!loadError() && students().length > 0">
       <mat-table [dataSource]="dataSource" matSort class="employee-students__table">
         <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Student</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.STUDENT_RECORDS.COLUMNS.STUDENT' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let student">
             <div class="student-cell">
               <span class="student-cell__avatar">{{ initials(student) }}</span>
@@ -43,22 +43,22 @@
         </ng-container>
 
         <ng-container matColumnDef="email">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.STUDENT_RECORDS.COLUMNS.EMAIL' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let student">{{ student.email }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="phone">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Phone</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.STUDENT_RECORDS.COLUMNS.PHONE' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let student">{{ student.phone || '-' }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.STUDENT_RECORDS.COLUMNS.STATUS' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let student">
             <span
               class="status-chip"
               [class.status-chip--disabled]="!student.isEnabled">
-              {{ student.isEnabled ? roleLabel(student) : 'Disabled' }}
+              {{ student.isEnabled ? (roleLabel(student) || ('EMPLOYEE.STUDENT_RECORDS.STATUS.STUDENT' | translate)) : ('EMPLOYEE.STUDENT_RECORDS.STATUS.DISABLED' | translate) }}
             </span>
           </mat-cell>
         </ng-container>

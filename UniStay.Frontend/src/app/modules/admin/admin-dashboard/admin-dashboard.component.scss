@@ -282,6 +282,54 @@ h1 {
   padding: 18px;
 }
 
+.route-panel ::ng-deep app-equipment-add {
+  display: block;
+}
+
+.route-panel ::ng-deep app-equipment-add .equipment-container {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.route-panel ::ng-deep app-equipment-add mat-card {
+  padding: 25px;
+  border: 1px solid var(--border-color, #d8e0ea);
+  border-radius: 8px;
+  background: var(--card-bg, #ffffff);
+  color: var(--text-color, #18212f);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+
+.route-panel ::ng-deep app-equipment-add h2 {
+  margin: 0 0 22px;
+  color: var(--text-color, #18212f);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.route-panel ::ng-deep app-equipment-add .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.route-panel ::ng-deep app-equipment-add .full-width {
+  width: 100%;
+}
+
+.route-panel ::ng-deep app-equipment-add .button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.route-panel ::ng-deep app-equipment-add .close-btn,
+.route-panel ::ng-deep app-equipment-add .submit-btn {
+  min-width: 110px;
+}
+
 .section-heading {
   margin-bottom: 18px;
 }
@@ -409,6 +457,137 @@ h1 {
     color: #fca5a5;
     border-color: rgba(252, 165, 165, 0.28);
     background: rgba(127, 29, 29, 0.28);
+  }
+
+  .route-panel ::ng-deep app-equipment-add mat-card {
+    border-color: var(--border-color, rgba(148, 163, 184, 0.24));
+    background: var(--card-bg, #111827);
+    color: #e5e7eb;
+  }
+
+  .route-panel ::ng-deep app-equipment-add h2 {
+    color: #f8fafc;
+  }
+
+  .route-panel ::ng-deep app-equipment-add mat-form-field {
+    --mdc-outlined-text-field-outline-color: #334155;
+    --mdc-outlined-text-field-hover-outline-color: #60a5fa;
+    --mdc-outlined-text-field-focus-outline-color: #60a5fa;
+    --mdc-outlined-text-field-label-text-color: #cbd5e1;
+    --mdc-outlined-text-field-hover-label-text-color: #e5e7eb;
+    --mdc-outlined-text-field-focus-label-text-color: #bfdbfe;
+    --mdc-outlined-text-field-input-text-color: #f8fafc;
+    --mdc-outlined-text-field-caret-color: #60a5fa;
+    --mat-form-field-container-text-color: #f8fafc;
+    --mat-form-field-subscript-text-color: #94a3b8;
+    --mat-form-field-error-text-color: #fca5a5;
+    --mat-form-field-leading-icon-color: #cbd5e1;
+    --mat-form-field-trailing-icon-color: #cbd5e1;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-text-field-wrapper {
+    background: #111c2e !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-form-field-focus-overlay {
+    background: rgba(147, 197, 253, .08) !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .mdc-notched-outline__leading,
+  .route-panel ::ng-deep app-equipment-add .mdc-notched-outline__notch,
+  .route-panel ::ng-deep app-equipment-add .mdc-notched-outline__trailing {
+    border-color: #334155 !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add mat-form-field:hover .mdc-notched-outline__leading,
+  .route-panel ::ng-deep app-equipment-add mat-form-field:hover .mdc-notched-outline__notch,
+  .route-panel ::ng-deep app-equipment-add mat-form-field:hover .mdc-notched-outline__trailing,
+  .route-panel ::ng-deep app-equipment-add mat-form-field.mat-focused .mdc-notched-outline__leading,
+  .route-panel ::ng-deep app-equipment-add mat-form-field.mat-focused .mdc-notched-outline__notch,
+  .route-panel ::ng-deep app-equipment-add mat-form-field.mat-focused .mdc-notched-outline__trailing {
+    border-color: #60a5fa !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-input-element,
+  .route-panel ::ng-deep app-equipment-add textarea.mat-mdc-input-element,
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-floating-label,
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-form-field-icon-suffix {
+    color: #e5e7eb !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-input-element,
+  .route-panel ::ng-deep app-equipment-add textarea.mat-mdc-input-element {
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-input-element::placeholder,
+  .route-panel ::ng-deep app-equipment-add textarea.mat-mdc-input-element::placeholder {
+    color: #64748b !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add mat-error,
+  .route-panel ::ng-deep app-equipment-add .mat-mdc-form-field-error {
+    color: #fca5a5 !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .button-row {
+    border-top: 1px solid #243247;
+    padding-top: 18px;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .close-btn,
+  .route-panel ::ng-deep app-equipment-add .close-btn.mat-mdc-outlined-button {
+    --mdc-outlined-button-label-text-color: #cbd5e1;
+    --mdc-outlined-button-outline-color: #475569;
+    --mat-outlined-button-state-layer-color: #93c5fd;
+    color: #cbd5e1;
+    border-color: #475569;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .close-btn:hover {
+    color: #f8fafc;
+    border-color: #93c5fd;
+    background: rgba(147, 197, 253, .08);
+    box-shadow: none;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .submit-btn,
+  .route-panel ::ng-deep app-equipment-add .submit-btn.mat-mdc-raised-button {
+    --mdc-protected-button-container-color: transparent;
+    --mdc-protected-button-label-text-color: #ffffff;
+    --mat-protected-button-state-layer-color: #ffffff;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .submit-btn:hover {
+    color: #bfdbfe;
+    background: rgba(147, 197, 253, .08);
+    box-shadow: none;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .submit-btn .mdc-button__label,
+  .route-panel ::ng-deep app-equipment-add .close-btn .mdc-button__label {
+    background: transparent !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .submit-btn .mdc-button__label {
+    color: #ffffff !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .submit-btn:hover .mdc-button__label {
+    color: #bfdbfe !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .close-btn .mdc-button__label {
+    color: #cbd5e1 !important;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .close-btn:hover .mdc-button__label {
+    color: #f8fafc !important;
   }
 }
 
@@ -542,6 +721,18 @@ h1 {
     max-width: 100%;
   }
 
+  .route-panel ::ng-deep app-equipment-add .equipment-container {
+    max-width: 100%;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .button-row {
+    flex-wrap: wrap;
+  }
+
   .route-panel ::ng-deep .filters,
   .route-panel ::ng-deep .header-actions,
   .route-panel ::ng-deep .form-actions,
@@ -621,6 +812,20 @@ h1 {
   .statistics-panel,
   .route-panel {
     padding: 12px;
+  }
+
+  .route-panel ::ng-deep app-equipment-add mat-card {
+    padding: 16px;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .button-row {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .route-panel ::ng-deep app-equipment-add .close-btn,
+  .route-panel ::ng-deep app-equipment-add .submit-btn {
+    width: 100%;
   }
 
   .section-heading {

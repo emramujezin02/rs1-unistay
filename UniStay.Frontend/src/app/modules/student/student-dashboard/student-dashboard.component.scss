@@ -25,6 +25,14 @@
   --student-shell-muted: #cbd5e1;
 }
 
+:host-context(body.dark) .mat-mdc-button-touch-target{
+ 
+        background-color: #0f172a;
+  
+}
+
+
+
 .student-shell {
   min-height: 100vh;
   display: flex;
@@ -98,6 +106,14 @@
   color: var(--student-shell-white) !important;
   font-size: 0.8125rem;
   font-weight: 700;
+}
+
+:host-context(body.dark) .student-sidebar__avatar,
+:host-context(body.dark) .student-topbar__avatar,
+.student-sidebar__avatar,
+.student-topbar__avatar {
+  background: var(--student-shell-primary) !important;
+  color: var(--student-shell-white) !important;
 }
 
 .student-sidebar__user {
@@ -263,6 +279,8 @@
   min-width: 0;
   padding: 2rem;
 }
+
+
 
 @media (max-width: 1024px) {
   .student-main,

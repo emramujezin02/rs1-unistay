@@ -463,6 +463,22 @@ mat-slide-toggle {
   }
 }
 
+:host-context(body.dark) .email-suggestions {
+  background: #111827;
+  border-color: rgba(148, 163, 184, 0.45);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+:host-context(body.dark) .email-item {
+  color: #ffffff;
+}
+
+:host-context(body.dark) .email-item:hover,
+:host-context(body.dark) .email-item:focus-visible {
+  background: #1f2937;
+  color: #ffffff;
+}
+
 @media (max-width: 414px) {
   .login-container {
     width: calc(100vw - 18px);

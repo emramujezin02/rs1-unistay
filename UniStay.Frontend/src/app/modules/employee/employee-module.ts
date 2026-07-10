@@ -13,6 +13,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { EmployeeRoomsComponent } from './employee-rooms/employee-rooms.component';
 import { EmployeeStudentsComponent } from './employee-students/employee-students.component';
 import { InviteFriendModule } from '../shared/invite-friend/invite-friend.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ EmployeeStudentsComponent
     MaterialModule,
     SharedModule,
     MatSortModule,
-    InviteFriendModule
+    InviteFriendModule,
+    TranslateModule
   ]
 })
 export class EmployeeModule { }

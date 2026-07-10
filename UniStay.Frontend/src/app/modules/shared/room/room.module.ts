@@ -6,6 +6,7 @@ import { MaterialModule } from '../material/material';
 import { RoomListComponent } from './room-list/room-list.component';
 import { RoomDetailsComponent } from './room-details/room-details.component';
 import { RoomRoutingModule } from './room-routing.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { RoomRoutingModule } from './room-routing.module';
     ReactiveFormsModule,
     RouterModule,
     RoomRoutingModule,
-    MaterialModule
+    MaterialModule,
+    TranslateModule
   ],
   exports: [
     RoomListComponent,

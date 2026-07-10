@@ -5,8 +5,8 @@ import { ANNOUNCEMENT_AUDIENCES, AnnouncementDto } from '../../../endpoints/anno
 import { ApplicationFacadeService } from '../../../endpoints/application-endpoints/application-facade.service';
 
 interface DashboardCard {
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: string;
   color: 'blue' | 'green' | 'amber' | 'purple';
   route: string;
@@ -21,46 +21,47 @@ interface DashboardCard {
 export class StudentDashboardHomeComponent implements OnInit {
   readonly announcements = signal<AnnouncementDto[]>([]);
   readonly loadingAnnouncements = signal(false);
+  currentNotificationIndex = 0;
 
   readonly cards: DashboardCard[] = [
     {
-      title: 'Search rooms',
-      description: 'Browse existing rs1-work room search and availability.',
+      titleKey: 'STUDENT.DASHBOARD_HOME.CARDS.SEARCH_ROOMS_TITLE',
+      descriptionKey: 'STUDENT.DASHBOARD_HOME.CARDS.SEARCH_ROOMS_DESC',
       icon: 'meeting_room',
       color: 'blue',
       route: '/student/rooms'
     },
     {
-      title: 'Invoices',
-      description: 'Review your accommodation invoices and payment context.',
+      titleKey: 'STUDENT.DASHBOARD_HOME.CARDS.INVOICES_TITLE',
+      descriptionKey: 'STUDENT.DASHBOARD_HOME.CARDS.INVOICES_DESC',
       icon: 'payments',
       color: 'green',
       route: '/student/invoices'
     },
     {
-      title: 'Favorites',
-      description: 'Open your saved rooms without changing favorites logic.',
+      titleKey: 'STUDENT.DASHBOARD_HOME.CARDS.FAVORITES_TITLE',
+      descriptionKey: 'STUDENT.DASHBOARD_HOME.CARDS.FAVORITES_DESC',
       icon: 'favorite_border',
       color: 'amber',
       route: '/student/favorites'
     },
     {
-      title: 'Invite friend',
-      description: 'Send a UniStay invitation link to a friend by email.',
+      titleKey: 'STUDENT.DASHBOARD_HOME.CARDS.INVITE_FRIEND_TITLE',
+      descriptionKey: 'STUDENT.DASHBOARD_HOME.CARDS.INVITE_FRIEND_DESC',
       icon: 'person_add',
       color: 'blue',
       route: '/student/invite-friend'
     },
     {
-      title: 'Security questions',
-      description: 'Set the account recovery questions used by the existing security flow.',
+      titleKey: 'STUDENT.DASHBOARD_HOME.CARDS.SECURITY_QUESTIONS_TITLE',
+      descriptionKey: 'STUDENT.DASHBOARD_HOME.CARDS.SECURITY_QUESTIONS_DESC',
       icon: 'security',
       color: 'green',
       route: '/student/security-questions'
     },
     {
-      title: 'Chat',
-      description: 'Continue conversations with staff and residence contacts.',
+      titleKey: 'STUDENT.DASHBOARD_HOME.CARDS.CHAT_TITLE',
+      descriptionKey: 'STUDENT.DASHBOARD_HOME.CARDS.CHAT_DESC',
       icon: 'chat_bubble_outline',
       color: 'purple',
       route: '/student/chat'
@@ -78,15 +79,15 @@ export class StudentDashboardHomeComponent implements OnInit {
     this.loadAnnouncements();
   }
 
-  get greeting(): string {
+  get greetingKey(): string {
     const hour = new Date().getHours();
     if (hour < 12) {
-      return 'Good morning';
+      return 'STUDENT.DASHBOARD_HOME.GREETING.MORNING';
     }
     if (hour < 18) {
-      return 'Good afternoon';
+      return 'STUDENT.DASHBOARD_HOME.GREETING.AFTERNOON';
     }
-    return 'Good evening';
+    return 'STUDENT.DASHBOARD_HOME.GREETING.EVENING';
   }
 
   get userFirstName(): string {
@@ -103,15 +104,51 @@ export class StudentDashboardHomeComponent implements OnInit {
     this.router.navigate(['/student/apply']);
   }
 
+  get selectedNotification(): AnnouncementDto | null {
+    return this.announcements()[this.currentNotificationIndex] ?? null;
+  }
+
+  get hasMultipleNotifications(): boolean {
+    return this.announcements().length > 1;
+  }
+
+  nextNotification(): void {
+    const total = this.announcements().length;
+    if (total <= 1) {
+      return;
+    }
+
+    this.currentNotificationIndex = (this.currentNotificationIndex + 1) % total;
+  }
+
+  previousNotification(): void {
+    const total = this.announcements().length;
+    if (total <= 1) {
+      return;
+    }
+
+    this.currentNotificationIndex = (this.currentNotificationIndex - 1 + total) % total;
+  }
+
+  goToNotification(index: number): void {
+    if (index < 0 || index >= this.announcements().length) {
+      return;
+    }
+
+    this.currentNotificationIndex = index;
+  }
+
   private loadAnnouncements(): void {
     this.loadingAnnouncements.set(true);
     this.announcementEndpoint.getAll(1, 3, ANNOUNCEMENT_AUDIENCES.STUDENT).subscribe({
       next: result => {
         this.announcements.set(result.items);
+        this.currentNotificationIndex = 0;
         this.loadingAnnouncements.set(false);
       },
       error: () => {
         this.announcements.set([]);
+        this.currentNotificationIndex = 0;
         this.loadingAnnouncements.set(false);
       }
     });

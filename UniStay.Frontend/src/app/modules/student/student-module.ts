@@ -11,6 +11,7 @@ import { StudentDashboardHomeComponent } from './student-dashboard-home/student-
 import { SharedModule } from '../shared/shared.module';
 import { ApplyComponent } from './pages/apply/apply.component';
 import { InviteFriendModule } from '../shared/invite-friend/invite-friend.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { InviteFriendModule } from '../shared/invite-friend/invite-friend.module
     FormsModule,
     MaterialModule,
     SharedModule,
-    InviteFriendModule
+    InviteFriendModule,
+    TranslateModule
   ]
 })
 export class StudentModule { }

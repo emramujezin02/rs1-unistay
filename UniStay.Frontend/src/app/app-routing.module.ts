@@ -9,8 +9,6 @@ import { RoomListComponent } from './modules/shared/room/room-list/room-list.com
 import { PasswordRecoveryComponent } from './modules/shared/password-recovery/password-recovery.component';
 import { SecurityQuestionsAddComponent } from './modules/shared/set-security/security-questions-add/security-questions-add.component';
 import { SecurityQuestionsAnswerComponent } from './modules/shared/set-security/security-questions-answer/security-questions-answer.component';
-import { AdminDashboardComponent } from './modules/admin/admin-dashboard/admin-dashboard.component';
-import { EquipmentItemCreateComponent } from './modules/shared/equipment/equipment-items-create/equipment-items-create.component';
 
 const routes: Routes = [
   // public/auth routes (bez dashboard layout)
@@ -45,10 +43,7 @@ const routes: Routes = [
   },
   {
     path: 'equipment-items-create/:id',
-    component: AdminDashboardComponent,
-    children: [
-      { path: '', component: EquipmentItemCreateComponent }
-    ]
+    redirectTo: 'admin/equipment/equipment-items-create/:id'
   },
 
   { path: 'room-list', component: RoomListComponent },

@@ -1,17 +1,17 @@
 <section class="employee-rooms">
   <header class="employee-rooms__header">
     <div>
-      <h1>Room management</h1>
-      <p>Inspect dormitory rooms, current occupancy, and availability across residence halls.</p>
+      <h1>{{ 'EMPLOYEE.ROOM_MANAGEMENT.TITLE' | translate }}</h1>
+      <p>{{ 'EMPLOYEE.ROOM_MANAGEMENT.SUBTITLE' | translate }}</p>
     </div>
   </header>
 
   <mat-form-field appearance="outline" class="employee-rooms__search">
-    <mat-label>Search rooms</mat-label>
+    <mat-label>{{ 'EMPLOYEE.ROOM_MANAGEMENT.SEARCH_LABEL' | translate }}</mat-label>
     <input
       matInput
       type="search"
-      placeholder="Room number or description"
+      [placeholder]="'EMPLOYEE.ROOM_MANAGEMENT.SEARCH_PLACEHOLDER' | translate"
       (input)="onSearch($any($event.target).value)" />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
@@ -20,25 +20,25 @@
 
   <ng-container *ngIf="!loading()">
     <p *ngIf="rooms().length === 0" class="employee-rooms__empty">
-      No rooms found.
+      {{ 'EMPLOYEE.ROOM_MANAGEMENT.EMPTY' | translate }}
     </p>
 
     <div class="employee-rooms__table-wrap" *ngIf="rooms().length > 0">
       <mat-table [dataSource]="dataSource" matSort class="employee-rooms__table">
         <ng-container matColumnDef="roomNumber">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Room</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.ROOM' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let room">
             <strong>{{ room.roomNumber }}</strong>
           </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="floor">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Floor</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.FLOOR' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let room">{{ room.floor }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="occupancy">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Occupancy</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.OCCUPANCY' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let room">
             <span
               class="occupancy-chip"
@@ -51,12 +51,12 @@
         </ng-container>
 
         <ng-container matColumnDef="availability">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Available</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.AVAILABLE' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let room">{{ availableBeds(room) }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="description">
-          <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.DESCRIPTION' | translate }}</mat-header-cell>
           <mat-cell *matCellDef="let room" class="employee-rooms__description">
             {{ room.description }}
           </mat-cell>

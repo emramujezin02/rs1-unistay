@@ -55,7 +55,7 @@ export class FavoritesComponent implements OnInit {
   }
 
   openRoom(id: number) {
-    this.router.navigate(['/room-details', id]);
+    this.router.navigate(['/student/rooms/room-details', id]);
   }
 
   onImageError(event: Event) {

@@ -15,10 +15,20 @@
 <div class="detail-notfound" *ngIf="notFound()">
   <mat-icon>search_off</mat-icon>
   <h2>Room was not found</h2>
-  <button mat-flat-button color="primary" type="button" (click)="goBack()">Back to rooms</button>
+  <button mat-flat-button color="primary" type="button" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    {{ 'rooms.backToRooms' | translate }}
+  </button>
 </div>
 
 <ng-container *ngIf="!loading() && !notFound() && room() as r">
+  <div class="detail-actions">
+    <button mat-stroked-button color="primary" type="button" class="back-to-rooms" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'rooms.backToRooms' | translate }}
+    </button>
+  </div>
+
   <div class="page-layout">
     <main class="main-content">
       <section class="product-page">

@@ -74,6 +74,6 @@ export class HallUpdateComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['../hall-list'], { relativeTo: this.route });
+    this.router.navigate(['../../hall-list'], { relativeTo: this.route });
   }
 }

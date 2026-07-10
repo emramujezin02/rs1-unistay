@@ -116,6 +116,6 @@ export class EquipmentItemCreateComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/employee/equipment/equipment-items-list', this.equipmentId]);
+    this.router.navigate(['../../equipment-items-list', this.equipmentId]);
   }
 }

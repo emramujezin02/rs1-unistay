@@ -180,6 +180,10 @@ export class EquipmentItemUpdateComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/employee/equipment/equipment-items-list', this.equipmentId], { relativeTo: this.route });
+    const listRoute = this.router.url.startsWith('/admin')
+      ? '/admin/equipment/equipment-items-list'
+      : '/employee/equipment/equipment-items-list';
+
+    this.router.navigate([listRoute, this.equipmentId]);
   }
 }

@@ -3,7 +3,7 @@
 </div>
 
 <p *ngIf="!loading && !hasItems" class="announcement-carousel__empty">
-  No announcements at this time.
+  {{ emptyText }}
 </p>
 
 <ng-container *ngIf="!loading && hasItems">
@@ -12,7 +12,7 @@
       class="announcement-carousel__button"
       type="button"
       (click)="prev(); $event.stopPropagation()"
-      aria-label="Previous announcement">
+      [attr.aria-label]="previousAriaLabel">
       <mat-icon>chevron_left</mat-icon>
     </button>
 
@@ -25,7 +25,7 @@
         (click)="openDetail(announcement)"
         (keydown.enter)="openDetail(announcement)">
         <div class="announcement-carousel__card-top">
-          <span class="announcement-carousel__tag">Announcement</span>
+          <span class="announcement-carousel__tag">{{ tagText }}</span>
           <time class="announcement-carousel__date">{{ announcement.createdAt | date:'mediumDate' }}</time>
         </div>
 
@@ -33,7 +33,7 @@
         <div class="announcement-carousel__body ql-content" [innerHTML]="announcement.content"></div>
 
         <span class="announcement-carousel__read-more">
-          Read more
+          {{ readMoreText }}
           <mat-icon>arrow_forward</mat-icon>
         </span>
       </article>
@@ -43,7 +43,7 @@
       class="announcement-carousel__button"
       type="button"
       (click)="next(); $event.stopPropagation()"
-      aria-label="Next announcement">
+      [attr.aria-label]="nextAriaLabel">
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
@@ -56,13 +56,13 @@
         type="button"
         [class.announcement-carousel__dot--active]="dot === currentIndex()"
         (click)="goTo(dot)"
-        [attr.aria-label]="'Announcement ' + (dot + 1)"
+        [attr.aria-label]="dotAriaLabelPrefix + ' ' + (dot + 1)"
         role="tab">
       </button>
     </div>
 
     <a *ngIf="viewAllRoute" class="announcement-carousel__view-all" [routerLink]="viewAllRoute">
-      View all
+      {{ viewAllText }}
       <mat-icon>chevron_right</mat-icon>
     </a>
   </div>

@@ -1,9 +1,17 @@
 <div class="equipment-list-container">
-
   <mat-card>
-
     <div class="header-row">
-      <h2>{{ equipmentName }} items</h2>
+      <div class="equipment-items-title">
+        <button mat-stroked-button
+                type="button"
+                class="equipment-items-back"
+                (click)="backToEquipment()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Equipment
+        </button>
+
+        <h2>{{ equipmentName }} items</h2>
+      </div>
 
       <button mat-raised-button color="primary"
               (click)="addNewItem()">
@@ -143,3 +151,4 @@
   </mat-card>
 
 </div>
+

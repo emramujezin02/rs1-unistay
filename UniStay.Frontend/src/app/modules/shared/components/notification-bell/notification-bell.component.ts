@@ -113,16 +113,18 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     }
 
     if (diffMinutes < 60) {
-      return `${diffMinutes}m ago`;
+      return `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago`;
     }
 
     const diffHours = Math.floor(diffMinutes / 60);
 
     if (diffHours < 24) {
-      return `${diffHours}h ago`;
+      return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
     }
 
-    return `${Math.floor(diffHours / 24)}d ago`;
+    const diffDays = Math.floor(diffHours / 24);
+
+    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
   }
 
   @HostListener('document:click', ['$event'])

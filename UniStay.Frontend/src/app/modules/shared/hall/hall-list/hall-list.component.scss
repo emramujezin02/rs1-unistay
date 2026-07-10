@@ -310,6 +310,18 @@ tr:hover {
   background: #172033 !important;
 }
 
+::ng-deep body.dark .mdc-button__label{
+  color:white;
+  background-color: #172033;
+}
+
+::ng-deep body.dark .mdc-button__ripple
+{
+  background-color: #172033;
+}
+
+
+
 @media (max-width: 768px) {
   .hall-list-container {
     max-width: 100%;

@@ -5,15 +5,15 @@ import { AnnouncementEndpointService } from '../../../endpoints/announcement-end
 import { ANNOUNCEMENT_AUDIENCES, AnnouncementDto } from '../../../endpoints/announcement-endpoints/announcement.models';
 
 interface DashboardAction {
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: string;
   color: 'blue' | 'green' | 'amber' | 'purple' | 'teal' | 'red';
   route: string;
 }
 
 interface DashboardNavItem {
-  title: string;
+  titleKey: string;
   icon: string;
   route: string;
 }
@@ -30,64 +30,64 @@ export class EmployeeDashboardComponent implements OnInit {
 
   readonly primaryActions: DashboardAction[] = [
     {
-      title: 'Room management',
-      description: 'Browse dorm rooms, availability, and occupancy details.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.ROOM_MANAGEMENT_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.ROOM_MANAGEMENT_DESC',
       icon: 'meeting_room',
       color: 'teal',
       route: '/employee/rooms'
     },
     {
-      title: 'Student records',
-      description: 'Search student accounts and review contact records.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.STUDENT_RECORDS_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.STUDENT_RECORDS_DESC',
       icon: 'group',
       color: 'green',
       route: '/employee/students'
     },
     {
-      title: 'Hall list',
-      description: 'Review residence halls and availability details.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.HALL_LIST_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.HALL_LIST_DESC',
       icon: 'business',
       color: 'blue',
       route: '/employee/hall/hall-list'
     },
     {
-      title: 'Hall reservations',
-      description: 'Review hall booking requests and approve or reject pending reservations.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.HALL_RESERVATIONS_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.HALL_RESERVATIONS_DESC',
       icon: 'event_available',
       color: 'teal',
       route: '/employee/hall-reservations'
     },
     {
-      title: 'Invite friend',
-      description: 'Send a UniStay invitation link to a friend by email.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.INVITE_FRIEND_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.INVITE_FRIEND_DESC',
       icon: 'person_add',
       color: 'blue',
       route: '/employee/invite-friend'
     },
     {
-      title: 'Fault list',
-      description: 'Track reported maintenance requests and statuses.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.FAULT_LIST_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.FAULT_LIST_DESC',
       icon: 'build',
       color: 'amber',
       route: '/employee/fault/fault-list'
     },
     {
-      title: 'Equipment list',
-      description: 'Check equipment inventory and assigned items.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.EQUIPMENT_LIST_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.EQUIPMENT_LIST_DESC',
       icon: 'inventory_2',
       color: 'green',
       route: '/employee/equipment/equipment-list'
     },
     {
-      title: 'Chat',
-      description: 'Continue conversations with students and staff.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.CHAT_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.CHAT_DESC',
       icon: 'chat_bubble_outline',
       color: 'purple',
       route: '/employee/chat'
     },
     {
-      title: 'Security questions',
-      description: 'Set account recovery questions using the shared security flow.',
+      titleKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.SECURITY_QUESTIONS_TITLE',
+      descriptionKey: 'EMPLOYEE.DASHBOARD_HOME.CARDS.SECURITY_QUESTIONS_DESC',
       icon: 'security',
       color: 'red',
       route: '/employee/security-questions'
@@ -95,17 +95,17 @@ export class EmployeeDashboardComponent implements OnInit {
   ];
 
   readonly panelNavItems: DashboardNavItem[] = [
-    { title: 'Dashboard', icon: 'dashboard', route: '/employee' },
-    { title: 'Room management', icon: 'meeting_room', route: '/employee/rooms' },
-    { title: 'Student records', icon: 'group', route: '/employee/students' },
-    { title: 'Invite Friend', icon: 'person_add', route: '/employee/invite-friend' },
-    { title: 'Hall list', icon: 'business', route: '/employee/hall/hall-list' },
-    { title: 'Hall Reservations', icon: 'event_available', route: '/employee/hall-reservations' },
-    { title: 'Faults', icon: 'build', route: '/employee/fault/fault-list' },
-    { title: 'Equipment', icon: 'inventory_2', route: '/employee/equipment/equipment-list' },
-    { title: 'Chat', icon: 'chat_bubble_outline', route: '/employee/chat' },
-    { title: 'Security Questions', icon: 'security', route: '/employee/security-questions' },
-    { title: 'Settings', icon: 'tune', route: '/employee/settings' }
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.DASHBOARD', icon: 'dashboard', route: '/employee' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.ROOM_MANAGEMENT', icon: 'meeting_room', route: '/employee/rooms' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.STUDENT_RECORDS', icon: 'group', route: '/employee/students' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.INVITE_FRIEND', icon: 'person_add', route: '/employee/invite-friend' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.HALL_LIST', icon: 'business', route: '/employee/hall/hall-list' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.HALL_RESERVATIONS', icon: 'event_available', route: '/employee/hall-reservations' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.FAULTS', icon: 'build', route: '/employee/fault/fault-list' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.EQUIPMENT', icon: 'inventory_2', route: '/employee/equipment/equipment-list' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.CHAT', icon: 'chat_bubble_outline', route: '/employee/chat' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.SECURITY_QUESTIONS', icon: 'security', route: '/employee/security-questions' },
+    { titleKey: 'EMPLOYEE.DASHBOARD_HOME.NAV.SETTINGS', icon: 'tune', route: '/employee/settings' }
   ];
 
   constructor(
@@ -142,15 +142,15 @@ export class EmployeeDashboardComponent implements OnInit {
     return currentUrl === route || currentUrl.startsWith(route + '/');
   }
 
-  get greeting(): string {
+  get greetingKey(): string {
     const hour = new Date().getHours();
     if (hour < 12) {
-      return 'Good morning';
+      return 'EMPLOYEE.DASHBOARD_HOME.GREETING.MORNING';
     }
     if (hour < 18) {
-      return 'Good afternoon';
+      return 'EMPLOYEE.DASHBOARD_HOME.GREETING.AFTERNOON';
     }
-    return 'Good evening';
+    return 'EMPLOYEE.DASHBOARD_HOME.GREETING.EVENING';
   }
 
   get userFirstName(): string {

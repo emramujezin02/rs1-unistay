@@ -143,6 +143,6 @@ export class FaultUpdateComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['../fault-list'], { relativeTo: this.route });
+    this.router.navigate(['../../fault-list'], { relativeTo: this.route });
   }
 }

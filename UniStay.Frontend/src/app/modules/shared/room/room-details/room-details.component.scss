@@ -133,6 +133,12 @@ color:gold;
 }
 
 .info button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 260px;
   margin-top: 20px;
   padding: 12px 28px;
   background: #1976d2;
@@ -142,6 +148,15 @@ color:gold;
   cursor: pointer;
   font-weight: 500;
   transition: 0.2s ease;
+}
+
+.info button + button {
+  margin-top: 12px;
+}
+
+.info button span {
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 .info button:hover {

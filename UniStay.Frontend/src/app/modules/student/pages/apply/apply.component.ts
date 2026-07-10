@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, signal } from '@angula
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, merge, switchMap, takeUntil, debounceTime } from 'rxjs';
 import { ApplicationEndpointService } from '../../../../endpoints/application-endpoints/application-endpoint.service';
 import { ApplicationFacadeService } from '../../../../endpoints/application-endpoints/application-facade.service';
@@ -10,7 +11,7 @@ import { MyConfig } from '../../../../my-config';
 import { gpaEligibleValidator } from '../../../../core/validators/availability-validators';
 
 interface DocumentEntry {
-  label: string;
+  labelKey: string;
   required: boolean;
   fileName: string | null;
   uploadedUrl: string | null;
@@ -36,12 +37,17 @@ export class ApplyComponent implements OnInit, OnDestroy {
 
   readonly yearOptions = [1, 2, 3, 4, 5, 6];
   readonly roomTypes = ['Single', 'Double', 'Triple'];
+  readonly roomTypeLabelKeys: Record<string, string> = {
+    Single: 'STUDENT.APPLICATION_FORM.ROOM_TYPES.SINGLE',
+    Double: 'STUDENT.APPLICATION_FORM.ROOM_TYPES.DOUBLE',
+    Triple: 'STUDENT.APPLICATION_FORM.ROOM_TYPES.TRIPLE'
+  };
 
   documents: DocumentEntry[] = [
-    { label: 'Identity document', required: true, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null },
-    { label: 'Enrollment confirmation', required: true, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null },
-    { label: 'Transcript', required: false, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null },
-    { label: 'Medical documentation', required: false, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null }
+    { labelKey: 'STUDENT.APPLICATION_FORM.DOCUMENTS.IDENTITY', required: true, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null },
+    { labelKey: 'STUDENT.APPLICATION_FORM.DOCUMENTS.ENROLLMENT', required: true, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null },
+    { labelKey: 'STUDENT.APPLICATION_FORM.DOCUMENTS.TRANSCRIPT', required: false, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null },
+    { labelKey: 'STUDENT.APPLICATION_FORM.DOCUMENTS.MEDICAL', required: false, fileName: null, uploadedUrl: null, uploading: false, progress: 0, uploadError: null }
   ];
 
   constructor(
@@ -50,6 +56,7 @@ export class ApplyComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private snackBar: MatSnackBar,
+    private translate: TranslateService,
     public facade: ApplicationFacadeService,
     private applicationApi: ApplicationEndpointService,
     private fileUploadApi: FileUploadEndpointService
@@ -177,7 +184,7 @@ export class ApplyComponent implements OnInit, OnDestroy {
       error: error => {
         doc.uploading = false;
         doc.progress = 0;
-        doc.uploadError = error?.message ?? 'Upload failed. Please try again.';
+        doc.uploadError = error?.message ?? this.translate.instant('STUDENT.APPLICATION_FORM.MESSAGES.UPLOAD_FAILED');
         this.cdr.detectChanges();
       }
     });
@@ -218,11 +225,19 @@ export class ApplyComponent implements OnInit, OnDestroy {
       switchMap(() => this.facade.loadMyApplications())
     ).subscribe({
       next: () => {
-        this.snackBar.open('Application submitted successfully.', 'Close', { duration: 4000 });
+        this.snackBar.open(
+          this.translate.instant('STUDENT.APPLICATION_FORM.MESSAGES.SUBMIT_SUCCESS'),
+          this.translate.instant('common.close'),
+          { duration: 4000 }
+        );
         this.router.navigate(['/student/dashboard']);
       },
       error: () => {
-        this.snackBar.open('Failed to submit application.', 'Close', { duration: 4000 });
+        this.snackBar.open(
+          this.translate.instant('STUDENT.APPLICATION_FORM.MESSAGES.SUBMIT_ERROR'),
+          this.translate.instant('common.close'),
+          { duration: 4000 }
+        );
       }
     });
   }

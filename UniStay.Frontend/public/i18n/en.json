@@ -6,6 +6,23 @@
   "common": {
     "close": "Close"
   },
+  "rooms": {
+    "backToRooms": "Back to rooms"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "MARK_ALL_READ": "Mark all read",
+    "EMPTY": "No notifications yet",
+    "ARIA": {
+      "OPEN": "Notifications"
+    },
+    "TIME": {
+      "JUST_NOW": "just now",
+      "MINUTES_AGO": "{{count}}m ago",
+      "HOURS_AGO": "{{count}}h ago",
+      "DAYS_AGO": "{{count}}d ago"
+    }
+  },
   "admin": {
     "equipmentItems": {
       "searchByName": "Search by name",
@@ -337,6 +354,235 @@
       "DELETE_SUCCESS": "Room deleted.",
       "DELETE_ERROR": "Failed to delete room.",
       "CLOSE": "Close"
+    }
+  },
+  "STUDENT": {
+    "DASHBOARD_HOME": {
+      "GREETING": {
+        "MORNING": "Good morning",
+        "AFTERNOON": "Good afternoon",
+        "EVENING": "Good evening"
+      },
+      "SUBTITLE": "Track your application status, read residence announcements, and open your student tools.",
+      "BADGE": "Student",
+      "ANNOUNCEMENTS": {
+        "TITLE": "Latest announcements",
+        "EMPTY": "No announcements at this time.",
+        "PREVIOUS": "Previous announcement",
+        "NEXT": "Next announcement",
+        "NAVIGATION": "Announcement navigation",
+        "GO_TO": "Go to announcement {{number}}"
+      },
+      "APPLICATION": {
+        "NONE_TITLE": "No active application",
+        "NONE_DESC": "Submit your accommodation application to enter the room assignment process.",
+        "APPLY_BUTTON": "Apply for accommodation",
+        "PENDING_TITLE": "Application pending",
+        "PENDING_DESC": "Your accommodation application is waiting for review.",
+        "APPLIED_ON": "Applied on",
+        "ROOM_TYPE": "Room type",
+        "STATUS_PENDING": "Pending",
+        "REJECTED_TITLE": "Application rejected",
+        "REJECTED_DESC": "You can submit a new accommodation application for the next review cycle.",
+        "APPLY_AGAIN": "Apply again",
+        "APPROVED_TITLE": "Application approved",
+        "APPROVED_DESC": "Your full student dashboard is available.",
+        "STATUS_APPROVED": "Approved"
+      },
+      "CARDS": {
+        "SEARCH_ROOMS_TITLE": "Search rooms",
+        "SEARCH_ROOMS_DESC": "Browse existing room search and availability.",
+        "INVOICES_TITLE": "Invoices",
+        "INVOICES_DESC": "Review your accommodation invoices and payment context.",
+        "FAVORITES_TITLE": "Favorites",
+        "FAVORITES_DESC": "Open your saved rooms without changing favorites logic.",
+        "INVITE_FRIEND_TITLE": "Invite friend",
+        "INVITE_FRIEND_DESC": "Send a UniStay invitation link to a friend by email.",
+        "SECURITY_QUESTIONS_TITLE": "Security questions",
+        "SECURITY_QUESTIONS_DESC": "Set the account recovery questions used by the existing security flow.",
+        "CHAT_TITLE": "Chat",
+        "CHAT_DESC": "Continue conversations with staff and residence contacts."
+      }
+    },
+    "APPLICATION_FORM": {
+      "BACK_TO_DASHBOARD": "Back to dashboard",
+      "TITLE": "Accommodation application",
+      "SUBTITLE": "Submit your competition application and supporting documents.",
+      "DRAFT_SAVED": "Draft saved",
+      "STEPS": {
+        "ACADEMIC": "Academic information",
+        "ROOM": "Room preference",
+        "PREFERENCES": "Preferences and notes",
+        "DOCUMENTS": "Documents",
+        "REVIEW": "Review and submit"
+      },
+      "FIELDS": {
+        "YEAR_OF_STUDY": "Year of study",
+        "YEAR_VALUE": "Year {{year}}",
+        "GPA": "GPA",
+        "PHONE_NUMBER": "Phone number",
+        "PHONE": "Phone",
+        "PREFERRED_ROOM_TYPE": "Preferred room type",
+        "ROOM_TYPE": "Room type",
+        "SELECTED_ROOM": "Selected room",
+        "ROOM_VALUE": "Room {{room}}",
+        "SPECIAL_REQUIREMENTS": "Special requirements",
+        "NOTES": "Notes"
+      },
+      "PLACEHOLDERS": {
+        "SPECIAL_REQUIREMENTS": "Accessibility needs, quiet room, near exit...",
+        "NOTES": "Additional information for administration"
+      },
+      "HINTS": {
+        "GPA_MIN_CHECK": "Minimum GPA is checked automatically.",
+        "CHECKING_GPA": "Checking GPA...",
+        "BROWSE_ROOMS": "You can select a specific room from Search Rooms, or submit only a room type preference.",
+        "OPTIONAL": "Optional"
+      },
+      "VALIDATION": {
+        "YEAR_REQUIRED": "Year of study is required.",
+        "GPA_RANGE": "GPA must be between 0 and 10.",
+        "GPA_TOO_LOW": "GPA is below the minimum of {{min}}.",
+        "ROOM_TYPE_REQUIRED": "Preferred room type is required."
+      },
+      "ROOM_TYPES": {
+        "SINGLE": "Single",
+        "DOUBLE": "Double",
+        "TRIPLE": "Triple"
+      },
+      "DOCUMENTS": {
+        "INTRO": "Upload the required documents before submitting the application.",
+        "IDENTITY": "Identity document",
+        "ENROLLMENT": "Enrollment confirmation",
+        "TRANSCRIPT": "Transcript",
+        "MEDICAL": "Medical documentation",
+        "ACCEPTED_FORMATS": "PDF, JPG, PNG, DOC or DOCX.",
+        "REQUIRED_NOTE": "Required documents must finish uploading before the application can be submitted.",
+        "NOT_PROVIDED": "Not provided"
+      },
+      "BUTTONS": {
+        "NEXT": "Next",
+        "BACK": "Back",
+        "BROWSE_ROOMS": "Browse rooms",
+        "CLEAR_SELECTED_ROOM": "Clear selected room",
+        "UPLOAD": "Upload",
+        "CHANGE": "Change",
+        "RETRY": "Retry",
+        "SUBMIT": "Submit application"
+      },
+      "MESSAGES": {
+        "UPLOAD_FAILED": "Upload failed. Please try again.",
+        "SUBMIT_SUCCESS": "Application submitted successfully.",
+        "SUBMIT_ERROR": "Failed to submit application."
+      }
+    }
+  },
+  "EMPLOYEE": {
+    "DASHBOARD_HOME": {
+      "GREETING": {
+        "MORNING": "Good morning",
+        "AFTERNOON": "Good afternoon",
+        "EVENING": "Good evening"
+      },
+      "SUBTITLE": "Manage residence halls, maintenance requests, equipment records, and daily student communication from one place.",
+      "BADGE": "Employee",
+      "ROLE_FALLBACK": "employee",
+      "ARIA": {
+        "MENU": "Employee menu",
+        "NAVIGATION": "Employee dashboard navigation",
+        "LOGOUT": "Log out",
+        "PROFILE": "Employee profile"
+      },
+      "NAV": {
+        "DASHBOARD": "Dashboard",
+        "ROOM_MANAGEMENT": "Room management",
+        "STUDENT_RECORDS": "Student records",
+        "INVITE_FRIEND": "Invite Friend",
+        "HALL_LIST": "Hall list",
+        "HALL_RESERVATIONS": "Hall Reservations",
+        "FAULTS": "Faults",
+        "EQUIPMENT": "Equipment",
+        "CHAT": "Chat",
+        "SECURITY_QUESTIONS": "Security Questions",
+        "SETTINGS": "Settings"
+      },
+      "ANNOUNCEMENTS": {
+        "TITLE": "Latest announcements",
+        "SUBTITLE": "Updates relevant to employees and shared residence operations.",
+        "EMPTY": "No announcements at this time.",
+        "PREVIOUS": "Previous announcement",
+        "NEXT": "Next announcement",
+        "TAG": "Announcement",
+        "READ_MORE": "Read more",
+        "DOT_PREFIX": "Announcement",
+        "VIEW_ALL": "View all"
+      },
+      "CARDS": {
+        "ROOM_MANAGEMENT_TITLE": "Room management",
+        "ROOM_MANAGEMENT_DESC": "Browse dorm rooms, availability, and occupancy details.",
+        "STUDENT_RECORDS_TITLE": "Student records",
+        "STUDENT_RECORDS_DESC": "Search student accounts and review contact records.",
+        "HALL_LIST_TITLE": "Hall list",
+        "HALL_LIST_DESC": "Review residence halls and availability details.",
+        "HALL_RESERVATIONS_TITLE": "Hall reservations",
+        "HALL_RESERVATIONS_DESC": "Review hall booking requests and approve or reject pending reservations.",
+        "INVITE_FRIEND_TITLE": "Invite friend",
+        "INVITE_FRIEND_DESC": "Send a UniStay invitation link to a friend by email.",
+        "FAULT_LIST_TITLE": "Fault list",
+        "FAULT_LIST_DESC": "Track reported maintenance requests and statuses.",
+        "EQUIPMENT_LIST_TITLE": "Equipment list",
+        "EQUIPMENT_LIST_DESC": "Check equipment inventory and assigned items.",
+        "CHAT_TITLE": "Chat",
+        "CHAT_DESC": "Continue conversations with students and staff.",
+        "SECURITY_QUESTIONS_TITLE": "Security questions",
+        "SECURITY_QUESTIONS_DESC": "Set account recovery questions using the shared security flow."
+      }
+    },
+    "ROOM_MANAGEMENT": {
+      "TITLE": "Room management",
+      "SUBTITLE": "Inspect dormitory rooms, current occupancy, and availability across residence halls.",
+      "SEARCH_LABEL": "Search rooms",
+      "SEARCH_PLACEHOLDER": "Room number or description",
+      "EMPTY": "No rooms found.",
+      "COLUMNS": {
+        "ROOM": "Room",
+        "FLOOR": "Floor",
+        "OCCUPANCY": "Occupancy",
+        "AVAILABLE": "Available",
+        "DESCRIPTION": "Description"
+      }
+    },
+    "STUDENT_RECORDS": {
+      "TITLE": "Student records",
+      "SUBTITLE": "Search and review student account records used in daily residence operations.",
+      "SEARCH_LABEL": "Search students",
+      "SEARCH_PLACEHOLDER": "Name, username, email, or phone",
+      "LOAD_ERROR": "Student records could not be loaded.",
+      "EMPTY": "No students found.",
+      "COLUMNS": {
+        "STUDENT": "Student",
+        "EMAIL": "Email",
+        "PHONE": "Phone",
+        "STATUS": "Status"
+      },
+      "STATUS": {
+        "STUDENT": "Student",
+        "DISABLED": "Disabled"
+      }
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL_READ": "Mark all read",
+      "EMPTY": "No notifications yet",
+      "ARIA": {
+        "OPEN": "Notifications"
+      },
+      "TIME": {
+        "JUST_NOW": "just now",
+        "MINUTES_AGO": "{{count}}m ago",
+        "HOURS_AGO": "{{count}}h ago",
+        "DAYS_AGO": "{{count}}d ago"
+      }
     }
   },
   "SETTINGS": {

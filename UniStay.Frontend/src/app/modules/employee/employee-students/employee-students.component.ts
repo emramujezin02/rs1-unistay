@@ -82,7 +82,7 @@ export class EmployeeStudentsComponent implements OnInit {
   }
 
   roleLabel(student: UserDto): string {
-    return (student as any).role || student.roleName || 'Student';
+    return (student as any).role || student.roleName || '';
   }
 
   private loadStudents(): void {

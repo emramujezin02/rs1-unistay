@@ -7,6 +7,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 @Component({
   selector: 'app-equipment-update',
   templateUrl: './equipment-update.component.html',
+  styleUrls: ['./equipment-update.component.scss'],
   standalone: false,
   animations: [
     // FORM ANIMACIJA
@@ -77,6 +78,6 @@ export class EquipmentUpdateComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['../equipment-list'], { relativeTo: this.route });
+    this.router.navigate(['../../equipment-list'], { relativeTo: this.route });
   }
 }

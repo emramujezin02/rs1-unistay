@@ -6,6 +6,23 @@
   "common": {
     "close": "Zatvori"
   },
+  "rooms": {
+    "backToRooms": "Nazad na sobe"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifikacije",
+    "MARK_ALL_READ": "Oznaci sve kao procitano",
+    "EMPTY": "Jos nema notifikacija",
+    "ARIA": {
+      "OPEN": "Notifikacije"
+    },
+    "TIME": {
+      "JUST_NOW": "upravo sada",
+      "MINUTES_AGO": "prije {{count}} min",
+      "HOURS_AGO": "prije {{count}} h",
+      "DAYS_AGO": "prije {{count}} d"
+    }
+  },
   "admin": {
     "equipmentItems": {
       "searchByName": "Pretraga po imenu",
@@ -337,6 +354,235 @@
       "DELETE_SUCCESS": "Soba je obrisana.",
       "DELETE_ERROR": "Brisanje sobe nije uspjelo.",
       "CLOSE": "Zatvori"
+    }
+  },
+  "STUDENT": {
+    "DASHBOARD_HOME": {
+      "GREETING": {
+        "MORNING": "Dobro jutro",
+        "AFTERNOON": "Dobar dan",
+        "EVENING": "Dobro vece"
+      },
+      "SUBTITLE": "Pratite status prijave, citajte obavijesti doma i otvorite studentske alate.",
+      "BADGE": "Student",
+      "ANNOUNCEMENTS": {
+        "TITLE": "Najnovije obavijesti",
+        "EMPTY": "Trenutno nema obavijesti.",
+        "PREVIOUS": "Prethodna obavijest",
+        "NEXT": "Sljedeca obavijest",
+        "NAVIGATION": "Navigacija obavijesti",
+        "GO_TO": "Idi na obavijest {{number}}"
+      },
+      "APPLICATION": {
+        "NONE_TITLE": "Nema aktivne prijave",
+        "NONE_DESC": "Posaljite prijavu za smjestaj kako biste usli u proces dodjele sobe.",
+        "APPLY_BUTTON": "Apliciraj za smjestaj",
+        "PENDING_TITLE": "Prijava je na cekanju",
+        "PENDING_DESC": "Vasa prijava za smjestaj ceka pregled.",
+        "APPLIED_ON": "Prijavljeno",
+        "ROOM_TYPE": "Tip sobe",
+        "STATUS_PENDING": "Na cekanju",
+        "REJECTED_TITLE": "Prijava je odbijena",
+        "REJECTED_DESC": "Mozete poslati novu prijavu za smjestaj za sljedeci ciklus pregleda.",
+        "APPLY_AGAIN": "Apliciraj ponovo",
+        "APPROVED_TITLE": "Prijava je odobrena",
+        "APPROVED_DESC": "Vas puni studentski dashboard je dostupan.",
+        "STATUS_APPROVED": "Odobreno"
+      },
+      "CARDS": {
+        "SEARCH_ROOMS_TITLE": "Pretraga soba",
+        "SEARCH_ROOMS_DESC": "Pregledajte pretragu soba i dostupnost.",
+        "INVOICES_TITLE": "Racuni",
+        "INVOICES_DESC": "Pregledajte racune za smjestaj i kontekst placanja.",
+        "FAVORITES_TITLE": "Favoriti",
+        "FAVORITES_DESC": "Otvorite sacuvane sobe bez promjene favorites logike.",
+        "INVITE_FRIEND_TITLE": "Pozovi prijatelja",
+        "INVITE_FRIEND_DESC": "Posaljite UniStay pozivni link prijatelju putem emaila.",
+        "SECURITY_QUESTIONS_TITLE": "Sigurnosna pitanja",
+        "SECURITY_QUESTIONS_DESC": "Postavite pitanja za oporavak racuna koja koristi postojeci sigurnosni tok.",
+        "CHAT_TITLE": "Chat",
+        "CHAT_DESC": "Nastavite razgovore sa osobljem i kontaktima doma."
+      }
+    },
+    "APPLICATION_FORM": {
+      "BACK_TO_DASHBOARD": "Nazad na dashboard",
+      "TITLE": "Prijava za smjestaj",
+      "SUBTITLE": "Posaljite prijavu za konkurs i pratece dokumente.",
+      "DRAFT_SAVED": "Draft sacuvan",
+      "STEPS": {
+        "ACADEMIC": "Akademske informacije",
+        "ROOM": "Preferencija sobe",
+        "PREFERENCES": "Preferencije i napomene",
+        "DOCUMENTS": "Dokumenti",
+        "REVIEW": "Pregled i slanje"
+      },
+      "FIELDS": {
+        "YEAR_OF_STUDY": "Godina studija",
+        "YEAR_VALUE": "{{year}}. godina",
+        "GPA": "Prosjek ocjena",
+        "PHONE_NUMBER": "Broj telefona",
+        "PHONE": "Telefon",
+        "PREFERRED_ROOM_TYPE": "Preferirani tip sobe",
+        "ROOM_TYPE": "Tip sobe",
+        "SELECTED_ROOM": "Odabrana soba",
+        "ROOM_VALUE": "Soba {{room}}",
+        "SPECIAL_REQUIREMENTS": "Posebni zahtjevi",
+        "NOTES": "Napomene"
+      },
+      "PLACEHOLDERS": {
+        "SPECIAL_REQUIREMENTS": "Potrebe pristupacnosti, tiha soba, blizu izlaza...",
+        "NOTES": "Dodatne informacije za administraciju"
+      },
+      "HINTS": {
+        "GPA_MIN_CHECK": "Minimalni prosjek se provjerava automatski.",
+        "CHECKING_GPA": "Provjera prosjeka...",
+        "BROWSE_ROOMS": "Mozete odabrati konkretnu sobu iz pretrage soba ili poslati samo preferenciju tipa sobe.",
+        "OPTIONAL": "Opcionalno"
+      },
+      "VALIDATION": {
+        "YEAR_REQUIRED": "Godina studija je obavezna.",
+        "GPA_RANGE": "Prosjek mora biti izmedju 0 i 10.",
+        "GPA_TOO_LOW": "Prosjek je ispod minimuma od {{min}}.",
+        "ROOM_TYPE_REQUIRED": "Preferirani tip sobe je obavezan."
+      },
+      "ROOM_TYPES": {
+        "SINGLE": "Jednokrevetna",
+        "DOUBLE": "Dvokrevetna",
+        "TRIPLE": "Trokrevetna"
+      },
+      "DOCUMENTS": {
+        "INTRO": "Ucitajte obavezne dokumente prije slanja prijave.",
+        "IDENTITY": "Identifikacioni dokument",
+        "ENROLLMENT": "Potvrda o upisu",
+        "TRANSCRIPT": "Prepis ocjena",
+        "MEDICAL": "Medicinska dokumentacija",
+        "ACCEPTED_FORMATS": "PDF, JPG, PNG, DOC ili DOCX.",
+        "REQUIRED_NOTE": "Obavezni dokumenti moraju zavrsiti ucitavanje prije slanja prijave.",
+        "NOT_PROVIDED": "Nije dostavljeno"
+      },
+      "BUTTONS": {
+        "NEXT": "Dalje",
+        "BACK": "Nazad",
+        "BROWSE_ROOMS": "Pregledaj sobe",
+        "CLEAR_SELECTED_ROOM": "Ukloni odabranu sobu",
+        "UPLOAD": "Ucitaj",
+        "CHANGE": "Promijeni",
+        "RETRY": "Pokusaj ponovo",
+        "SUBMIT": "Posalji prijavu"
+      },
+      "MESSAGES": {
+        "UPLOAD_FAILED": "Ucitavanje nije uspjelo. Pokusajte ponovo.",
+        "SUBMIT_SUCCESS": "Prijava je uspjesno poslana.",
+        "SUBMIT_ERROR": "Slanje prijave nije uspjelo."
+      }
+    }
+  },
+  "EMPLOYEE": {
+    "DASHBOARD_HOME": {
+      "GREETING": {
+        "MORNING": "Dobro jutro",
+        "AFTERNOON": "Dobar dan",
+        "EVENING": "Dobro vece"
+      },
+      "SUBTITLE": "Upravljajte domovima, zahtjevima za odrzavanje, evidencijom opreme i svakodnevnom komunikacijom sa studentima s jednog mjesta.",
+      "BADGE": "Zaposlenik",
+      "ROLE_FALLBACK": "zaposlenik",
+      "ARIA": {
+        "MENU": "Meni zaposlenika",
+        "NAVIGATION": "Navigacija Employee Dashboarda",
+        "LOGOUT": "Odjava",
+        "PROFILE": "Profil zaposlenika"
+      },
+      "NAV": {
+        "DASHBOARD": "Dashboard",
+        "ROOM_MANAGEMENT": "Upravljanje sobama",
+        "STUDENT_RECORDS": "Studentska evidencija",
+        "INVITE_FRIEND": "Pozovi prijatelja",
+        "HALL_LIST": "Lista sala",
+        "HALL_RESERVATIONS": "Rezervacije sala",
+        "FAULTS": "Kvarovi",
+        "EQUIPMENT": "Oprema",
+        "CHAT": "Chat",
+        "SECURITY_QUESTIONS": "Sigurnosna pitanja",
+        "SETTINGS": "Postavke"
+      },
+      "ANNOUNCEMENTS": {
+        "TITLE": "Najnovije obavijesti",
+        "SUBTITLE": "Azuriranja relevantna za zaposlene i zajednicke operacije u domu.",
+        "EMPTY": "Trenutno nema obavijesti.",
+        "PREVIOUS": "Prethodna obavijest",
+        "NEXT": "Sljedeca obavijest",
+        "TAG": "Obavijest",
+        "READ_MORE": "Procitaj vise",
+        "DOT_PREFIX": "Obavijest",
+        "VIEW_ALL": "Prikazi sve"
+      },
+      "CARDS": {
+        "ROOM_MANAGEMENT_TITLE": "Upravljanje sobama",
+        "ROOM_MANAGEMENT_DESC": "Pregledajte sobe u domu, dostupnost i detalje popunjenosti.",
+        "STUDENT_RECORDS_TITLE": "Studentska evidencija",
+        "STUDENT_RECORDS_DESC": "Pretrazite studentske racune i pregledajte kontakt podatke.",
+        "HALL_LIST_TITLE": "Lista sala",
+        "HALL_LIST_DESC": "Pregledajte sale i detalje dostupnosti.",
+        "HALL_RESERVATIONS_TITLE": "Rezervacije sala",
+        "HALL_RESERVATIONS_DESC": "Pregledajte zahtjeve za rezervaciju sala i odobrite ili odbijte zahtjeve na cekanju.",
+        "INVITE_FRIEND_TITLE": "Pozovi prijatelja",
+        "INVITE_FRIEND_DESC": "Posaljite UniStay pozivni link prijatelju putem emaila.",
+        "FAULT_LIST_TITLE": "Lista kvarova",
+        "FAULT_LIST_DESC": "Pratite prijavljene zahtjeve za odrzavanje i njihove statuse.",
+        "EQUIPMENT_LIST_TITLE": "Lista opreme",
+        "EQUIPMENT_LIST_DESC": "Provjerite inventar opreme i dodijeljene stavke.",
+        "CHAT_TITLE": "Chat",
+        "CHAT_DESC": "Nastavite razgovore sa studentima i osobljem.",
+        "SECURITY_QUESTIONS_TITLE": "Sigurnosna pitanja",
+        "SECURITY_QUESTIONS_DESC": "Postavite pitanja za oporavak racuna kroz postojeci sigurnosni tok."
+      }
+    },
+    "ROOM_MANAGEMENT": {
+      "TITLE": "Upravljanje sobama",
+      "SUBTITLE": "Pregledajte sobe u domu, trenutnu popunjenost i dostupnost kroz domove.",
+      "SEARCH_LABEL": "Pretrazi sobe",
+      "SEARCH_PLACEHOLDER": "Broj sobe ili opis",
+      "EMPTY": "Nema pronadjenih soba.",
+      "COLUMNS": {
+        "ROOM": "Soba",
+        "FLOOR": "Sprat",
+        "OCCUPANCY": "Popunjenost",
+        "AVAILABLE": "Dostupno",
+        "DESCRIPTION": "Opis"
+      }
+    },
+    "STUDENT_RECORDS": {
+      "TITLE": "Studentska evidencija",
+      "SUBTITLE": "Pretrazite i pregledajte studentske racune koji se koriste u svakodnevnim operacijama doma.",
+      "SEARCH_LABEL": "Pretrazi studente",
+      "SEARCH_PLACEHOLDER": "Ime, korisnicko ime, email ili telefon",
+      "LOAD_ERROR": "Studentska evidencija se nije mogla ucitati.",
+      "EMPTY": "Nema pronadjenih studenata.",
+      "COLUMNS": {
+        "STUDENT": "Student",
+        "EMAIL": "Email",
+        "PHONE": "Telefon",
+        "STATUS": "Status"
+      },
+      "STATUS": {
+        "STUDENT": "Student",
+        "DISABLED": "Onemogucen"
+      }
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifikacije",
+      "MARK_ALL_READ": "Oznaci sve kao procitano",
+      "EMPTY": "Jos nema notifikacija",
+      "ARIA": {
+        "OPEN": "Notifikacije"
+      },
+      "TIME": {
+        "JUST_NOW": "upravo sada",
+        "MINUTES_AGO": "prije {{count}} min",
+        "HOURS_AGO": "prije {{count}} h",
+        "DAYS_AGO": "prije {{count}} d"
+      }
     }
   },
   "SETTINGS": {

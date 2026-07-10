@@ -23,6 +23,22 @@ mat-card {
   font-weight: 800;
 }
 
+.equipment-items-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.equipment-items-back {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.equipment-items-back mat-icon {
+  margin-right: 6px;
+}
+
 .filters {
   display: flex;
   align-items: center;
@@ -183,6 +199,13 @@ td.mat-cell, th.mat-header-cell {
 
   .header-row h2 {
     color: #f8fafc;
+  }
+
+  .equipment-items-back {
+    --mdc-outlined-button-label-text-color: #93c5fd;
+    --mdc-outlined-button-outline-color: #334155;
+    --mat-outlined-button-state-layer-color: #93c5fd;
+    color: #93c5fd;
   }
 
   .header-row button[mat-raised-button] {

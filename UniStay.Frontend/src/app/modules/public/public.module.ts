@@ -6,6 +6,7 @@ import { MaterialModule } from '../shared/material/material';
 import { PublicRoutingModule } from './public-routing.module';
 import { PublicRoomDetailComponent } from './pages/room-detail/public-room-detail.component';
 import { PublicRoomsComponent } from './pages/rooms/public-rooms.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { PublicRoomsComponent } from './pages/rooms/public-rooms.component';
     FormsModule,
     RouterModule,
     MaterialModule,
-    PublicRoutingModule
+    PublicRoutingModule,
+    TranslateModule
   ]
 })
 export class PublicModule {}

@@ -13,6 +13,13 @@ export class AnnouncementCarouselComponent implements OnChanges {
   @Input() announcements: AnnouncementDto[] = [];
   @Input() loading = false;
   @Input() viewAllRoute?: string;
+  @Input() emptyText = 'No announcements at this time.';
+  @Input() previousAriaLabel = 'Previous announcement';
+  @Input() nextAriaLabel = 'Next announcement';
+  @Input() tagText = 'Announcement';
+  @Input() readMoreText = 'Read more';
+  @Input() dotAriaLabelPrefix = 'Announcement';
+  @Input() viewAllText = 'View all';
 
   private readonly dialog = inject(MatDialog);
   private readonly index = signal(0);

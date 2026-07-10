@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FavoritesService } from '../../../../endpoints/favorite/favorite-endpoint.service';
 import { ReviewService } from '../../../../endpoints/review-and-react/review-and-react-endpoint.service';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -37,6 +37,7 @@ export class RoomDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private roomGetByIdService: RoomGetByIdEndpointService,
     private favoriteService: FavoritesService,
     private reviewService: ReviewService
@@ -59,6 +60,10 @@ export class RoomDetailsComponent implements OnInit {
         this.loadFavoriteStatus();
         this.loadReviews();
       });
+  }
+
+  goBackToRooms() {
+    this.router.navigate(['/student/rooms']);
   }
 
   nextImage() {

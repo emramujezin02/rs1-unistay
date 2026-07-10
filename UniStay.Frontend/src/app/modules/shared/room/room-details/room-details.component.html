@@ -1,6 +1,6 @@
 <div class="page-layout" *ngIf="room">
 
-  <!-- LIJEVO (GLAVNI SADRŽAJ) -->
+  <!-- LIJEVO (GLAVNI SADRZAJ) -->
   <div class="main-content" [@fadeIn]>
 
     <div class="product-page">
@@ -14,7 +14,7 @@
           <button class="nav outside left"
             *ngIf="room.images?.length > 1"
             (click)="prevImage(); $event.stopPropagation()">
-            ‹
+            &lsaquo;
           </button>
 
           <img [src]="selectedImage || defaultRoomImageUrl"
@@ -23,7 +23,7 @@
           <button class="nav outside right"
             *ngIf="room.images?.length > 1"
             (click)="nextImage(); $event.stopPropagation()">
-            ›
+            &rsaquo;
           </button>
         </div>
 
@@ -45,6 +45,10 @@
         <p><strong>Capacity:</strong> {{room.maxOccupancy}}</p>
         <p><strong>Floor:</strong> {{room.floor}}</p>
 
+        <button type="button" class="back-to-rooms" (click)="goBackToRooms()">
+          <span aria-hidden="true"></span>
+          Back to rooms
+        </button>
         <button>Apply for room</button>
         <button *ngIf="!isFavorite" (click)="addToFavorites()">Add to favorites</button>
         <button *ngIf="isFavorite" (click)="removeFavorite()">Remove from favorites</button>
@@ -93,16 +97,16 @@
 
       <div class="reactions">
 
-        <button 
+        <button
           [class.active]="r.userReaction === true"
           (click)="react(r.roomReviewID,true)">
-          👍 {{r.likes}}
+          &#128077; {{r.likes}}
         </button>
 
-        <button 
+        <button
           [class.active]="r.userReaction === false"
           (click)="react(r.roomReviewID,false)">
-          👎 {{r.dislikes}}
+          &#128078; {{r.dislikes}}
         </button>
 
       </div>

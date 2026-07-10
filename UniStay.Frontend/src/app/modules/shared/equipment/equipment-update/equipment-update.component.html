@@ -1,4 +1,4 @@
-*<div class="equipment-edit-container">
+<div class="equipment-edit-container">
 
   <mat-card @formAnimation>
 
@@ -51,11 +51,7 @@
 
       <!-- BUTTONS -->
       <div class="button-group">
-        <button mat-raised-button
-                color="primary"
-                type="submit" @fieldAnimation>
-          Save
-        </button>
+
 
         <button mat-stroked-button
                 color="warn"
@@ -63,6 +59,14 @@
                 (click)="back()" @fieldAnimation>
           Back
         </button>
+        
+        <button mat-raised-button
+                color="primary"
+                type="submit" @fieldAnimation>
+          Save
+        </button>
+
+        
       </div>
 
     </form>
