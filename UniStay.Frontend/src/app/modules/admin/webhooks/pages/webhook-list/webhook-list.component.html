@@ -1,0 +1,148 @@
+<div class="webhook-page">
+  <div class="page-header">
+    <div>
+      <h1>{{ 'ADMIN.WEBHOOKS.TITLE' | translate }}</h1>
+      <p>{{ 'ADMIN.WEBHOOKS.SUBTITLE' | translate }}</p>
+    </div>
+
+    <button
+      *ngIf="!showForm()"
+      mat-button
+      class="add-webhook-action"
+      type="button"
+      (click)="showForm.set(true)">
+      + {{ 'ADMIN.WEBHOOKS.ADD_BTN' | translate }}
+    </button>
+  </div>
+
+  <mat-card class="webhook-form-card" *ngIf="showForm()">
+    <mat-card-header>
+      <mat-card-title>{{ 'ADMIN.WEBHOOKS.FORM_TITLE' | translate }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" class="webhook-form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'ADMIN.WEBHOOKS.URL_LABEL' | translate }}</mat-label>
+          <mat-icon matPrefix>link</mat-icon>
+          <input matInput formControlName="url" [placeholder]="'ADMIN.WEBHOOKS.URL_PLACEHOLDER' | translate" />
+          <mat-error *ngIf="form.get('url')?.hasError('required')">{{ 'ADMIN.WEBHOOKS.URL_REQUIRED' | translate }}</mat-error>
+          <mat-error *ngIf="form.get('url')?.hasError('pattern')">{{ 'ADMIN.WEBHOOKS.URL_INVALID' | translate }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'ADMIN.WEBHOOKS.SECRET_LABEL' | translate }}</mat-label>
+          <mat-icon matPrefix>key</mat-icon>
+          <input matInput type="password" formControlName="secret" [placeholder]="'ADMIN.WEBHOOKS.SECRET_PLACEHOLDER' | translate" />
+          <mat-hint>{{ 'ADMIN.WEBHOOKS.SECRET_HINT' | translate }}</mat-hint>
+          <mat-error *ngIf="form.get('secret')?.hasError('required')">{{ 'ADMIN.WEBHOOKS.SECRET_REQUIRED' | translate }}</mat-error>
+          <mat-error *ngIf="form.get('secret')?.hasError('minlength')">
+            {{ 'ADMIN.WEBHOOKS.SECRET_MIN' | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'ADMIN.WEBHOOKS.DESC_LABEL' | translate }}</mat-label>
+          <input matInput formControlName="description" [placeholder]="'ADMIN.WEBHOOKS.DESC_PLACEHOLDER' | translate" />
+        </mat-form-field>
+
+        <div class="event-picker">
+          <p class="event-picker__label">{{ 'ADMIN.WEBHOOKS.EVENTS_LABEL' | translate }}</p>
+          <div class="event-picker__chips">
+            <button
+              *ngFor="let event of availableEvents"
+              type="button"
+              class="event-chip"
+              [class.event-chip--selected]="isEventSelected(event)"
+              (click)="toggleEvent(event)">
+              <mat-icon>{{ isEventSelected(event) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+              {{ event }}
+            </button>
+          </div>
+          <p class="event-picker__hint">{{ 'ADMIN.WEBHOOKS.EVENTS_HINT' | translate }}</p>
+        </div>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" (click)="cancelForm()">{{ 'ADMIN.WEBHOOKS.CANCEL_BTN' | translate }}</button>
+          <button mat-button class="submit-webhook-action" type="submit" [disabled]="submitting()">
+            <mat-spinner *ngIf="submitting()" diameter="18"></mat-spinner>
+            <span *ngIf="!submitting()">{{ 'ADMIN.WEBHOOKS.SAVE_BTN' | translate }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="loading-state" *ngIf="loading()">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading()">
+    <p class="error-state" *ngIf="error() as errorMessage">{{ errorMessage | translate }}</p>
+
+    <div class="empty-state" *ngIf="subscriptions().length === 0 && !error()">
+      <mat-icon>webhook</mat-icon>
+      <p>{{ 'ADMIN.WEBHOOKS.EMPTY' | translate }}</p>
+    </div>
+
+    <mat-card class="table-card" *ngIf="subscriptions().length > 0">
+      <mat-table [dataSource]="subscriptions()">
+        <ng-container matColumnDef="url">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.WEBHOOKS.COL_URL' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let subscription">
+            <a [href]="subscription.url" target="_blank" rel="noopener" class="webhook-url">
+              {{ subscription.url }}
+            </a>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.WEBHOOKS.COL_DESC' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let subscription">{{ subscription.description || '-' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="events">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.WEBHOOKS.COL_EVENTS' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let subscription">
+            <span class="event-badge" *ngFor="let event of subscription.events">{{ event }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.WEBHOOKS.COL_CREATED' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let subscription">{{ subscription.createdAt | date:'mediumDate' }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let subscription" class="actions-cell">
+            <button
+              mat-icon-button
+              color="primary"
+              type="button"
+              [matTooltip]="'ADMIN.WEBHOOKS.TEST_BTN' | translate"
+              [disabled]="testingId() === subscription.id || !!deletingId()"
+              (click)="onTest(subscription.id)">
+              <mat-spinner *ngIf="testingId() === subscription.id" diameter="20"></mat-spinner>
+              <mat-icon *ngIf="testingId() !== subscription.id">send</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              color="warn"
+              type="button"
+              [matTooltip]="'ADMIN.WEBHOOKS.DELETE_BTN' | translate"
+              [disabled]="deletingId() === subscription.id || !!testingId()"
+              (click)="onDelete(subscription.id)">
+              <mat-spinner *ngIf="deletingId() === subscription.id" diameter="20"></mat-spinner>
+              <mat-icon *ngIf="deletingId() !== subscription.id">delete_outline</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </mat-card>
+  </ng-container>
+</div>

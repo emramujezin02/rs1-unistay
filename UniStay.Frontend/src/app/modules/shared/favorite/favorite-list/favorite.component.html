@@ -1,0 +1,38 @@
+<h2>My favorite rooms</h2>
+
+<div *ngIf="loading" class="favorite-state">
+  Loading favorites...
+</div>
+
+<div *ngIf="!loading && errorMessage" class="favorite-state favorite-state--error">
+  {{ errorMessage }}
+</div>
+
+<div *ngIf="!loading && !errorMessage && rooms.length === 0" class="favorite-state">
+  You do not have favorite rooms yet.
+</div>
+
+<div class="rooms-grid" *ngIf="!loading && !errorMessage && rooms.length > 0">
+
+  <div *ngFor="let room of rooms" class="room-card" (click)="openRoom(room.roomID)" [@fadeIn]>
+
+    <img
+      [src]="room.images.length? room.images[0] : defaultRoomImageUrl"
+      (error)="onImageError($event)"
+      class="room-image">
+
+    <div class="room-info">
+      <div class="room-title">
+        Room {{room.roomNumber}}
+      </div>
+
+      <div class="room-meta" *ngIf="room.floor || room.maxOccupancy">
+        Floor {{room.floor || '-'}} &bull; Max {{room.maxOccupancy || '-'}}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<router-outlet></router-outlet>

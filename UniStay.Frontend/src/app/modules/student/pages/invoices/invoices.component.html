@@ -1,0 +1,242 @@
+<div class="invoices-container">
+  <div class="invoices-header">
+    <h1>
+      <i class="fa-solid fa-file-invoice-dollar"></i>My Invoices
+    </h1>
+    <div class="header-controls">
+      <input type="text" placeholder="Search invoices..." class="search-input">
+      <button class="filter-button">
+        <i class="fa-solid fa-filter"></i>Filter by Status
+      </button>
+    </div>
+  </div>
+
+  <div class="invoices-table-card">
+    <div class="table-wrapper">
+      <table class="invoices-table">
+        <thead>
+        <tr>
+          <th>Invoice #</th>
+          <th>Date</th>
+          <th>Total Amount</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (invoice of invoices(); track invoice.invoiceID) {
+            <tr>
+              <td class="invoice-id">{{ invoice.invoiceID }}</td>
+
+
+              <td>{{ invoice.issuedAt ? 'Issued' : 'Not issued' }}</td>
+
+
+              <td class="amount">${{ invoice.totalAmount.toFixed(2) }}</td>
+
+              <td class="status-cell">
+                <span
+                  class="status-badge"
+                  [ngClass]="{
+                    'paid': invoice.paid,
+                    'unpaid': !invoice.paid
+                  }"
+                >
+                  @if (invoice.paid) {
+                    <i class="fa-solid fa-check-circle"></i>
+                  } @else {
+                    <i class="fa-solid fa-exclamation-circle"></i>
+                  }
+                  {{ invoice.paid ? 'Paid' : 'Unpaid' }}
+                </span>
+              </td>
+
+              <td class="actions-cell">
+                @if (!invoice.paid) {
+                  <button
+                    (click)="payInvoice(invoice.invoiceID)"
+                    class="pay-button"
+                  >
+                    Pay Now
+                  </button>
+                } @else {
+                  <button
+                    (click)="downloadInvoice(invoice.invoiceID)"
+                    class="pay-button"
+                  >
+                    Get PDF
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="table-pagination">
+      <div class="pagination-summary">
+        <span>Showing 1 to {{invoices().length}} of {{invoices().length}} entries</span>
+      </div>
+      <div class="pagination-controls">
+        <button class="pagination-button" disabled>&lt; Previous</button>
+        <span class="pagination-current-page">1</span>
+        <button class="pagination-button" disabled>Next &gt;</button>
+      </div>
+    </div>
+  </div>
+</div>
+@if (showPayment) {
+  <!-- OVERLAY -->
+  <div class="stripe-overlay" (click)="closePayment()">
+
+    <!-- MODAL -->
+    <div class="stripe-modal" (click)="$event.stopPropagation()">
+      <h2>
+        <i class="fa-solid fa-credit-card"></i>
+        Pay invoice
+      </h2>
+
+      <div class="stripe-card-wrapper">
+        <div #cardElement></div>
+      </div>
+
+      <div class="stripe-actions">
+        <button class="confirm-button" (click)="confirmPayment()">
+          Confirm payment
+        </button>
+
+        <button class="cancel-button" (click)="closePayment()">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+  </div>
+}
+
+
+
+<!--
+<div class="invoices-container">
+
+  <div class="invoices-header">
+    <h1>
+      <mat-icon>receipt_long</mat-icon>
+      My Invoices
+    </h1>
+
+    <div class="header-controls">
+      <mat-form-field appearance="outline">
+        <mat-label>Search invoices</mat-label>
+        <input matInput placeholder="Search...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <button mat-stroked-button>
+        <mat-icon>filter_list</mat-icon>
+        Filter by Status
+      </button>
+    </div>
+  </div>
+
+  <mat-card class="table-card">
+
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="invoices()" class="mat-elevation-z1">
+
+        
+        <ng-container matColumnDef="invoiceID">
+          <th mat-header-cell *matHeaderCellDef>Invoice #</th>
+          <td mat-cell *matCellDef="let invoice">
+            {{ invoice.invoiceID }}
+          </td>
+        </ng-container>
+
+        
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let invoice">
+            {{ invoice.issuedAt ? 'Issued' : 'Not issued' }}
+          </td>
+        </ng-container>
+
+        
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let invoice">
+            ${{ invoice.totalAmount.toFixed(2) }}
+          </td>
+        </ng-container>
+
+       
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let invoice">
+            <span class="status-badge"
+              [class.paid]="invoice.paid"
+              [class.unpaid]="!invoice.paid">
+              <mat-icon>
+                {{ invoice.paid ? 'check_circle' : 'error' }}
+              </mat-icon>
+              {{ invoice.paid ? 'Paid' : 'Unpaid' }}
+            </span>
+          </td>
+        </ng-container>
+
+        
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let invoice">
+
+            <button
+              *ngIf="!invoice.paid"
+              mat-raised-button
+              color="primary"
+              (click)="payInvoice(invoice.invoiceID)">
+              Pay Now
+            </button>
+
+            <button
+              *ngIf="invoice.paid"
+              mat-stroked-button
+              (click)="downloadInvoice(invoice.invoiceID)">
+              Get PDF
+            </button>
+
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['invoiceID','date','amount','status','actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['invoiceID','date','amount','status','actions'];"></tr>
+
+      </table>
+    </div>
+
+  </mat-card>
+</div>
+
+
+<mat-dialog-content *ngIf="showPayment" class="stripe-dialog">
+
+  <h2 mat-dialog-title>
+    <mat-icon>credit_card</mat-icon>
+    Pay invoice
+  </h2>
+
+  <div class="stripe-card-wrapper">
+    <div #cardElement></div>
+  </div>
+
+  <div class="stripe-actions">
+    <button mat-raised-button color="primary" (click)="confirmPayment()">
+      Confirm payment
+    </button>
+
+    <button mat-button (click)="closePayment()">
+      Cancel
+    </button>
+  </div>
+
+</mat-dialog-content>
+
+-->

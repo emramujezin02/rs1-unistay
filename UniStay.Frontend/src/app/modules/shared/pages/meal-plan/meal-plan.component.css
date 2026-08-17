@@ -1,0 +1,8 @@
+.features {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  font-size: 1.5rem; /* isto kao text-2xl */
+  color: #6b7280; /* text-gray-500 */
+}

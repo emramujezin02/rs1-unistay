@@ -1,0 +1,104 @@
+﻿<section class="admin-shell">
+  <aside class="admin-sidebar" aria-label="Admin dashboard menu">
+    <div class="admin-sidebar__brand">
+      <span class="admin-sidebar__brand-text">UniStay</span>
+      <span class="admin-sidebar__badge">Admin</span>
+    </div>
+
+    <nav class="admin-sidebar__nav" aria-label="Admin navigation">
+      <button
+        *ngFor="let item of menuItems"
+        type="button"
+        class="admin-sidebar__nav-item"
+        [class.admin-sidebar__nav-item--active]="isActive(item.route)"
+        (click)="navigateTo(item.route)">
+        <mat-icon class="admin-sidebar__nav-icon">{{ item.icon }}</mat-icon>
+        <span class="admin-sidebar__nav-label">{{ item.title }}</span>
+      </button>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+      <div class="admin-sidebar__user">
+        <div class="admin-sidebar__avatar">{{ userInitial }}</div>
+        <div class="admin-sidebar__user-info">
+          <span class="admin-sidebar__user-email">{{ userEmail || 'admin' }}</span>
+          <span class="admin-sidebar__user-role">{{ userRole || 'administrator' }}</span>
+        </div>
+      </div>
+
+      <button type="button" class="admin-sidebar__logout" (click)="logout()" aria-label="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <span class="admin-topbar__brand">UniStay</span>
+
+      <div class="dashboard-toolbar">
+        <div class="admin-topbar__avatar" aria-label="Admin profile">
+          {{ userInitial }}
+        </div>
+        <app-notification-bell></app-notification-bell>
+      </div>
+    </header>
+
+    <section class="admin-content">
+      <ng-container *ngIf="isStatisticsRoute; else routedAdminContent">
+        <section class="statistics-panel" aria-labelledby="admin-statistics-title">
+          <div class="section-heading">
+            <div>
+              <h1 id="admin-statistics-title">Statistics Overview</h1>
+              <p>UniStay analytics for logged-in users, total users and sent messages.</p>
+            </div>
+          </div>
+
+          <div class="stats-state" *ngIf="statsLoading">
+            <mat-icon>hourglass_top</mat-icon>
+            <span>Loading dashboard statistics...</span>
+          </div>
+
+          <div class="stats-state stats-state--error" *ngIf="statsError && !statsLoading">
+            <mat-icon>info</mat-icon>
+            <span>Statistics are temporarily unavailable.</span>
+          </div>
+
+          <div class="stats-grid" *ngIf="!statsLoading">
+            <mat-card class="stat-card active">
+              <mat-icon class="stat-icon">person</mat-icon>
+              <div class="stat-content">
+                <h3>Active Users</h3>
+                <p>{{ stats.activeUsers }}</p>
+              </div>
+            </mat-card>
+
+            <mat-card class="stat-card total">
+              <mat-icon class="stat-icon">groups</mat-icon>
+              <div class="stat-content">
+                <h3>Total Users</h3>
+                <p>{{ stats.totalUsers }}</p>
+              </div>
+            </mat-card>
+
+            <mat-card class="stat-card messages">
+              <mat-icon class="stat-icon">chat</mat-icon>
+              <div class="stat-content">
+                <h3>Total Messages</h3>
+                <p>{{ stats.totalMessages }}</p>
+              </div>
+            </mat-card>
+          </div>
+        </section>
+      </ng-container>
+
+      <ng-template #routedAdminContent>
+        <section class="route-panel" [@routeTransition]="prepareRoute(outlet)">
+          <router-outlet #outlet="outlet"></router-outlet>
+        </section>
+      </ng-template>
+    </section>
+  </main>
+</section>
+
+

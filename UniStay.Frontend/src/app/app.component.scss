@@ -1,0 +1,26 @@
+.theme-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.theme-toggle.light {
+  background: white;
+  border: 2px solid #ddd;
+}
+
+.theme-toggle.dark {
+  background: black;
+  border: 2px solid #333;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+}

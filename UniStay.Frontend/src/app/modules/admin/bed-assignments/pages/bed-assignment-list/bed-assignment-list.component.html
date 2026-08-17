@@ -1,0 +1,84 @@
+<div class="page-header">
+  <h1>{{ 'ADMIN.BED_ASSIGNMENTS.PAGE_TITLE' | translate }}</h1>
+  <button mat-button class="assign-action" type="button" (click)="openAssignDialog()">
+    <mat-icon>add</mat-icon>
+    {{ 'ADMIN.BED_ASSIGNMENTS.ASSIGN_BTN' | translate }}
+  </button>
+</div>
+
+<mat-form-field appearance="outline" class="search-field">
+  <mat-label>{{ 'ADMIN.BED_ASSIGNMENTS.SEARCH_LABEL' | translate }}</mat-label>
+  <input matInput [placeholder]="'ADMIN.BED_ASSIGNMENTS.SEARCH_PLACEHOLDER' | translate" (input)="facade.search($any($event.target).value)" />
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>
+
+<mat-spinner *ngIf="facade.loading()" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!facade.loading()">
+  <p class="error-state" *ngIf="facade.error()">{{ facade.error() }}</p>
+  <p class="empty-state" *ngIf="facade.isEmpty() && !facade.error()">{{ 'ADMIN.BED_ASSIGNMENTS.EMPTY' | translate }}</p>
+
+  <div class="bed-assignments-table-wrapper" *ngIf="facade.hasItems()">
+    <mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="student">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.BED_ASSIGNMENTS.COL_STUDENT' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let assignment">
+          <div class="student-cell">
+            <strong>{{ assignment.studentFirstName }} {{ assignment.studentLastName }}</strong>
+            <small *ngIf="assignment.studentIdentifier">{{ assignment.studentIdentifier }}</small>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="bed">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.BED_ASSIGNMENTS.COL_BED' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let assignment">
+          <span class="bed-badge">{{ assignment.bedNumber }}</span>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="room">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.BED_ASSIGNMENTS.COL_ROOM' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let assignment">{{ assignment.roomNumber }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="fromDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.BED_ASSIGNMENTS.COL_FROM' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let assignment">{{ assignment.fromDate | date:'mediumDate' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="toDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.BED_ASSIGNMENTS.COL_TO' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let assignment">{{ assignment.toDate | date:'mediumDate' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.BED_ASSIGNMENTS.COL_ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let assignment">
+          <mat-chip [color]="isActive(assignment) ? 'primary' : 'accent'" selected>
+            {{ (isActive(assignment) ? 'ADMIN.BED_ASSIGNMENTS.STATUS_ACTIVE' : 'ADMIN.BED_ASSIGNMENTS.STATUS_INACTIVE') | translate }}
+          </mat-chip>
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            [matTooltip]="'ADMIN.BED_ASSIGNMENTS.RELEASE_TOOLTIP' | translate"
+            (click)="facade.release(assignment.assignmentId)">
+            <mat-icon>link_off</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+  <mat-paginator
+    *ngIf="facade.hasItems()"
+    [length]="facade.totalCount()"
+    [pageSize]="facade.filters().pageSize"
+    [pageIndex]="facade.filters().page - 1"
+    (page)="facade.changePage($event.pageIndex)">
+  </mat-paginator>
+</ng-container>

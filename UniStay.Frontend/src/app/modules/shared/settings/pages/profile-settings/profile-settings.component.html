@@ -1,0 +1,191 @@
+<section class="profile-settings-shell">
+  <main class="profile-settings">
+    <header class="profile-settings__header">
+      <div>
+        <h1>{{ showLanguageSelector ? ('SETTINGS.TITLE' | translate) : 'Profile settings' }}</h1>
+        <p>{{ showLanguageSelector ? ('SETTINGS.SUBTITLE' | translate) : 'Manage your personal details and password.' }}</p>
+      </div>
+    </header>
+
+    <article class="settings-panel">
+      <div class="settings-panel__header">
+        <mat-icon>manage_accounts</mat-icon>
+        <div>
+          <h2>{{ showLanguageSelector ? ('SETTINGS.PROFILE_TITLE' | translate) : 'Personal information' }}</h2>
+          <p>{{ showLanguageSelector ? ('SETTINGS.PROFILE_DESC' | translate) : 'Name, email, username, phone, and profile image.' }}</p>
+        </div>
+      </div>
+
+      <div class="settings-state" *ngIf="profileLoading">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>{{ showLanguageSelector ? ('SETTINGS.LOADING_PROFILE' | translate) : 'Loading profile...' }}</span>
+      </div>
+
+      <ng-container *ngIf="!profileLoading">
+        <div class="settings-alert settings-alert--success" *ngIf="profileSuccess">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ profileSuccess }}</span>
+        </div>
+
+        <div class="settings-alert settings-alert--error" *ngIf="profileError">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ profileError }}</span>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="settings-form">
+          <div class="settings-form__row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ showLanguageSelector ? ('SETTINGS.FIRST_NAME' | translate) : 'First name' }}</mat-label>
+              <input matInput formControlName="firstName" autocomplete="given-name">
+              <mat-error *ngIf="isInvalid('firstName')">{{ showLanguageSelector ? ('SETTINGS.FIRST_NAME_REQUIRED' | translate) : 'First name is required.' }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ showLanguageSelector ? ('SETTINGS.LAST_NAME' | translate) : 'Last name' }}</mat-label>
+              <input matInput formControlName="lastName" autocomplete="family-name">
+              <mat-error *ngIf="isInvalid('lastName')">{{ showLanguageSelector ? ('SETTINGS.LAST_NAME_REQUIRED' | translate) : 'Last name is required.' }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="settings-form__row">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ showLanguageSelector ? ('SETTINGS.USERNAME' | translate) : 'Username' }}</mat-label>
+              <input matInput formControlName="username" autocomplete="username">
+              <mat-error *ngIf="profileForm.get('username')?.hasError('required')">{{ showLanguageSelector ? ('SETTINGS.USERNAME_REQUIRED' | translate) : 'Username is required.' }}</mat-error>
+              <mat-error *ngIf="profileForm.get('username')?.hasError('minlength')">{{ showLanguageSelector ? ('SETTINGS.USERNAME_MIN' | translate) : 'Use at least 3 characters.' }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ showLanguageSelector ? ('SETTINGS.EMAIL' | translate) : 'Email' }}</mat-label>
+              <input matInput formControlName="email" type="email" autocomplete="email">
+              <mat-error *ngIf="profileForm.get('email')?.hasError('required')">{{ showLanguageSelector ? ('SETTINGS.EMAIL_REQUIRED' | translate) : 'Email is required.' }}</mat-error>
+              <mat-error *ngIf="profileForm.get('email')?.hasError('email')">{{ showLanguageSelector ? ('SETTINGS.EMAIL_INVALID' | translate) : 'Enter a valid email.' }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="settings-form__row" *ngIf="!showLanguageSelector">
+            <mat-form-field appearance="outline">
+              <mat-label>{{ showLanguageSelector ? ('SETTINGS.PHONE' | translate) : 'Phone' }}</mat-label>
+              <input matInput formControlName="phone" type="tel" autocomplete="tel">
+              <mat-error *ngIf="profileForm.get('phone')?.hasError('pattern')">{{ showLanguageSelector ? ('SETTINGS.PHONE_INVALID' | translate) : 'Use 6 to 15 digits.' }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>{{ showLanguageSelector ? ('SETTINGS.DATE_OF_BIRTH' | translate) : 'Date of birth' }}</mat-label>
+              <input matInput formControlName="dateOfBirth" type="date">
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" *ngIf="!showLanguageSelector">
+            <mat-label>{{ showLanguageSelector ? ('SETTINGS.PROFILE_IMAGE' | translate) : 'Profile image URL' }}</mat-label>
+            <input matInput formControlName="profileImage" autocomplete="off">
+            <mat-error *ngIf="profileForm.get('profileImage')?.hasError('maxlength')">{{ showLanguageSelector ? ('SETTINGS.PROFILE_IMAGE_MAX' | translate) : 'Maximum length is 500 characters.' }}</mat-error>
+          </mat-form-field>
+
+          <div class="settings-panel__actions">
+            <button class="settings-text-action" type="submit" [disabled]="profileForm.invalid || profileSaving">
+              <mat-spinner *ngIf="profileSaving" diameter="18"></mat-spinner>
+              <span>{{ showLanguageSelector ? ('SETTINGS.SAVE_PROFILE' | translate) : 'Save profile' }}</span>
+            </button>
+          </div>
+        </form>
+      </ng-container>
+    </article>
+
+    <article class="settings-panel">
+      <div class="settings-panel__header">
+        <mat-icon>lock_reset</mat-icon>
+        <div>
+          <h2>{{ showLanguageSelector ? ('SETTINGS.PASSWORD_TITLE' | translate) : 'Change password' }}</h2>
+          <p>{{ showLanguageSelector ? ('SETTINGS.PASSWORD_DESC' | translate) : 'Confirm your current password before setting a new one.' }}</p>
+        </div>
+      </div>
+
+      <div class="settings-alert settings-alert--success" *ngIf="passwordSuccess">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ passwordSuccess }}</span>
+      </div>
+
+      <div class="settings-alert settings-alert--error" *ngIf="passwordError">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ passwordError }}</span>
+      </div>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="settings-form settings-form--single">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ showLanguageSelector ? ('SETTINGS.CURRENT_PASSWORD' | translate) : 'Current password' }}</mat-label>
+          <input matInput formControlName="currentPassword" [type]="showCurrentPassword ? 'text' : 'password'" autocomplete="current-password">
+          <button mat-icon-button matSuffix type="button" (click)="showCurrentPassword = !showCurrentPassword" [attr.aria-label]="showLanguageSelector ? ('SETTINGS.SHOW_CURRENT_PASSWORD' | translate) : 'Show current password'">
+            <mat-icon>{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="isInvalid('currentPassword', passwordForm)">{{ showLanguageSelector ? ('SETTINGS.CURRENT_PASSWORD_REQUIRED' | translate) : 'Current password is required.' }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ showLanguageSelector ? ('SETTINGS.NEW_PASSWORD' | translate) : 'New password' }}</mat-label>
+          <input matInput formControlName="newPassword" [type]="showNewPassword ? 'text' : 'password'" autocomplete="new-password">
+          <button mat-icon-button matSuffix type="button" (click)="showNewPassword = !showNewPassword" [attr.aria-label]="showLanguageSelector ? ('SETTINGS.SHOW_NEW_PASSWORD' | translate) : 'Show new password'">
+            <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">{{ showLanguageSelector ? ('SETTINGS.PASSWORD_MIN' | translate) : 'Use at least 6 characters.' }}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ showLanguageSelector ? ('SETTINGS.CONFIRM_PASSWORD' | translate) : 'Confirm new password' }}</mat-label>
+          <input matInput formControlName="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" autocomplete="new-password">
+          <button mat-icon-button matSuffix type="button" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showLanguageSelector ? ('SETTINGS.SHOW_CONFIRM_PASSWORD' | translate) : 'Show confirmed password'">
+            <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="passwordForm.hasError('passwordMismatch')">{{ showLanguageSelector ? ('SETTINGS.PASSWORD_MISMATCH' | translate) : 'Passwords do not match.' }}</mat-error>
+        </mat-form-field>
+
+        <div class="settings-panel__actions">
+          <button class="settings-text-action" type="submit" [disabled]="passwordForm.invalid || passwordSaving">
+            <mat-spinner *ngIf="passwordSaving" diameter="18"></mat-spinner>
+            <span>{{ showLanguageSelector ? ('SETTINGS.CHANGE_PASSWORD' | translate) : 'Change password' }}</span>
+          </button>
+        </div>
+      </form>
+    </article>
+
+    <article class="settings-panel" *ngIf="showLanguageSelector">
+      <div class="settings-panel__header">
+        <mat-icon>language</mat-icon>
+        <div>
+          <h2>{{ 'SETTINGS.LANGUAGE_TITLE' | translate }}</h2>
+          <p>{{ 'SETTINGS.LANGUAGE_DESC' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="language-options">
+        <button
+          type="button"
+          class="language-options__button"
+          *ngFor="let language of languages"
+          [class.language-options__button--active]="isActiveLanguage(language.code)"
+          (click)="setLanguage(language.code)">
+          <span class="language-options__identity">
+            <span class="language-options__badge">{{ language.label }}</span>
+            <span class="language-options__name">{{ language.labelKey | translate }}</span>
+          </span>
+          <span class="language-options__active" *ngIf="isActiveLanguage(language.code)">
+            <mat-icon>check_circle</mat-icon>
+            {{ 'SETTINGS.ACTIVE' | translate }}
+          </span>
+        </button>
+      </div>
+    </article>
+
+    <div class="settings-mobile-logout" *ngIf="showEmployeePanel || showLanguageSelector">
+      <button
+        mat-raised-button
+        color="warn"
+        type="button"
+        class="settings-mobile-logout__button"
+        (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>{{ showLanguageSelector ? 'Logout' : 'Log out' }}</span>
+      </button>
+    </div>
+  </main>
+</section>

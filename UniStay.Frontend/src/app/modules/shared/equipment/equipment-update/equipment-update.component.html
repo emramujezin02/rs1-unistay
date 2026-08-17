@@ -1,0 +1,107 @@
+<div class="equipment-edit-container">
+
+  <mat-card @formAnimation>
+
+    <h2>Edit Equipment</h2>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="loading">
+      <mat-progress-spinner
+        diameter="40"
+        mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+
+    <!-- FORM -->
+    <form *ngIf="!loading"
+          [formGroup]="form"
+          (ngSubmit)="saveEquipment()"
+          class="form-layout">
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Name</mat-label>
+        <input matInput
+               formControlName="name"
+               minlength="2"
+               maxlength="150">
+        <mat-error *ngIf="form.get('name')?.hasError('minlength')">Name must be at least 2 characters.</mat-error>
+        <mat-error *ngIf="form.get('name')?.hasError('maxlength')">Name cannot exceed 150 characters.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Description</mat-label>
+        <textarea matInput
+                  rows="3"
+                  formControlName="description"
+                  maxlength="1000">
+        </textarea>
+        <mat-error *ngIf="form.get('description')?.hasError('maxlength')">Description cannot exceed 1000 characters.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Rental Price</mat-label>
+        <input matInput
+               formControlName="rentalPrice"
+               maxlength="100">
+        <mat-error *ngIf="form.get('rentalPrice')?.hasError('maxlength')">Rental price cannot exceed 100 characters.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Type</mat-label>
+        <input matInput
+               formControlName="equipmentType"
+               maxlength="100">
+        <mat-error *ngIf="form.get('equipmentType')?.hasError('maxlength')">Type cannot exceed 100 characters.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Quantity</mat-label>
+        <input matInput
+               type="number"
+               formControlName="quantity"
+               required
+               min="0">
+        <mat-error *ngIf="form.get('quantity')?.hasError('required')">Quantity is required.</mat-error>
+        <mat-error *ngIf="form.get('quantity')?.hasError('min')">Quantity must be 0 or greater.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Available Quantity</mat-label>
+        <input matInput
+               type="number"
+               formControlName="availableQuantity"
+               required
+               min="0">
+        <mat-error *ngIf="form.get('availableQuantity')?.hasError('required')">Available quantity is required.</mat-error>
+        <mat-error *ngIf="form.get('availableQuantity')?.hasError('min')">Available quantity must be 0 or greater.</mat-error>
+      </mat-form-field>
+
+      <div class="form-error" *ngIf="(form.get('availableQuantity')?.touched || submitted) && hasInvalidQuantities()">
+        Available quantity cannot exceed quantity.
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="button-group">
+
+
+        <button mat-stroked-button
+                color="warn"
+                type="button"
+                (click)="back()" @fieldAnimation>
+          Back
+        </button>
+        
+        <button mat-raised-button
+                color="primary"
+                type="submit" @fieldAnimation>
+          Save
+        </button>
+
+        
+      </div>
+
+    </form>
+
+  </mat-card>
+
+</div>

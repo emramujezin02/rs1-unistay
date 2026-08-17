@@ -1,0 +1,152 @@
+.site-footer {
+  background-color: #111827;
+  color: #d1d5db;
+}
+
+.footer__container {
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  max-width: 1280px;
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.footer__brand-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.footer__brand-tagline {
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.footer__socials {
+  display: flex;
+}
+.footer__socials > *:not(:first-child) {
+  margin-left: 1rem;
+}
+
+.footer__social-link {
+  color: #9ca3af;
+  transition: color 300ms;
+}
+
+.footer__social-link:hover {
+  color: #fff;
+}
+
+.footer__social-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: currentColor;
+}
+
+.footer__links-title {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.footer__links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer__links-list > * + * {
+  margin-top: 0.5rem;
+}
+
+.footer__link {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 300ms;
+}
+
+.footer__link:hover {
+  color: #fff;
+}
+
+.footer__contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #9ca3af;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer__contact-list > * + * {
+  margin-top: 0.75rem;
+}
+
+.footer__contact-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.footer__contact-item--center {
+  align-items: center;
+}
+
+.footer__contact-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.75rem;
+  margin-top: 0.25rem;
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.footer__contact-item--center .footer__contact-icon {
+  margin-top: 0;
+}
+
+.footer__contact-link {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 300ms;
+}
+
+.footer__contact-link:hover {
+  color: #fff;
+}
+
+
+.footer__divider {
+  border-color: #374151;
+  border-top-width: 1px;
+  border-style: solid;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer__copyright {
+  text-align: center;
+  color: #6b7280;
+}

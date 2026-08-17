@@ -1,0 +1,41 @@
+<div class="page-header">
+  <h1>{{ (isEdit ? 'ADMIN.ROOMS.EDIT_ROOM' : 'ADMIN.ROOMS.ADD_ROOM') | translate }}</h1>
+</div>
+
+<mat-card class="form-card">
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="room-form">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'ADMIN.ROOMS.ROOM_NUMBER_LABEL' | translate }}</mat-label>
+        <input matInput formControlName="roomNumber" />
+        <mat-error *ngIf="form.controls.roomNumber.hasError('required')">{{ 'ADMIN.ROOMS.ROOM_NUMBER_REQUIRED' | translate }}</mat-error>
+      </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ID doma</mat-label>
+          <input matInput type="number" formControlName="hallId" />
+          <mat-error *ngIf="form.controls.hallId.hasError('required')">ID doma je obavezan.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Kapacitet</mat-label>
+          <input matInput type="number" formControlName="maxOccupancy" />
+          <mat-error *ngIf="form.controls.maxOccupancy.hasError('max')">{{ 'ADMIN.ROOMS.MAX_OCCUPANCY_MAX' | translate }}</mat-error>
+        </mat-form-field>
+
+
+      <mat-form-field appearance="outline">
+        <mat-label>Cijena po mjesecu</mat-label>
+        <input matInput type="number" formControlName="monthlyPrice" />
+        <mat-error *ngIf="form.controls.monthlyPrice.hasError('required')">Cijena po mjesecu je obavezna.</mat-error>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="cancel()">{{ 'ADMIN.ROOMS.CANCEL' | translate }}</button>
+        <button mat-button class="submit-room-action" type="submit">
+          {{ isEdit ? ('ADMIN.ROOMS.SAVE_CHANGES' | translate) : 'Kreiraj sobu' }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

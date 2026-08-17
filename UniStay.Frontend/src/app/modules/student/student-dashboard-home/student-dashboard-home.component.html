@@ -1,0 +1,168 @@
+<div class="dashboard">
+  <div class="dashboard__welcome">
+    <div class="dashboard__welcome-text">
+      <h1 class="dashboard__title">{{ greetingKey | translate }}, {{ userFirstName }}</h1>
+      <p class="dashboard__subtitle">
+        {{ 'STUDENT.DASHBOARD_HOME.SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <div class="dashboard__welcome-badge">
+      <mat-icon>school</mat-icon>
+      <span>{{ 'STUDENT.DASHBOARD_HOME.BADGE' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="ann-card">
+    <div class="ann-card__header">
+      <div class="ann-card__title-row">
+        <mat-icon class="ann-card__icon">campaign</mat-icon>
+        <h2 class="ann-card__title">{{ 'STUDENT.DASHBOARD_HOME.ANNOUNCEMENTS.TITLE' | translate }}</h2>
+      </div>
+    </div>
+
+    <div *ngIf="loadingAnnouncements()" class="ann-card__loading">
+      <mat-spinner diameter="28"></mat-spinner>
+    </div>
+
+    <p *ngIf="!loadingAnnouncements() && announcements().length === 0" class="ann-card__empty">
+      {{ 'STUDENT.DASHBOARD_HOME.ANNOUNCEMENTS.EMPTY' | translate }}
+    </p>
+
+    <div *ngIf="!loadingAnnouncements() && selectedNotification as announcement" class="ann-carousel">
+      <button
+        *ngIf="hasMultipleNotifications"
+        type="button"
+        class="ann-carousel__btn ann-carousel__btn--prev"
+        [attr.aria-label]="'STUDENT.DASHBOARD_HOME.ANNOUNCEMENTS.PREVIOUS' | translate"
+        (click)="previousNotification()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <div class="ann-carousel__track">
+        <article class="ann-card__item">
+          <div class="ann-card__meta">
+            <span>{{ announcement.audience }}</span>
+            <time>{{ announcement.createdAt | date:'mediumDate' }}</time>
+          </div>
+          <h3>{{ announcement.title }}</h3>
+          <div class="ann-card__body" [innerHTML]="announcement.content"></div>
+        </article>
+      </div>
+
+      <button
+        *ngIf="hasMultipleNotifications"
+        type="button"
+        class="ann-carousel__btn ann-carousel__btn--next"
+        [attr.aria-label]="'STUDENT.DASHBOARD_HOME.ANNOUNCEMENTS.NEXT' | translate"
+        (click)="nextNotification()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <div
+      *ngIf="!loadingAnnouncements() && hasMultipleNotifications"
+      class="ann-carousel__dots"
+      role="tablist"
+      [attr.aria-label]="'STUDENT.DASHBOARD_HOME.ANNOUNCEMENTS.NAVIGATION' | translate">
+      <button
+        *ngFor="let announcement of announcements(); let i = index"
+        type="button"
+        class="ann-carousel__dot"
+        [class.ann-carousel__dot--active]="i === currentNotificationIndex"
+        [attr.aria-label]="'STUDENT.DASHBOARD_HOME.ANNOUNCEMENTS.GO_TO' | translate:{ number: i + 1 }"
+        (click)="goToNotification(i)">
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="applicationFacade.loading()" class="dashboard__loading">
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!applicationFacade.loading() && applicationFacade.applicationStatus() !== 'Approved'">
+    <div *ngIf="applicationFacade.applicationStatus() === null" class="gate gate--none">
+      <div class="gate__icon-wrap gate__icon-wrap--none">
+        <mat-icon>assignment</mat-icon>
+      </div>
+      <h2 class="gate__title">{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.NONE_TITLE' | translate }}</h2>
+      <p class="gate__desc">
+        {{ 'STUDENT.DASHBOARD_HOME.APPLICATION.NONE_DESC' | translate }}
+      </p>
+      <button mat-raised-button color="primary" class="gate__cta" type="button" (click)="goApply()">
+        <mat-icon>send</mat-icon>
+        {{ 'STUDENT.DASHBOARD_HOME.APPLICATION.APPLY_BUTTON' | translate }}
+      </button>
+    </div>
+
+    <div *ngIf="applicationFacade.applicationStatus() === 'Pending'" class="gate gate--pending">
+      <div class="gate__icon-wrap gate__icon-wrap--pending">
+        <mat-icon>hourglass_top</mat-icon>
+      </div>
+      <h2 class="gate__title">{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.PENDING_TITLE' | translate }}</h2>
+      <p class="gate__desc">{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.PENDING_DESC' | translate }}</p>
+      <div class="gate__meta" *ngIf="applicationFacade.activeApplication() as app">
+        <span class="gate__meta-item">
+          <mat-icon>calendar_today</mat-icon>
+          {{ 'STUDENT.DASHBOARD_HOME.APPLICATION.APPLIED_ON' | translate }}: {{ app.appliedAt | date:'mediumDate' }}
+        </span>
+        <span class="gate__meta-item">
+          <mat-icon>bed</mat-icon>
+          {{ 'STUDENT.DASHBOARD_HOME.APPLICATION.ROOM_TYPE' | translate }}: {{ app.preferredRoomType }}
+        </span>
+      </div>
+      <span class="gate__chip gate__chip--pending">{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.STATUS_PENDING' | translate }}</span>
+    </div>
+
+    <div *ngIf="applicationFacade.applicationStatus() === 'Rejected'" class="gate gate--rejected">
+      <div class="gate__icon-wrap gate__icon-wrap--rejected">
+        <mat-icon>cancel</mat-icon>
+      </div>
+      <h2 class="gate__title">{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.REJECTED_TITLE' | translate }}</h2>
+      <p class="gate__desc">
+        {{ 'STUDENT.DASHBOARD_HOME.APPLICATION.REJECTED_DESC' | translate }}
+      </p>
+      <div class="gate__meta" *ngIf="applicationFacade.activeApplication() as app">
+        <span class="gate__meta-item">
+          <mat-icon>bed</mat-icon>
+          {{ 'STUDENT.DASHBOARD_HOME.APPLICATION.ROOM_TYPE' | translate }}: {{ app.preferredRoomType }}
+        </span>
+      </div>
+      <button mat-raised-button color="primary" class="gate__cta" type="button" (click)="goApply()">
+        <mat-icon>refresh</mat-icon>
+        {{ 'STUDENT.DASHBOARD_HOME.APPLICATION.APPLY_AGAIN' | translate }}
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!applicationFacade.loading() && applicationFacade.applicationStatus() === 'Approved'">
+    <div class="approved-strip">
+      <mat-icon class="approved-strip__icon">check_circle</mat-icon>
+      <div class="approved-strip__body">
+        <strong>{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.APPROVED_TITLE' | translate }}</strong>
+        <span>{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.APPROVED_DESC' | translate }}</span>
+      </div>
+      <span class="approved-strip__chip">{{ 'STUDENT.DASHBOARD_HOME.APPLICATION.STATUS_APPROVED' | translate }}</span>
+    </div>
+
+    <div class="dashboard__grid">
+      <button
+        *ngFor="let card of cards"
+        class="dash-card"
+        [class]="'dash-card dash-card--' + card.color"
+        type="button"
+        (click)="navigate(card.route)">
+        <div class="dash-card__icon-wrap">
+          <mat-icon class="dash-card__icon">{{ card.icon }}</mat-icon>
+        </div>
+        <div class="dash-card__body">
+          <h2 class="dash-card__title">{{ card.titleKey | translate }}</h2>
+          <p class="dash-card__desc">{{ card.descriptionKey | translate }}</p>
+        </div>
+        <div class="dash-card__arrow">
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </button>
+    </div>
+  </ng-container>
+</div>

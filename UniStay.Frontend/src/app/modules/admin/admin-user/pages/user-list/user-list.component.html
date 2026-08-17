@@ -1,0 +1,69 @@
+<div class="page-header">
+  <h1>{{ 'ADMIN.USERS.PAGE_TITLE' | translate }}</h1>
+</div>
+
+<mat-form-field appearance="outline" class="search-field">
+  <mat-label>{{ 'ADMIN.USERS.SEARCH_LABEL' | translate }}</mat-label>
+  <input matInput [formControl]="searchCtrl" [placeholder]="'ADMIN.USERS.SEARCH_PLACEHOLDER' | translate" />
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>
+
+<mat-spinner *ngIf="facade.loading()" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!facade.loading()">
+  <p class="error-state" *ngIf="facade.error()">{{ facade.error() }}</p>
+  <p class="empty-state" *ngIf="facade.isEmpty() && !facade.error()">{{ 'ADMIN.USERS.EMPTY' | translate }}</p>
+
+  <div class="users-table-wrapper" *ngIf="facade.hasUsers()">
+    <mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.USERS.COL_USERNAME' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">
+          <div class="user-cell">
+            <strong>{{ user.username }}</strong>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.USERS.COL_EMAIL' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.email }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.USERS.COL_FIRST_NAME' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.firstName }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.USERS.COL_LAST_NAME' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.lastName }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.USERS.COL_ROLE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{ user.roleName || ('ADMIN.USERS.ROLE_USER' | translate) }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.USERS.COL_ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let user">
+          <button mat-icon-button type="button" color="warn" [matTooltip]="'ADMIN.USERS.DELETE_TOOLTIP' | translate" (click)="deleteUser(user)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+  <mat-paginator
+    *ngIf="facade.hasUsers()"
+    [length]="facade.totalCount()"
+    [pageSize]="facade.filters().pageSize"
+    [pageIndex]="facade.filters().page - 1"
+    (page)="facade.changePage($event.pageIndex)">
+  </mat-paginator>
+</ng-container>

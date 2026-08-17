@@ -1,0 +1,124 @@
+<div class="page-layout" *ngIf="room">
+
+  <div class="main-content" [@fadeIn]>
+
+    <div class="product-page">
+
+      <div class="gallery">
+
+        <div class="main-image"
+             [class.zoom]="zoomed"
+             (click)="toggleZoom()">
+
+          <button class="nav outside left"
+            *ngIf="room.images?.length > 1"
+            (click)="prevImage(); $event.stopPropagation()">
+            &lsaquo;
+          </button>
+
+          <img [src]="selectedImage || defaultRoomImageUrl"
+               (error)="onImageError($event)" />
+
+          <button class="nav outside right"
+            *ngIf="room.images?.length > 1"
+            (click)="nextImage(); $event.stopPropagation()">
+            &rsaquo;
+          </button>
+        </div>
+
+        <div class="thumbnails">
+          <img *ngFor="let img of room.images; let i = index"
+               [src]="img"
+               (error)="onImageError($event)"
+               [class.active]="i === currentIndex"
+               (click)="currentIndex = i; selectImage(img)">
+        </div>
+
+      </div>
+
+      <div class="info">
+
+        <h1>Room {{room.roomNumber}}</h1>
+        <p>{{room.description}}</p>
+
+        <p><strong>Capacity:</strong> {{room.maxOccupancy}}</p>
+        <p><strong>Floor:</strong> {{room.floor}}</p>
+
+        <button type="button" class="back-to-rooms" (click)="goBackToRooms()">
+          <span aria-hidden="true"></span>
+          Back to rooms
+        </button>
+        <button *ngIf="isSelectionMode" (click)="applyForRoom()">Apply for room</button>
+        <button *ngIf="!isFavorite" (click)="addToFavorites()">Add to favorites</button>
+        <button *ngIf="isFavorite" (click)="removeFavorite()">Remove from favorites</button>
+
+      </div>
+
+    </div>
+
+
+    <div class="review-form" [formGroup]="reviewForm" [@fadeIn]>
+
+      <textarea formControlName="comment" placeholder="Write a comment"></textarea>
+      <div *ngIf="commentControl.touched && (commentControl.hasError('required') || commentControl.hasError('pattern'))">
+        Comment is required.
+      </div>
+      <div *ngIf="commentControl.touched && commentControl.hasError('maxlength')">
+        Comment cannot exceed 1000 characters.
+      </div>
+
+      <div class="stars">
+        <div *ngFor="let s of [1,2,3,4,5]"
+             class="star"
+             [class.filled]="s <= ratingControl.value"
+             (click)="setRating(s)">
+        </div>
+      </div>
+      <div *ngIf="ratingControl.touched && (ratingControl.hasError('min') || ratingControl.hasError('max'))">
+        Rating must be between 1 and 5.
+      </div>
+
+      <button type="button" (click)="addReview()">Post Review</button>
+
+    </div>
+
+  </div>
+
+  <div class="reviews-section">
+
+    <div *ngFor="let r of reviews" class="review-card" [@fadeIn]>
+
+      <div class="review-header">
+        <strong>{{r.user}}</strong>
+
+        <div class="stars">
+          <div *ngFor="let s of [1,2,3,4,5]"
+               class="star"
+               [class.filled]="s <= r.rating">
+          </div>
+        </div>
+      </div>
+
+      <p>{{r.comment}}</p>
+
+      <div class="reactions">
+
+        <button
+          [class.active]="r.userReaction === true"
+          (click)="react(r.roomReviewID,true)">
+          <mat-icon>thumb_up</mat-icon> {{r.likes}}
+        </button>
+
+        <button
+          [class.active]="r.userReaction === false"
+          (click)="react(r.roomReviewID,false)">
+          <mat-icon>thumb_down</mat-icon> {{r.dislikes}}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

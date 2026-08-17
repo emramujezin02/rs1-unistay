@@ -1,0 +1,82 @@
+<div class="fault-update-container">
+
+  <mat-card @formAnimation>
+    <h2>{{ isEdit ? 'Edit Fault' : 'Add Fault' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="saveFault()">
+
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title">
+        <mat-error *ngIf="form.get('title')?.hasError('required') && form.get('title')?.touched">
+          Required
+        </mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('minlength') && form.get('title')?.touched">
+          Title must have at least 3 characters.
+        </mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('maxlength') && form.get('title')?.touched">
+          Title cannot exceed 200 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+        <mat-error *ngIf="form.get('description')?.hasError('maxlength') && form.get('description')?.touched">
+          Description cannot exceed 2000 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- STATUS SELECT -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status" panelClass="fault-update-select-panel">
+          <mat-option value="Unresolved">Unresolved</mat-option>
+          <mat-option value="Resolved">Resolved</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('status')?.hasError('required') && form.get('status')?.touched">
+          Required
+        </mat-error>
+        <mat-error *ngIf="form.get('status')?.hasError('maxlength') && form.get('status')?.touched">
+          Status cannot exceed 50 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Priority</mat-label>
+        <input matInput formControlName="priority">
+        <mat-error *ngIf="form.get('priority')?.hasError('maxlength') && form.get('priority')?.touched">
+          Priority cannot exceed 50 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- DATE -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Resolved At</mat-label>
+        <input
+          matInput
+          type="date"
+          formControlName="resolvedAt"
+          [disabled]="form.get('status')?.value === 'Unresolved'">
+        <mat-error *ngIf="form.get('resolvedAt')?.hasError('required') && form.get('resolvedAt')?.touched">
+          Resolved date is required when fault is resolved.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="button-row">
+
+
+        <button mat-stroked-button type="button" (click)="back()" @fieldAnimation>
+          Back
+        </button>
+        
+        <button mat-raised-button color="primary" type="submit" @fieldAnimation>
+          Save
+        </button>
+
+      </div>
+
+    </form>
+  </mat-card>
+
+</div>

@@ -1,0 +1,62 @@
+<div class="twofa-container">
+
+  <mat-card>
+
+    <h3>Two Factor Authentication (email codes)</h3>
+
+    <p *ngIf="!enabled">
+      2FA is currently <strong class="disabled">disabled</strong>.
+    </p>
+
+    <p *ngIf="enabled">
+      2FA is <strong class="enabled">enabled</strong>.
+    </p>
+
+    <!-- ENABLE / DISABLE -->
+    <div class="action-buttons">
+
+      <button mat-raised-button
+              color="primary"
+              *ngIf="!enabled"
+              (click)="enable()">
+        Enable 2FA
+      </button>
+
+      <button mat-raised-button
+              color="warn"
+              *ngIf="enabled"
+              (click)="disable()">
+        Disable 2FA
+      </button>
+
+    </div>
+
+    <!-- BACKUP CODES -->
+    <div *ngIf="backupCodes.length" class="backup-section">
+
+      <mat-divider></mat-divider>
+
+      <h4>Backup codes (save them!)</h4>
+
+      <mat-list>
+        <mat-list-item *ngFor="let c of backupCodes">
+          {{ c }}
+        </mat-list-item>
+      </mat-list>
+
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- TEST BUTTON -->
+    <div class="test-section">
+      <button mat-stroked-button
+              color="accent"
+              (click)="sendTestCode()">
+        Send test code to my email
+      </button>
+    </div>
+
+  </mat-card>
+
+</div>

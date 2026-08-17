@@ -1,0 +1,267 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.add-room-action {
+  color: #2563eb;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.room-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-room-action.mat-mdc-button {
+  --mdc-text-button-container-color: transparent;
+  --mdc-text-button-label-text-color: #2563eb;
+  --mat-text-button-state-layer-color: #2563eb;
+  border: 0;
+  box-shadow: none;
+}
+
+.add-room-action:hover {
+  color: #1d4ed8;
+}
+
+.search-field {
+  width: min(360px, 100%);
+}
+
+.room-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.room-cell strong {
+  color: #111827;
+}
+
+.empty-state {
+  color: #888;
+}
+
+.error-state {
+  color: #b00020;
+}
+
+mat-chip {
+  margin-right: .5rem;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+mat-table {
+  background: #fff;
+}
+
+mat-header-row {
+  background: #fff;
+  border-bottom-color: #e5e7eb;
+}
+
+mat-header-cell {
+  color: #334155;
+  font-weight: 700;
+}
+
+mat-row {
+  border-bottom-color: #edf2f7;
+}
+
+mat-row:hover {
+  background: #f8fafc;
+}
+
+:host-context(body.dark) .page-header h1 {
+  color: #e5e7eb;
+}
+
+:host-context(body.dark) .add-room-action,
+:host-context(body.dark) .add-room-action.mat-mdc-button {
+  --mdc-text-button-label-text-color: #93c5fd;
+  --mat-text-button-state-layer-color: #93c5fd;
+  color: #93c5fd;
+}
+
+:host-context(body.dark) .add-room-action:hover {
+  color: #bfdbfe;
+}
+
+:host-context(body.dark) .search-field {
+  --mdc-outlined-text-field-outline-color: #334155;
+  --mdc-outlined-text-field-hover-outline-color: #60a5fa;
+  --mdc-outlined-text-field-focus-outline-color: #60a5fa;
+  --mdc-outlined-text-field-label-text-color: #cbd5e1;
+  --mdc-outlined-text-field-input-text-color: #f8fafc;
+  --mdc-outlined-text-field-caret-color: #60a5fa;
+  --mat-form-field-leading-icon-color: #cbd5e1;
+  --mat-form-field-trailing-icon-color: #cbd5e1;
+}
+
+:host-context(body.dark) .table-scroll {
+  border-color: #334155;
+  background: #0f172a;
+}
+
+:host-context(body.dark) mat-table {
+  background: #0f172a;
+}
+
+:host-context(body.dark) mat-header-row {
+  background: #111827;
+  border-bottom-color: #334155;
+}
+
+:host-context(body.dark) mat-header-cell {
+  color: #e5e7eb;
+}
+
+:host-context(body.dark) mat-row {
+  border-bottom-color: #1f2937;
+}
+
+:host-context(body.dark) mat-row:hover {
+  background: #172033;
+}
+
+:host-context(body.dark) mat-cell {
+  color: #dbeafe;
+}
+
+:host-context(body.dark) .room-cell strong {
+  color: #f8fafc;
+}
+
+:host-context(body.dark) .empty-state {
+  color: #cbd5e1;
+}
+
+:host-context(body.dark) .error-state {
+  color: #fca5a5;
+}
+
+:host-context(body.dark) button[mat-icon-button] {
+  color: #cbd5e1;
+}
+
+:host-context(body.dark) button[mat-icon-button][color='primary'] {
+  color: #93c5fd;
+}
+
+:host-context(body.dark) button[mat-icon-button][color='warn'] {
+  color: #fca5a5;
+}
+
+:host-context(body.dark) mat-paginator {
+  background: #0f172a;
+  color: #dbeafe;
+}
+
+@media (max-width: 1024px) {
+  .page-header {
+    gap: .875rem;
+  }
+
+  .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  mat-table {
+    min-width: 760px;
+  }
+
+  mat-header-row,
+  mat-row {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    align-items: stretch;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+  }
+
+  .page-header button {
+    width: 100%;
+  }
+
+  .search-field {
+    width: 100%;
+  }
+
+  mat-table {
+    min-width: 720px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    gap: .75rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.35rem;
+  }
+
+  mat-table {
+    min-width: 680px;
+  }
+
+  mat-cell,
+  mat-header-cell {
+    padding-inline: 10px;
+  }
+
+  mat-paginator {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  mat-paginator ::ng-deep .mat-mdc-paginator-container {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 390px) {
+  .page-header h1 {
+    font-size: 1.25rem;
+  }
+
+  mat-table {
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 360px) {
+  mat-cell,
+  mat-header-cell {
+    padding-inline: 8px;
+  }
+}

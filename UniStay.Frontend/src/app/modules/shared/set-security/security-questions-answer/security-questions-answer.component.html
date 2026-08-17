@@ -1,0 +1,45 @@
+<h1>SECURITY TEST </h1>
+
+<div class="security-container">
+
+  <mat-card>
+
+    <h2>Set Your Security Questions</h2>
+
+    <form [formGroup]="form">
+
+      <!-- EMAIL -->
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email"
+               formControlName="email"
+               placeholder="Enter your account email">
+      </mat-form-field>
+
+      <!-- QUESTIONS -->
+      <div *ngFor="let q of questions">
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ getQuestionText(q) }}</mat-label>
+          <input matInput
+                 type="text"
+                 [formControlName]="'question_' + getQuestionId(q)"
+                 placeholder="Your answer">
+        </mat-form-field>
+
+      </div>
+
+      <button mat-raised-button
+              color="primary"
+              type="button"
+              (click)="save()">
+        Save Security Answers
+      </button>
+
+    </form>
+
+  </mat-card>
+
+</div>
+
+

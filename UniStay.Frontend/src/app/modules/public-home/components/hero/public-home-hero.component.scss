@@ -1,0 +1,55 @@
+.hero {
+  position: relative;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 5rem 2rem;
+}
+
+.hero__image,
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__overlay {
+  background: linear-gradient(90deg, rgba(8, 18, 35, .82), rgba(8, 18, 35, .42), rgba(8, 18, 35, .16));
+}
+
+.hero__content {
+  position: relative;
+  max-width: 680px;
+  color: #fff;
+}
+
+.hero__eyebrow {
+  font-size: .78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  line-height: 1;
+  margin: .8rem 0 1rem;
+}
+
+p {
+  max-width: 600px;
+  font-size: 1.14rem;
+  line-height: 1.65;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: 1.5rem;
+}

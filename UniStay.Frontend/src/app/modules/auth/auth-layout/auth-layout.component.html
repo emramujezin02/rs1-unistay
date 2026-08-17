@@ -1,0 +1,81 @@
+
+<div>
+<div *ngIf="!isLoginPage" style="display:flex; justify-content:flex-end; padding:10px;">
+  <button (click)="logout()" class="btnLogout">Logout</button>
+</div>
+
+<a *ngIf="!isLoginPage  && userRole === 'student'" routerLink="/favorite">♡</a>
+
+<button *ngIf="(userRole === 'employee' || userRole === 'administrator') && !isLoginPage"
+        (click)="openHallList()">
+  Hall list
+</button>
+<button *ngIf="(userRole === 'employee' || userRole === 'administrator') && !isLoginPage "
+        (click)="openHallAdd()">
+  Add hall
+</button>
+
+<button *ngIf="(userRole === 'employee' || userRole === 'administrator') && !isLoginPage"
+        (click)="openFaultList()">
+  Fault list
+</button>
+<button *ngIf="(userRole === 'employee' || userRole === 'administrator') && !isLoginPage"
+        (click)="openFaultAdd()">
+  Add fault
+</button>
+<button *ngIf="(userRole === 'employee' || userRole === 'administrator') && !isLoginPage"
+        (click)="openEquipmentList()">
+  Equipment list
+</button>
+<button *ngIf="(userRole === 'employee' || userRole === 'administrator') && !isLoginPage"
+        (click)="openEquipmentAdd()">
+  Add equipment
+</button>
+
+<button *ngIf="!isLoginPage" (click)="openChat()">Chat</button>
+
+<button *ngIf="(userRole === 'employee' || userRole === 'administrator') && !isLoginPage"
+        (click)="analyticsDashboard()">
+  Analytics
+</button>
+
+<button *ngIf="!isLoginPage"
+        (click)="openRoomDetails()">
+  Explore Room
+</button>
+
+<button *ngIf="!isLoginPage"
+        (click)="openSecurityQuestionsAdd()">
+  Add Security Questions
+</button>
+
+
+
+
+
+</div>
+
+
+<mat-card *ngIf="userRole === 'student' && !isLoginPage" class="dashboard-card">
+
+<h2 class="dashboard-title">Invite friend</h2>
+
+<form [formGroup]="form">
+
+<mat-form-field appearance="outline" class="full-width form-group">
+<mat-label>Friend email</mat-label>
+<input matInput formControlName="email">
+</mat-form-field>
+
+<mat-form-field appearance="outline" class="full-width form-group">
+<mat-label>Invite link</mat-label>
+<input matInput [value]="inviteLink" readonly>
+</mat-form-field>
+
+<button mat-raised-button color="primary" class="save-btn" (click)="sendInvite()">
+Send Invite
+</button>
+
+</form>
+
+</mat-card><router-outlet></router-outlet>

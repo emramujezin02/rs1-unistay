@@ -1,0 +1,18 @@
+<section id="about" class="about">
+  <div>
+    <span class="about__eyebrow">About UniStay</span>
+    <h2>Built for the whole student housing journey</h2>
+    <p>
+      UniStay connects room applications, assignments, maintenance requests, announcements, and daily dorm operations.
+      Students get clarity, while staff get a focused workspace for managing accommodation.
+    </p>
+  </div>
+
+  <div class="about__stats">
+    <div class="stat" *ngFor="let stat of stats">
+      <mat-icon>{{ stat.icon }}</mat-icon>
+      <strong>{{ stat.value }}</strong>
+      <span>{{ stat.label }}</span>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,89 @@
+<div class="equipment-item-container">
+
+  <mat-card @formAnimation>
+
+    <h2>Add Equipment Item</h2>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+
+      <!-- SERIAL -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Serial Number</mat-label>
+        <input matInput formControlName="serialNumber">
+
+        <mat-error *ngIf="form.get('serialNumber')?.invalid && form.get('serialNumber')?.touched">
+          Serial number is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- STATUS -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Status</mat-label>
+
+        <mat-select formControlName="isAvailable" panelClass="equipment-item-create-select-panel">
+          <mat-option [value]="true">Available</mat-option>
+          <mat-option [value]="false">Occupied</mat-option>
+        </mat-select>
+
+      </mat-form-field>
+
+
+      <!-- ASSIGNED DATE -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Issued At</mat-label>
+
+        <input
+          matInput
+          type="date"
+          formControlName="assignedAt"
+          >
+
+      </mat-form-field>
+
+      <!-- RETURN DATE -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Return Until</mat-label>
+
+        <input
+          matInput
+          type="date"
+          formControlName="returnedAt"
+          >
+
+      </mat-form-field>
+
+      <!-- LOCATION -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Location</mat-label>
+
+        <input
+          matInput
+          formControlName="location"
+         >
+
+      </mat-form-field>
+
+      <!-- BUTTONS -->
+      <div class="button-row">
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="close-btn"
+          (click)="cancel()"
+          @fieldAnimation>
+
+          Close
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" class="submit-btn" @fieldAnimation>
+          Save Item
+        </button>
+
+      </div>
+
+    </form>
+
+  </mat-card>
+
+</div>

@@ -1,0 +1,79 @@
+﻿<div class="hall-edit-container">
+
+  <mat-card @formAnimation>
+
+    <h2>Edit hall</h2>
+
+    <div *ngIf="loading" class="loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="saveHall()">
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" required [maxlength]="nameMaxLength">
+        <mat-error *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched">Name is required.</mat-error>
+        <mat-error *ngIf="form.get('name')?.hasError('maxlength') && form.get('name')?.touched">Name cannot exceed {{ nameMaxLength }} characters.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Capacity</mat-label>
+        <input matInput type="number" formControlName="capacity" required [min]="minCapacity" [max]="maxCapacity">
+        <mat-error *ngIf="form.get('capacity')?.hasError('required') && form.get('capacity')?.touched">Capacity is required.</mat-error>
+        <mat-error *ngIf="form.get('capacity')?.hasError('min') && form.get('capacity')?.touched">Capacity must be at least {{ minCapacity }}.</mat-error>
+        <mat-error *ngIf="form.get('capacity')?.hasError('max') && form.get('capacity')?.touched">Capacity cannot exceed {{ maxCapacity }}.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description" [maxlength]="descriptionMaxLength"></textarea>
+        <mat-error *ngIf="form.get('description')?.hasError('maxlength') && form.get('description')?.touched">Description cannot exceed {{ descriptionMaxLength }} characters.</mat-error>
+      </mat-form-field>
+
+      <div class="date-row">
+
+        <mat-form-field appearance="outline" @fieldAnimation>
+          <mat-label>Available from</mat-label>
+          <input matInput type="date" formControlName="availableFrom" required>
+          <mat-error *ngIf="form.get('availableFrom')?.hasError('required') && form.get('availableFrom')?.touched">Available from is required.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" @fieldAnimation>
+          <mat-label>Available until</mat-label>
+          <input matInput type="date" formControlName="availableTo" required>
+          <mat-error *ngIf="form.get('availableTo')?.hasError('required') && form.get('availableTo')?.touched">Available until is required.</mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <mat-error *ngIf="isDateRangeInvalid() && (form.get('availableFrom')?.touched || form.get('availableTo')?.touched || submitted)">
+        Available until must be after available from.
+      </mat-error>
+
+      <mat-form-field appearance="outline" @fieldAnimation>
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="isAvailable" panelClass="hall-edit-select-panel">
+          <mat-option [value]="true">Available</mat-option>
+          <mat-option [value]="false">Occupied</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="button-row">
+
+        <button mat-stroked-button type="button" class="close-btn" (click)="back()" @fieldAnimation>
+          Back
+        </button>
+        
+        <button mat-raised-button color="primary" type="submit" class="submit-btn" @fieldAnimation>
+          Save
+        </button>
+
+        
+      </div>
+
+    </form>
+
+  </mat-card>
+
+</div>

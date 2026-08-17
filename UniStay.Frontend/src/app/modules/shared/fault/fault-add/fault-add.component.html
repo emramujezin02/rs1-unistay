@@ -1,0 +1,85 @@
+<div class="fault-add-container" *ngIf="!loading; else loadingTpl">
+
+  <mat-card @formAnimation>
+    <h2>{{ isAddMode ? 'Edit fault' : 'Add new fault' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-layout">
+
+      <!-- Fault name -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Fault name</mat-label>
+        <input matInput type="text" formControlName="title">
+        <mat-error *ngIf="form.get('title')?.hasError('required') && form.get('title')?.touched">
+          Required field
+        </mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('minlength') && form.get('title')?.touched">
+          Title must have at least 3 characters.
+        </mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('maxlength') && form.get('title')?.touched">
+          Title cannot exceed 200 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Hidden -->
+      <input type="hidden" formControlName="reportedBy">
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+        <mat-error *ngIf="form.get('description')?.hasError('maxlength') && form.get('description')?.touched">
+          Description cannot exceed 2000 characters.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Room -->
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>Room</mat-label>
+        <input
+          matInput
+          type="text"
+          [formControl]="roomControl"
+          [matAutocomplete]="roomAuto"
+          (blur)="onRoomBlur()">
+        <mat-autocomplete
+          #roomAuto="matAutocomplete"
+          class="fault-add-autocomplete-panel"
+          [displayWith]="displayRoomValue"
+          (optionSelected)="onRoomSelected($event.option.value)"
+        >
+          <mat-option *ngFor="let room of filteredRooms" [value]="room">
+            {{ displayRoom(room) }}
+          </mat-option>
+          <mat-option *ngIf="filteredRooms.length === 0" disabled>
+            No matching rooms
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="form.get('roomID')?.invalid && form.get('roomID')?.touched">
+          Required field
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Button -->
+      <div class="button-row">
+        <button mat-stroked-button type="button" class="close-btn" (click)="back()" @fieldAnimation>
+          Close
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading" @fieldAnimation>
+          {{ isAddMode ? 'Save changes' : 'Add fault' }}
+        </button>
+      </div>
+
+    </form>
+  </mat-card>
+
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading...</div>
+</ng-template>
+
+<div *ngIf="isSaving" class="autosave-indicator" aria-live="polite">
+  <span aria-hidden="true">&#10003;</span>
+  Draft saved
+</div>

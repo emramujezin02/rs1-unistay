@@ -1,0 +1,189 @@
+<link rel="stylesheet" href="/assets/landing/landing.css">
+
+<div class="landing-page">
+  <header class="navbar" [class.navbar--scrolled]="isScrolled()">
+    <div class="navbar__inner">
+      <a class="navbar__brand" routerLink="/" (click)="closeMenu()">UniStay</a>
+
+      <nav class="navbar__links" aria-label="Main navigation">
+        <button
+          type="button"
+          *ngFor="let section of sections"
+          [class.is-active]="activeSection() === section"
+          (click)="scrollTo(section)">
+          {{ section | titlecase }}
+        </button>
+        <a routerLink="/rooms">Rooms</a>
+      </nav>
+
+      <a class="button button--primary navbar__login" routerLink="/login">Login</a>
+
+      <button type="button" class="navbar__toggle" aria-label="Toggle navigation menu" (click)="toggleMenu()">
+        <mat-icon>{{ isMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </div>
+
+    <nav class="navbar__mobile" [class.navbar__mobile--open]="isMenuOpen()" aria-label="Mobile navigation">
+      <button
+        type="button"
+        *ngFor="let section of sections"
+        [class.is-active]="activeSection() === section"
+        (click)="scrollTo(section)">
+        {{ section | titlecase }}
+      </button>
+      <a routerLink="/rooms" (click)="closeMenu()">Rooms</a>
+      <a routerLink="/login" (click)="closeMenu()">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="UniStay introduction">
+      <div class="hero__content">
+        <span class="hero__eyebrow">Student Housing Management</span>
+        <h1>Your Home<br><span>Away From Home.</span></h1>
+        <p>
+          UniStay simplifies every aspect of dormitory life, from room applications and maintenance
+          requests to announcements and accommodation details.
+        </p>
+        <div class="hero__actions">
+          <a class="button button--primary button--large" routerLink="/login">Get Started</a>
+          <button class="button button--ghost button--large" type="button" (click)="scrollTo('features')">
+            See Features
+            <mat-icon>arrow_downward</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="hero__scroll-indicator" aria-hidden="true"><span></span></div>
+    </section>
+
+    <section id="announcements" class="announcements">
+      <div class="section-container section-container--narrow">
+        <div class="section-header">
+          <span class="section-eyebrow">Stay Informed</span>
+          <h2>Latest Announcements</h2>
+          <p>Important notices and updates from the UniStay administration.</p>
+        </div>
+
+        <div class="announcement-slider">
+          <button type="button" class="slider-button" aria-label="Previous announcement" (click)="previousAnnouncement()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+
+          <article class="announcement-card" *ngIf="currentAnnouncement() as announcement">
+            <span class="announcement-card__tag">Stay Informed</span>
+            <time>{{ formatDate(announcement.createdAt) }}</time>
+            <h3>{{ announcement.title }}</h3>
+            <p>{{ announcement.content }}</p>
+          </article>
+
+          <button type="button" class="slider-button" aria-label="Next announcement" (click)="nextAnnouncement()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+
+        <div class="announcement-dots" aria-label="Announcement navigation">
+          <button
+            type="button"
+            *ngFor="let dot of announcementDots()"
+            [class.is-active]="dot === currentAnnouncementIndex()"
+            [attr.aria-label]="'Show announcement ' + (dot + 1)"
+            (click)="showAnnouncement(dot)">
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <div class="section-container about__grid">
+        <div class="about__content">
+          <span class="section-eyebrow">What is UniStay?</span>
+          <h2>A smarter way to manage student housing</h2>
+          <p>
+            UniStay is a comprehensive dormitory management system designed to streamline every aspect
+            of student housing. From room allocation and bed assignments to maintenance requests and
+            community announcements, it provides a seamless digital experience.
+          </p>
+          <p>
+            Our mission is to create a comfortable, safe, and efficient living environment so students
+            can focus on their studies and enjoy university life to the fullest.
+          </p>
+          <a class="button button--primary" routerLink="/login">Join UniStay</a>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card" *ngFor="let stat of stats">
+            <mat-icon>{{ stat.icon }}</mat-icon>
+            <strong>{{ stat.value }}</strong>
+            <span>{{ stat.label }}</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="section-container">
+        <div class="section-header">
+          <span class="section-eyebrow">What We Offer</span>
+          <h2>Everything in one place</h2>
+          <p>All the tools students and administrators need, accessible from any device.</p>
+        </div>
+
+        <div class="features__grid">
+          <article class="feature-card" *ngFor="let feature of features">
+            <div class="feature-card__icon"><mat-icon>{{ feature.icon }}</mat-icon></div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact" class="footer" aria-label="Site footer">
+    <div class="footer__inner">
+      <div class="footer__grid">
+        <div class="footer__brand-column">
+          <a class="footer__brand" routerLink="/">UniStay</a>
+          <p>Simplifying dormitory living for a better student experience.</p>
+          <div class="footer__socials" aria-label="Social media links">
+            <a href="#" aria-label="Facebook">
+              <mat-icon>facebook</mat-icon>
+            </a>
+            <a href="#" aria-label="Twitter">
+              <mat-icon>alternate_email</mat-icon>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <mat-icon>photo_camera</mat-icon>
+            </a>
+          </div>
+        </div>
+        <div class="footer__column">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><button type="button" (click)="scrollTo('announcements')">Announcements</button></li>
+            <li><button type="button" (click)="scrollTo('about')">About UniStay</button></li>
+            <li><button type="button" (click)="scrollTo('features')">Features</button></li>
+            <li><a routerLink="/auth/login">Login</a></li>
+          </ul>
+        </div>
+        <div class="footer__column">
+          <h3>Contact Us</h3>
+          <ul class="footer__contact-list">
+            <li><mat-icon>location_on</mat-icon><span>123 University Ave, Knowledge City</span></li>
+            <li><mat-icon>phone</mat-icon><span>(123) 456-7890</span></li>
+            <li><mat-icon>email</mat-icon><a href="mailto:support@unistay.edu">support&#64;unistay.edu</a></li>
+          </ul>
+        </div>
+        <div class="footer__column">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__copyright">&copy; {{ currentYear }} UniStay. All rights reserved.</div>
+    </div>
+  </footer>
+</div>

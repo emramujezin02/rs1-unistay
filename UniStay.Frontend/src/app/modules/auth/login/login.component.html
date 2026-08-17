@@ -1,0 +1,63 @@
+<div class="login-container">
+  <h2>Login</h2>
+
+  <form (ngSubmit)="onLogin()" [formGroup]="form" autocomplete="on">
+<div style="position:relative;">
+    <app-my-input-text
+      [myLabel]="'Email'"
+      [myPlaceholder]="'Unesite email'"
+      myControlName="email"
+       (focus)="onEmailFocus()"
+
+    ></app-my-input-text>
+
+  <div *ngIf="showSuggestions && filteredEmails?.length" class="email-suggestions">
+    <div 
+      class="email-item"
+      *ngFor="let email of filteredEmails"
+      (click)="onEmailSelected(email)">
+      {{ email }}
+      
+    </div>
+  </div>
+</div>
+
+
+    <app-my-input-text
+      [myLabel]="'Password'"
+      [myPlaceholder]="'Unesite lozinku'"
+      [myType]="MyInputTextType.Password"
+      myControlName="password"
+    ></app-my-input-text>
+
+
+<div class="login-options-row">
+    <mat-slide-toggle formControlName="rememberMe">
+      Keep me logged in
+    </mat-slide-toggle>
+
+    <div class="captcha-small">
+    <ngx-recaptcha2
+      [siteKey]="recaptchaSiteKey"
+      formControlName="captchaToken">
+    </ngx-recaptcha2>
+     </div>
+</div>
+
+    <button class="btnLogin" type="submit"
+            [disabled]="form.invalid"
+            style="background-color:blue; color:white; font-size: larger; border-color:blue; padding-left: 20px;padding-right:20px">
+      Log in
+    </button>
+
+    <label (click)="passwordRecovery()" style="text-align:center; margin-top:10px;">
+      Forgot password?
+    </label>
+
+    <p class="register-link">
+      Nemate račun?
+      <a routerLink="/register">Kreirajte ga</a>
+    </p>
+
+  </form>
+</div>

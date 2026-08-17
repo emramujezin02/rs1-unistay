@@ -1,0 +1,10 @@
+<div
+  class="theme-toggle"
+  [ngClass]="currentTheme"
+  (click)="toggleTheme()">
+</div>
+<div [@routeTransition]="prepareRoute(outlet)">
+  <router-outlet #outlet="outlet"></router-outlet>
+</div>
+<app-user-add></app-user-add>
+

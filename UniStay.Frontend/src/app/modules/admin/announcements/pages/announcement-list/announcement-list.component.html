@@ -1,0 +1,193 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <h1 class="page-header__title">{{ 'ADMIN.ANNOUNCEMENTS.PAGE_TITLE' | translate }}</h1>
+      <p class="page-header__subtitle">{{ 'ADMIN.ANNOUNCEMENTS.SUBTITLE' | translate }}</p>
+    </div>
+
+    <button mat-button class="new-announcement-action" type="button" (click)="toggleForm()">
+      {{ showForm() ? ('ADMIN.ANNOUNCEMENTS.CANCEL_BTN' | translate) : ('+ ' + ('ADMIN.ANNOUNCEMENTS.NEW_BTN' | translate)) }}
+    </button>
+  </div>
+
+  <div class="form-card" *ngIf="showForm()">
+    <h3 class="form-card__title">{{ 'ADMIN.ANNOUNCEMENTS.FORM_TITLE' | translate }}</h3>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="ann-form">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'ADMIN.ANNOUNCEMENTS.TITLE_LABEL' | translate }}</mat-label>
+        <input matInput formControlName="title" />
+        <mat-error *ngIf="form.get('title')?.hasError('required')">
+          {{ 'ADMIN.ANNOUNCEMENTS.TITLE_REQUIRED' | translate }}
+        </mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('maxlength')">
+          {{ 'ADMIN.ANNOUNCEMENTS.TITLE_MAXLENGTH' | translate }}
+        </mat-error>
+      </mat-form-field>
+
+      <div
+        class="editor-wrap"
+        [class.editor-wrap--focus]="editorFocused"
+        [class.editor-wrap--error]="form.get('content')?.invalid && form.get('content')?.touched">
+        <label class="editor-label">{{ 'ADMIN.ANNOUNCEMENTS.BODY_LABEL' | translate }}</label>
+        <div class="editor-toolbar" aria-label="Announcement formatting toolbar">
+          <select class="editor-select" aria-label="Text style" (change)="applyEditorBlock($event)">
+            <option value="p">Normal</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+          </select>
+          <button mat-icon-button type="button" aria-label="Bold" (click)="applyEditorCommand('bold')">
+            <mat-icon>format_bold</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Italic" (click)="applyEditorCommand('italic')">
+            <mat-icon>format_italic</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Underline" (click)="applyEditorCommand('underline')">
+            <mat-icon>format_underlined</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Bulleted list" (click)="applyEditorCommand('insertUnorderedList')">
+            <mat-icon>format_list_bulleted</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Numbered list" (click)="applyEditorCommand('insertOrderedList')">
+            <mat-icon>format_list_numbered</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Align left" (click)="applyEditorCommand('justifyLeft')">
+            <mat-icon>format_align_left</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Align center" (click)="applyEditorCommand('justifyCenter')">
+            <mat-icon>format_align_center</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Insert link" (click)="createEditorLink()">
+            <mat-icon>link</mat-icon>
+          </button>
+          <button mat-icon-button type="button" aria-label="Clear formatting" (click)="applyEditorCommand('removeFormat')">
+            <mat-icon>format_clear</mat-icon>
+          </button>
+        </div>
+        <div
+          #contentEditor
+          class="editor-surface"
+          contenteditable="true"
+          role="textbox"
+          aria-multiline="true"
+          [attr.data-placeholder]="'ADMIN.ANNOUNCEMENTS.BODY_LABEL' | translate"
+          (input)="syncEditorContent()"
+          (blur)="editorFocused = false; form.get('content')?.markAsTouched()"
+          (focus)="editorFocused = true">
+        </div>
+        <div class="editor-footer">
+          <span class="editor-error" *ngIf="form.get('content')?.hasError('required') && form.get('content')?.touched">
+            {{ 'ADMIN.ANNOUNCEMENTS.BODY_REQUIRED' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="options-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'ADMIN.ANNOUNCEMENTS.AUDIENCE_LABEL' | translate }}</mat-label>
+          <mat-select formControlName="audience">
+            <mat-option *ngFor="let option of audienceOptions" [value]="option.value">
+              {{ option.labelKey | translate }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'ADMIN.ANNOUNCEMENTS.EXPIRES_LABEL' | translate }}</mat-label>
+          <input matInput type="date" formControlName="expiresAt" />
+          <mat-hint>{{ 'ADMIN.ANNOUNCEMENTS.EXPIRES_HINT' | translate }}</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-button type="button" (click)="toggleForm()">{{ 'ADMIN.ANNOUNCEMENTS.CANCEL_BTN' | translate }}</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="submitting()">
+          <mat-spinner *ngIf="submitting()" diameter="18"></mat-spinner>
+          <mat-icon *ngIf="!submitting()">campaign</mat-icon>
+          {{ 'ADMIN.ANNOUNCEMENTS.POST_BTN' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="loading-state" *ngIf="loading()">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading()">
+    <p *ngIf="announcements().length === 0" class="empty-state">
+      {{ 'ADMIN.ANNOUNCEMENTS.EMPTY' | translate }}
+    </p>
+
+    <div class="ann-table-wrapper" *ngIf="announcements().length > 0">
+      <mat-table [dataSource]="announcements()" class="ann-table">
+        <ng-container matColumnDef="title">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ANNOUNCEMENTS.COL_TITLE' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let announcement">
+            <div class="title-cell">
+              <span class="title-text">{{ announcement.title }}</span>
+              <span class="content-preview">{{ stripHtml(announcement.content) }}</span>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="audience">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ANNOUNCEMENTS.COL_AUDIENCE' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let announcement">
+            <mat-chip [color]="audienceColor(announcement.audience)" selected>
+              {{ audienceLabelKey(announcement.audience) | translate }}
+            </mat-chip>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="expires">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ANNOUNCEMENTS.COL_EXPIRES' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let announcement">
+            <span *ngIf="announcement.expiresAt">{{ announcement.expiresAt | date:'mediumDate' }}</span>
+            <span *ngIf="!announcement.expiresAt" class="no-expiry">{{ 'ADMIN.ANNOUNCEMENTS.NO_EXPIRY' | translate }}</span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="createdBy">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ANNOUNCEMENTS.COL_BY' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let announcement">
+            {{ announcement.createdByUsername || 'UniStay' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ANNOUNCEMENTS.COL_DATE' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let announcement">
+            {{ announcement.createdAt | date:'mediumDate' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let announcement">
+            <button
+              mat-icon-button
+              color="warn"
+              type="button"
+              [matTooltip]="'ADMIN.ANNOUNCEMENTS.DELETE_TOOLTIP' | translate"
+              (click)="onDelete(announcement)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+
+    <mat-paginator
+      *ngIf="totalCount() > pageSize"
+      [length]="totalCount()"
+      [pageSize]="pageSize"
+      [pageIndex]="page() - 1"
+      [hidePageSize]="true"
+      (page)="onPageChange($event.pageIndex)">
+    </mat-paginator>
+  </ng-container>
+</div>

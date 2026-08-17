@@ -1,0 +1,79 @@
+<section class="employee-rooms">
+  <header class="employee-rooms__header">
+    <div>
+      <h1>{{ 'EMPLOYEE.ROOM_MANAGEMENT.TITLE' | translate }}</h1>
+      <p>{{ 'EMPLOYEE.ROOM_MANAGEMENT.SUBTITLE' | translate }}</p>
+    </div>
+  </header>
+
+  <mat-form-field appearance="outline" class="employee-rooms__search">
+    <mat-label>{{ 'EMPLOYEE.ROOM_MANAGEMENT.SEARCH_LABEL' | translate }}</mat-label>
+    <input
+      matInput
+      type="search"
+      [placeholder]="'EMPLOYEE.ROOM_MANAGEMENT.SEARCH_PLACEHOLDER' | translate"
+      (input)="onSearch($any($event.target).value)" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <app-loading-spinner *ngIf="loading()"></app-loading-spinner>
+
+  <ng-container *ngIf="!loading()">
+    <p *ngIf="rooms().length === 0" class="employee-rooms__empty">
+      {{ 'EMPLOYEE.ROOM_MANAGEMENT.EMPTY' | translate }}
+    </p>
+
+    <div class="employee-rooms__table-wrap" *ngIf="rooms().length > 0">
+      <mat-table [dataSource]="dataSource" matSort class="employee-rooms__table">
+        <ng-container matColumnDef="roomNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.ROOM' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let room">
+            <strong>{{ room.roomNumber }}</strong>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="floor">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.FLOOR' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let room">{{ room.floor }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="occupancy">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.OCCUPANCY' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let room">
+            <span
+              class="occupancy-chip"
+              [class.occupancy-chip--full]="availableBeds(room) === 0"
+              [class.occupancy-chip--partial]="availableBeds(room) > 0 && occupiedBeds(room) > 0"
+              [class.occupancy-chip--empty]="occupiedBeds(room) === 0">
+              {{ occupiedBeds(room) }} / {{ room.maxOccupancy }}
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="availability">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.AVAILABLE' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let room">{{ availableBeds(room) }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef>{{ 'EMPLOYEE.ROOM_MANAGEMENT.COLUMNS.DESCRIPTION' | translate }}</mat-header-cell>
+          <mat-cell *matCellDef="let room" class="employee-rooms__description">
+            {{ room.description }}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+
+    <mat-paginator
+      *ngIf="totalCount() > ps"
+      [length]="totalCount()"
+      [pageSize]="ps"
+      [pageIndex]="currentPage"
+      [hidePageSize]="true"
+      (page)="onPageChange($event.pageIndex)">
+    </mat-paginator>
+  </ng-container>
+</section>

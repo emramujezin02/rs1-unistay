@@ -1,0 +1,83 @@
+<div class="page-header">
+  <h1>{{ 'ADMIN.ROOMS.PAGE_TITLE' | translate }}</h1>
+  <button mat-button class="add-room-action" type="button" (click)="createRoom()">
+    + Dodaj sobe
+  </button>
+</div>
+
+<mat-form-field appearance="outline" class="search-field">
+  <mat-label>{{ 'ADMIN.ROOMS.SEARCH_LABEL' | translate }}</mat-label>
+  <input matInput [placeholder]="'ADMIN.ROOMS.SEARCH_PLACEHOLDER' | translate" (input)="facade.search($any($event.target).value)" />
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>
+
+<mat-spinner *ngIf="facade.loading()" diameter="36"></mat-spinner>
+
+<ng-container *ngIf="!facade.loading()">
+  <p class="error-state" *ngIf="facade.error()">{{ facade.error() }}</p>
+  <p class="empty-state" *ngIf="facade.isEmpty() && !facade.error()">{{ 'ADMIN.ROOMS.EMPTY' | translate }}</p>
+
+  <div class="table-scroll" *ngIf="facade.hasRooms()">
+    <mat-table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="room">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.ROOMS.COL_ROOM' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let room">
+<div class="room-cell">
+  <strong>{{ room.roomNumber }}</strong>
+  
+</div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="building">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.ROOMS.COL_BUILDING' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let room">{{ room.building || '-' }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="capacity">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Kapacitet</mat-header-cell>
+        <mat-cell *matCellDef="let room">{{ room.maxOccupancy }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="occupancy">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.ROOMS.COL_OCCUPANCY' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let room">{{ room.occupiedBeds || 0 }} / {{ room.maxOccupancy }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'ADMIN.ROOMS.COL_STATUS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let room">
+          <mat-chip [color]="statusColor(room)" selected>
+            {{ ((room.availableBeds || 0) > 0 ? 'ADMIN.ROOMS.STATUS_AVAILABLE' : 'ADMIN.ROOMS.STATUS_FULL') | translate }}
+          </mat-chip>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>{{ 'ADMIN.ROOMS.COL_ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let room">
+          <button mat-icon-button type="button" [matTooltip]="'ADMIN.ROOMS.VIEW_TOOLTIP' | translate" (click)="viewRoom(room)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button type="button" color="primary" [matTooltip]="'ADMIN.ROOMS.EDIT_TOOLTIP' | translate" (click)="editRoom(room)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" color="warn" [matTooltip]="'ADMIN.ROOMS.DELETE_TOOLTIP' | translate" (click)="deleteRoom(room)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+  <mat-paginator
+    *ngIf="facade.hasRooms()"
+    [length]="facade.totalCount()"
+    [pageSize]="facade.filters().pageSize"
+    [pageIndex]="facade.filters().page - 1"
+    (page)="facade.changePage($event.pageIndex)">
+  </mat-paginator>
+</ng-container>

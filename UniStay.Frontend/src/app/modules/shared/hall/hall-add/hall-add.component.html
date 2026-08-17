@@ -1,0 +1,115 @@
+<mat-form-field appearance="fill" class="language-select">
+  <mat-label>{{ 'HALL.LANGUAGE' | translate }}</mat-label>
+  <mat-select [value]="currentLanguage" (selectionChange)="changeLanguage($event.value)" panelClass="hall-add-select-panel">
+    <mat-option *ngFor="let lang of languages" [value]="lang.code">
+      {{ lang.labelKey | translate }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<div class="hall-add-container" *ngIf="!loading; else loadingTpl">
+
+  <mat-card @formAnimation>
+    <h2>
+  {{ isAddMode ? ('HALL.EDIT' | translate) : ('HALL.ADD' | translate) }}
+</h2>
+
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>{{ 'HALL.NAME' | translate }}</mat-label>
+        <input
+          matInput
+          formControlName="name"
+          [placeholder]="'HALL.NAME_PLACEHOLDER' | translate"
+          [matAutocomplete]="auto">
+
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          class="hall-add-autocomplete-panel"
+          (optionSelected)="onNameSelected($event.option.value)"
+        >
+          <mat-option *ngFor="let option of nameSuggestions" [value]="option">
+            {{ option }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="form.get('name')?.hasError('required') && form.get('name')?.touched">
+          {{ 'HALL.NAME_MESSAGE' | translate }}
+        </mat-error>
+        <mat-error *ngIf="form.get('name')?.hasError('maxlength') && form.get('name')?.touched">
+          {{ 'HALL.NAME_MAX_LENGTH_MESSAGE' | translate: { max: nameMaxLength } }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>{{ 'HALL.CAPACITY' | translate }}</mat-label>
+        <input matInput type="number" formControlName="capacity" [min]="minCapacity" [max]="maxCapacity" [placeholder]="'HALL.CAPACITY_PLACEHOLDER' | translate">
+        <mat-error *ngIf="(form.get('capacity')?.hasError('required') || form.get('capacity')?.hasError('min')) && form.get('capacity')?.touched">
+          {{ 'HALL.CAPACITY_MESSAGE' | translate }}
+        </mat-error>
+        <mat-error *ngIf="form.get('capacity')?.hasError('max') && form.get('capacity')?.touched">
+          {{ 'HALL.CAPACITY_MAX_MESSAGE' | translate: { max: maxCapacity } }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+        <mat-label>{{ 'HALL.DESCRIPTION' | translate }}</mat-label>
+        <textarea matInput formControlName="description" rows="3" [placeholder]="'HALL.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+        <mat-error *ngIf="(form.get('description')?.hasError('required') || form.get('description')?.hasError('minlength')) && form.get('description')?.touched">
+          {{ 'HALL.DESCRIPTION_MESSAGE' | translate }}
+        </mat-error>
+        <mat-error *ngIf="form.get('description')?.hasError('maxlength') && form.get('description')?.touched">
+          {{ 'HALL.DESCRIPTION_MAX_LENGTH_MESSAGE' | translate: { max: descriptionMaxLength } }}
+        </mat-error>
+      </mat-form-field>
+
+      <div class="date-row">
+        <mat-form-field appearance="outline" class="half-width" @fieldAnimation>
+          <mat-label>{{ 'HALL.AVAILABLE_FROM' | translate }}</mat-label>
+          <input matInput type="date" formControlName="availableFrom" [placeholder]="'HALL.AVAILABLE_FROM_PLACEHOLDER' | translate">
+          <mat-error *ngIf="form.get('availableFrom')?.invalid && form.get('availableFrom')?.touched">
+            {{ 'HALL.AVAILABLE_FROM_MESSAGE' | translate }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width" @fieldAnimation>
+          <mat-label>{{ 'HALL.AVAILABLE_UNTIL' | translate }}</mat-label>
+          <input matInput type="date" formControlName="availableTo" [placeholder]="'HALL.AVAILABLE_UNTIL_PLACEHOLDER' | translate">
+          <mat-error *ngIf="form.get('availableTo')?.invalid && form.get('availableTo')?.touched">
+            {{ 'HALL.AVAILABLE_UNTIL_MESSAGE' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-error *ngIf="form.hasError('invalidDateRange') && (form.get('availableFrom')?.touched || form.get('availableTo')?.touched)">
+        {{ 'HALL.DATE_RANGE_MESSAGE' | translate }}
+      </mat-error>
+
+      <mat-checkbox formControlName="isAvailable" @fieldAnimation>
+        {{ 'HALL.CHECKBOX' | translate }}
+      </mat-checkbox>
+
+      <div class="button-row">
+        <button mat-stroked-button type="button" class="close-btn" (click)="back()" @fieldAnimation>
+          {{ 'common.close' | translate }}
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading" @fieldAnimation>
+          {{ isAddMode ? ('HALL.SAVE' | translate) : ('HALL.ADD' | translate) }}
+        </button>
+      </div>
+
+    </form>
+  </mat-card>
+
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">{{ 'HALL.LOADING' | translate }}</div>
+</ng-template>
+
+<div *ngIf="isSaving" class="autosave-indicator" aria-live="polite">
+  <span aria-hidden="true">&#10003;</span>
+  Draft saved
+</div>

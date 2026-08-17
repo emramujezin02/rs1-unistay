@@ -1,0 +1,76 @@
+<h2 mat-dialog-title>
+  <mat-icon>bed</mat-icon>
+  {{ 'ADMIN.BED_ASSIGNMENTS.ASSIGN_TITLE' | translate }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <p>{{ 'ADMIN.BED_ASSIGNMENTS.ASSIGN_SUBTITLE' | translate }}</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'ADMIN.BED_ASSIGNMENTS.STUDENT_LABEL' | translate }}</mat-label>
+    <input
+      matInput
+      [formControl]="studentControl"
+      [matAutocomplete]="studentAuto"
+      [placeholder]="'ADMIN.BED_ASSIGNMENTS.STUDENT_PLACEHOLDER' | translate" />
+    <mat-icon matSuffix>person_search</mat-icon>
+    <mat-autocomplete
+      #studentAuto="matAutocomplete"
+      class="bed-assignment-autocomplete-panel"
+      [displayWith]="displayStudent">
+      <mat-option *ngIf="loadingStudents" disabled>{{ 'ADMIN.BED_ASSIGNMENTS.LOADING_STUDENTS' | translate }}</mat-option>
+      <mat-option *ngFor="let student of filteredStudents" [value]="student">
+        <span class="student-option">
+          <strong>{{ student.firstName }} {{ student.lastName }}</strong>
+          <small>{{ student.username }} | {{ student.email }}</small>
+        </span>
+      </mat-option>
+      <mat-option *ngIf="!loadingStudents && filteredStudents.length === 0" disabled>
+        {{ 'ADMIN.BED_ASSIGNMENTS.NO_STUDENTS' | translate }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width" [formGroup]="form">
+    <mat-label>{{ 'ADMIN.BED_ASSIGNMENTS.BED_LABEL' | translate }}</mat-label>
+    <mat-select formControlName="bedId" panelClass="bed-assignment-select-panel">
+      <mat-option *ngFor="let bed of freeBeds" [value]="bed.bedId">
+        {{ 'ADMIN.BED_ASSIGNMENTS.BED_OPTION' | translate }} {{ bed.bedNumber }} |
+        {{ 'ADMIN.BED_ASSIGNMENTS.ROOM_OPTION' | translate }} {{ bed.roomNumber }} |
+        {{ 'ADMIN.BED_ASSIGNMENTS.FLOOR_OPTION' | translate }} {{ bed.floor }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('bedId')?.hasError('required')">{{ 'ADMIN.BED_ASSIGNMENTS.BED_REQUIRED' | translate }}</mat-error>
+  </mat-form-field>
+
+  <p class="no-beds" *ngIf="freeBeds.length === 0">
+    <mat-icon>warning</mat-icon>
+    {{ 'ADMIN.BED_ASSIGNMENTS.NO_FREE_BEDS' | translate }}
+  </p>
+
+  <div class="date-row" [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'ADMIN.BED_ASSIGNMENTS.FROM_DATE' | translate }}</mat-label>
+      <input matInput type="date" formControlName="fromDate" />
+      <mat-error *ngIf="form.get('fromDate')?.hasError('required')">{{ 'ADMIN.BED_ASSIGNMENTS.REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'ADMIN.BED_ASSIGNMENTS.TO_DATE' | translate }}</mat-label>
+      <input matInput type="date" formControlName="toDate" />
+      <mat-error *ngIf="form.get('toDate')?.hasError('required')">{{ 'ADMIN.BED_ASSIGNMENTS.REQUIRED' | translate }}</mat-error>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="cancel()">{{ 'ADMIN.BED_ASSIGNMENTS.CANCEL' | translate }}</button>
+  <button
+    mat-button
+    class="submit-bed-assignment-action"
+    type="button"
+    [disabled]="form.invalid || !selectedStudent || freeBeds.length === 0"
+    (click)="confirm()">
+    {{ 'ADMIN.BED_ASSIGNMENTS.CONFIRM_BTN' | translate }}
+  </button>
+</mat-dialog-actions>

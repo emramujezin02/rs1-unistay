@@ -1,0 +1,124 @@
+﻿<section class="employee-dashboard">
+  <div class="employee-dashboard__layout">
+    <aside class="employee-panel" [attr.aria-label]="'EMPLOYEE.DASHBOARD_HOME.ARIA.MENU' | translate">
+      <div class="employee-panel__brand">
+        <span class="employee-panel__brand-text">UniStay</span>
+        <span class="employee-panel__badge">{{ 'EMPLOYEE.DASHBOARD_HOME.BADGE' | translate }}</span>
+      </div>
+
+      <nav class="employee-panel__nav" [attr.aria-label]="'EMPLOYEE.DASHBOARD_HOME.ARIA.NAVIGATION' | translate">
+        <button
+          *ngFor="let item of panelNavItems"
+          type="button"
+          class="employee-panel__nav-item"
+          [class.employee-panel__nav-item--active]="isActive(item.route)"
+          (click)="navigate(item.route)">
+          <mat-icon class="employee-panel__nav-icon">{{ item.icon }}</mat-icon>
+          <span class="employee-panel__nav-label">{{ item.titleKey | translate }}</span>
+        </button>
+      </nav>
+
+      <div class="employee-panel__footer">
+        <div class="employee-panel__user">
+          <div class="employee-panel__avatar">{{ userFirstName.charAt(0) }}</div>
+          <div class="employee-panel__user-info">
+            <span class="employee-panel__user-name">{{ userEmail }}</span>
+            <span class="employee-panel__user-role">{{ userRole || ('EMPLOYEE.DASHBOARD_HOME.ROLE_FALLBACK' | translate) }}</span>
+          </div>
+        </div>
+
+        <button type="button" class="employee-panel__logout" (click)="logout()" [attr.aria-label]="'EMPLOYEE.DASHBOARD_HOME.ARIA.LOGOUT' | translate">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </aside>
+
+    <main class="employee-dashboard__main">
+      <header class="employee-topbar">
+  <span class="employee-topbar__brand">UniStay</span>
+
+  <div class="employee-topbar__toolbar">
+    <div class="employee-topbar__avatar" [attr.aria-label]="'EMPLOYEE.DASHBOARD_HOME.ARIA.PROFILE' | translate">
+      {{ userFirstName.charAt(0) }}
+    </div>
+    <app-notification-bell></app-notification-bell>
+  </div>
+</header>
+
+<br><br>
+
+      <ng-container *ngIf="isOverviewRoute; else employeeRouteContent">
+        <header class="employee-dashboard__hero">
+          <div class="employee-dashboard__hero-copy">
+            <h1>{{ greetingKey | translate }}, {{ userFirstName }}</h1>
+            <p class="employee-dashboard__subtitle">
+              {{ 'EMPLOYEE.DASHBOARD_HOME.SUBTITLE' | translate }}
+            </p>
+          </div>
+
+          <div class="employee-dashboard__hero-actions">
+            <div class="employee-dashboard__badge">
+              <mat-icon>badge</mat-icon>
+              <span>{{ 'EMPLOYEE.DASHBOARD_HOME.BADGE' | translate }}</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="announcement-panel" aria-labelledby="employee-announcements-title">
+          <div class="section-heading">
+            <mat-icon>campaign</mat-icon>
+            <div>
+              <h2 id="employee-announcements-title">{{ 'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.TITLE' | translate }}</h2>
+              <p>{{ 'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.SUBTITLE' | translate }}</p>
+            </div>
+          </div>
+
+          <app-announcement-carousel
+            [announcements]="announcements()"
+            [loading]="loadingAnnouncements()"
+            [emptyText]="'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.EMPTY' | translate"
+            [previousAriaLabel]="'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.PREVIOUS' | translate"
+            [nextAriaLabel]="'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.NEXT' | translate"
+            [tagText]="'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.TAG' | translate"
+            [readMoreText]="'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.READ_MORE' | translate"
+            [dotAriaLabelPrefix]="'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.DOT_PREFIX' | translate"
+            [viewAllText]="'EMPLOYEE.DASHBOARD_HOME.ANNOUNCEMENTS.VIEW_ALL' | translate">
+          </app-announcement-carousel>
+        </section>
+
+        <section class="dashboard-section" aria-labelledby="employee-main-actions-title">
+          <div class="section-heading">
+          
+
+          </div>
+
+          <div class="dashboard-grid">
+            <button
+              *ngFor="let action of primaryActions"
+              type="button"
+              class="dashboard-card"
+              [class]="'dashboard-card dashboard-card--' + action.color"
+              (click)="navigate(action.route)">
+              <span class="dashboard-card__icon">
+                <mat-icon>{{ action.icon }}</mat-icon>
+              </span>
+              <span class="dashboard-card__content">
+                <span class="dashboard-card__title">{{ action.titleKey | translate }}</span>
+                <span class="dashboard-card__description">{{ action.descriptionKey | translate }}</span>
+              </span>
+              <mat-icon class="dashboard-card__arrow">arrow_forward</mat-icon>
+            </button>
+          </div>
+        </section>
+      </ng-container>
+
+      <ng-template #employeeRouteContent>
+        <section [@routeTransition]="prepareRoute(outlet)">
+          <router-outlet #outlet="outlet"></router-outlet>
+        </section>
+      </ng-template>
+    </main>
+  </div>
+</section>
+
+

@@ -1,0 +1,52 @@
+<div class="notif-bell">
+  <button
+    class="notif-bell__btn"
+    type="button"
+    (click)="toggleDropdown()"
+    [attr.aria-expanded]="isOpen()"
+    aria-label="Notifications">
+    <mat-icon class="notif-bell__icon">notifications</mat-icon>
+    <span class="notif-bell__badge" *ngIf="unreadCount() > 0">
+      {{ unreadCount() > 99 ? '99+' : unreadCount() }}
+    </span>
+  </button>
+
+  <div class="notif-dropdown" *ngIf="isOpen()">
+    <div class="notif-dropdown__header">
+      <span class="notif-dropdown__title">Notifications</span>
+      <button
+        class="notif-dropdown__mark-all"
+        type="button"
+        (click)="markAllRead()"
+        *ngIf="unreadCount() > 0">
+        Mark all read
+      </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="notif-dropdown__list">
+      <div class="notif-empty" *ngIf="notifications().length === 0">
+        <mat-icon class="notif-empty__icon">notifications_none</mat-icon>
+        <p>No notifications yet</p>
+      </div>
+
+      <button
+        *ngFor="let notification of notifications()"
+        class="notif-item"
+        type="button"
+        [class.notif-item--unread]="!notification.isRead"
+        (click)="markRead(notification)">
+        <span class="notif-item__icon-wrap">
+          <mat-icon class="notif-item__icon">{{ typeIcon(notification.type) }}</mat-icon>
+        </span>
+        <span class="notif-item__body">
+          <span class="notif-item__title">{{ notification.title }}</span>
+          <span class="notif-item__msg">{{ notification.message }}</span>
+          <span class="notif-item__time">{{ timeAgo(notification.createdAt) }}</span>
+        </span>
+        <span class="notif-item__dot" *ngIf="!notification.isRead"></span>
+      </button>
+    </div>
+  </div>
+</div>
