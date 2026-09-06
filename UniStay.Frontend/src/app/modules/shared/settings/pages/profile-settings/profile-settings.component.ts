@@ -184,10 +184,6 @@ export class ProfileSettingsComponent implements OnInit {
     return this.router.url.split('?')[0].split('#')[0].startsWith('/employee');
   }
 
-  /*get showAdminLanguageSelector(): boolean {
-    return this.router.url.split('?')[0].split('#')[0].startsWith('/admin');
-  }*/
-
     get showLanguageSelector(): boolean {
   return true;
 }
@@ -236,12 +232,27 @@ export class ProfileSettingsComponent implements OnInit {
     return newPassword && confirmPassword && newPassword !== confirmPassword ? { passwordMismatch: true } : null;
   }
 
-  private errorMessage(err: any, fallback: string): string {
-    return err?.error?.detail ?? err?.error?.message ?? err?.error?.Message ?? fallback;
+  private errorMessage(err: unknown, fallback: string): string {
+    if (!err || typeof err !== 'object' || !('error' in err)) {
+      return fallback;
+    }
+
+    const body = (err as { error?: unknown }).error;
+    if (!body || typeof body !== 'object') {
+      return fallback;
+    }
+
+    const detail = (body as { detail?: unknown }).detail;
+    const message = (body as { message?: unknown }).message;
+    const pascalMessage = (body as { Message?: unknown }).Message;
+    return this.asMessage(detail) ?? this.asMessage(message) ?? this.asMessage(pascalMessage) ?? fallback;
+  }
+
+  private asMessage(value: unknown): string | null {
+    return typeof value === 'string' && value.trim() ? value : null;
   }
 
   private settingsText(key: string, fallback: string): string {
-    //return this.showAdminLanguageSelector ? this.languageService.instant(key) : fallback;
     return this.languageService.instant(key) || fallback;
   }
 

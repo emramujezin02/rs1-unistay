@@ -1,10 +1,13 @@
 namespace UniStay.Application.Modules.Housing.Equipment.Commands.Update;
 
-public sealed class UpdateEquipmentCommandHandler(IAppDbContext context)
+public sealed class UpdateEquipmentCommandHandler(IAppDbContext context, IAppCurrentUser currentUser)
     : IRequestHandler<UpdateEquipmentCommand, Unit>
 {
     public async Task<Unit> Handle(UpdateEquipmentCommand request, CancellationToken ct)
     {
+        if (!currentUser.IsAdmin && !currentUser.IsEmployee)
+            throw new UnauthorizedAccessException("Only admins and employees can update equipment.");
+
         var equipment = await context.Equipment
             .Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == request.Id, ct);

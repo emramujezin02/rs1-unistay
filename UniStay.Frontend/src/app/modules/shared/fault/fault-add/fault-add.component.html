@@ -1,7 +1,7 @@
 <div class="fault-add-container" *ngIf="!loading; else loadingTpl">
 
   <mat-card @formAnimation>
-    <h2>{{ isAddMode ? 'Edit fault' : 'Add new fault' }}</h2>
+    <h2>{{ isEditMode ? 'Edit fault' : 'Add new fault' }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-layout">
 
@@ -59,6 +59,38 @@
         </mat-error>
       </mat-form-field>
 
+      <ng-container *ngIf="isEditMode">
+
+  <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+    <mat-label>Priority</mat-label>
+
+    <input
+      matInput
+      type="text"
+      formControlName="priority">
+
+    <mat-error
+      *ngIf="form.get('priority')?.hasError('maxlength') && form.get('priority')?.touched">
+      Priority cannot exceed 50 characters.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width" @fieldAnimation>
+    <mat-label>Status</mat-label>
+
+    <mat-select formControlName="status">
+      <mat-option value="Open">Unresolved</mat-option>
+      <mat-option value="Resolved">Resolved</mat-option>
+    </mat-select>
+
+    <mat-error
+      *ngIf="form.get('status')?.hasError('required') && form.get('status')?.touched">
+      Required field
+    </mat-error>
+  </mat-form-field>
+
+</ng-container>
+
       <!-- Button -->
       <div class="button-row">
         <button mat-stroked-button type="button" class="close-btn" (click)="back()" @fieldAnimation>
@@ -66,7 +98,7 @@
         </button>
 
         <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading" @fieldAnimation>
-          {{ isAddMode ? 'Save changes' : 'Add fault' }}
+          {{ isEditMode ? 'Save changes' : 'Add fault' }}
         </button>
       </div>
 

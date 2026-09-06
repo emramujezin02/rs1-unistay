@@ -1,5 +1,8 @@
 using UniStay.Application.Modules.Auth.Commands.Login;
 using UniStay.Application.Modules.Account.Users.Common;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using UniStay.Shared.Options;
 
 public sealed class LoginCommandHandler(
     IAppDbContext ctx,
@@ -7,11 +10,14 @@ public sealed class LoginCommandHandler(
     IPasswordHasher<UniStayUserEntity> hasher,
     ISecurityTokenService securityTokenService,
     IEmailService emailService,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IOptions<TwoFactorOptions> twoFactorOptions,
+    IHostEnvironment hostEnvironment)
     : IRequestHandler<LoginCommand, LoginCommandDto>
 {
     public async Task<LoginCommandDto> Handle(LoginCommand request, CancellationToken ct)
     {
+        var options = twoFactorOptions.Value;
         var email = request.Email.Trim().ToLowerInvariant();
 
         var user = await ctx.Users
@@ -22,10 +28,8 @@ public sealed class LoginCommandHandler(
         if (verify == PasswordVerificationResult.Failed)
             throw new UniStayConflictException("Invalid credentials.");
 
-        var isDemoUser = email is
-            "admin@unistay.ba" or
-            "student@unistay.ba" or
-            "employee@unistay.ba";
+        var isDevelopmentDemoBypass = hostEnvironment.IsDevelopment() &&
+            options.DevelopmentDemoBypassEmails.Any(x => string.Equals(x.Trim(), email, StringComparison.OrdinalIgnoreCase));
 
         var fingerprintHash = string.IsNullOrWhiteSpace(request.Fingerprint)
             ? null
@@ -38,15 +42,33 @@ public sealed class LoginCommandHandler(
                 x.TokenHash == fingerprintHash &&
                 x.ExpiresAtUtc > timeProvider.GetUtcNow().UtcDateTime, ct);
 
-        if (!isDemoUser && !isTrustedDevice)
+        var twoFactorEnabled = await ctx.TwoFactorSettings.AsNoTracking().AnyAsync(x =>
+            x.UserId == user.Id &&
+            x.IsEnabled &&
+            x.RequiresTwoFactor, ct);
+
+        if (twoFactorEnabled && !isDevelopmentDemoBypass && !isTrustedDevice)
         {
             var code = securityTokenService.GenerateNumericCode(6);
+            var challenge = securityTokenService.GenerateSecureToken(32);
+            var now = timeProvider.GetUtcNow().UtcDateTime;
+
             ctx.TwoFactorCodes.Add(new TwoFactorCodeEntity
             {
                 UserId = user.Id,
                 CodeHash = securityTokenService.Hash(code),
-                ExpiresAtUtc = timeProvider.GetUtcNow().AddMinutes(10).UtcDateTime,
+                ExpiresAtUtc = now.AddMinutes(options.ChallengeMinutes),
                 Used = false
+            });
+            ctx.TwoFactorLoginChallenges.Add(new TwoFactorLoginChallengeEntity
+            {
+                UserId = user.Id,
+                ChallengeHash = securityTokenService.Hash(challenge),
+                ExpiresAtUtc = now.AddMinutes(options.ChallengeMinutes),
+                FailedAttempts = 0,
+                MaxAttempts = options.MaxVerifyAttempts,
+                Consumed = false,
+                CreatedAtUtc = now
             });
 
             await ctx.SaveChangesAsync(ct);
@@ -55,11 +77,7 @@ public sealed class LoginCommandHandler(
             return new LoginCommandDto
             {
                 RequiresTwoFactor = true,
-                TwoFactorUserId = user.Id,
-                UserId = user.Id,
-                Email = user.Email,
-                Theme = user.Theme,
-                RoleName = UserRoleMapper.GetRoleName(user),
+                TwoFactorChallengeId = challenge,
                 AccessToken = string.Empty,
                 RefreshToken = string.Empty
             };

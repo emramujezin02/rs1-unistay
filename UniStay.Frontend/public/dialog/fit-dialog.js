@@ -1,7 +1,6 @@
 function zatvori()
 {
     document.getElementById("my-dialog-wrapper").remove()
-    console.log("dialog: zatvoren") ;
 }
 
 

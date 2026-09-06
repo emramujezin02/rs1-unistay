@@ -54,7 +54,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private authService: MyAuthService,
     private router: Router,
     private analyticsService: AnalyticsService
-  ) {console.log("Dashboard loaded");}
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardStats();
@@ -117,33 +117,30 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/equipment/equipment-list']);
   }
 
-  private loadDashboardStats(): void {
-    this.statsLoading = true;
-    this.statsError = false;
+private loadDashboardStats(): void {
+  this.statsLoading = true;
+  this.statsError = false;
 
-    this.analyticsSub = this.analyticsService.analytics$.subscribe(data => {
+  this.analyticsSub = this.analyticsService.analytics$.subscribe(data => {
+    this.stats = this.normalizeStats(data);
+    this.statsLoading = false;
+    this.statsError = false;
+  });
+
+  this.analyticsService.startConnection();
+
+  this.analyticsService.getSnapshot().subscribe({
+    next: data => {
       this.stats = this.normalizeStats(data);
       this.statsLoading = false;
-      this.statsError = false;
-    });
-
-    const userId = Number(localStorage.getItem('id'));
-    if (userId) {
-      this.analyticsService.startConnection(userId);
+    },
+    error: () => {
+      this.stats = this.createEmptyStats();
+      this.statsError = true;
+      this.statsLoading = false;
     }
-
-    this.analyticsService.getSnapshot().subscribe({
-      next: data => {
-        this.stats = this.normalizeStats(data);
-        this.statsLoading = false;
-      },
-      error: () => {
-        this.stats = this.createEmptyStats();
-        this.statsError = true;
-        this.statsLoading = false;
-      }
-    });
-  }
+  });
+}
 
   private normalizeStats(snapshot: Partial<AnalyticsSnapshot> | null | undefined): DashboardStats {
     return {

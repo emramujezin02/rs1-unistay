@@ -92,6 +92,15 @@ public static class DependencyInjection
             o.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
+
+            o.AddPolicy("AdminOnly", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+
+                policy.RequireAssertion(context =>
+                    context.User.FindFirst("is_admin")?.Value
+                        .Equals("true", StringComparison.OrdinalIgnoreCase) == true);
+            });
         });
 
         // Swagger with Bearer auth

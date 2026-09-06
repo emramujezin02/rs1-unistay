@@ -16,9 +16,11 @@ public partial class DatabaseContext : DbContext, IAppDbContext
     public DbSet<SecurityQuestionEntity> SecurityQuestions => Set<SecurityQuestionEntity>();
     public DbSet<UserSecurityAnswerEntity> UserSecurityAnswers => Set<UserSecurityAnswerEntity>();
     public DbSet<PasswordResetTokenEntity> PasswordResetTokens => Set<PasswordResetTokenEntity>();
+    public DbSet<PasswordRecoveryContextEntity> PasswordRecoveryContexts => Set<PasswordRecoveryContextEntity>();
     public DbSet<InviteTokenEntity> InviteTokens => Set<InviteTokenEntity>();
     public DbSet<TwoFactorSettingEntity> TwoFactorSettings => Set<TwoFactorSettingEntity>();
     public DbSet<TwoFactorCodeEntity> TwoFactorCodes => Set<TwoFactorCodeEntity>();
+    public DbSet<TwoFactorLoginChallengeEntity> TwoFactorLoginChallenges => Set<TwoFactorLoginChallengeEntity>();
     public DbSet<BackupCodeEntity> BackupCodes => Set<BackupCodeEntity>();
     public DbSet<TrustedDeviceEntity> TrustedDevices => Set<TrustedDeviceEntity>();
     public DbSet<HallEntity> Halls => Set<HallEntity>();

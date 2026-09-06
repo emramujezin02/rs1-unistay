@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace UniStay.Infrastructure.Hubs;
 
-[Authorize]
+[Authorize(Policy = "AdminOnly")]
 public sealed class AnalyticsHub : Hub
 {
 }

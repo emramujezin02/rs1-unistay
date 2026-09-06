@@ -1,6 +1,7 @@
 using UniStay.Application.Modules.AccommodationApplications.Commands.ApproveApplication;
 using UniStay.Application.Modules.AccommodationApplications.Commands.CreateApplication;
 using UniStay.Application.Modules.AccommodationApplications.Commands.RejectApplication;
+using UniStay.Application.Modules.AccommodationApplications.Queries.DownloadDocument;
 using UniStay.Application.Modules.AccommodationApplications.Queries.GetAllApplications;
 using UniStay.Application.Modules.AccommodationApplications.Queries.GetApplicationById;
 using UniStay.Application.Modules.AccommodationApplications.Queries.GetMyApplications;
@@ -69,6 +70,13 @@ public sealed class AccommodationApplicationsController(ISender sender) : Contro
     {
         var result = await sender.Send(new GetApplicationByIdQuery(id), ct);
         return Ok(result);
+    }
+
+    [HttpGet("{id:int}/documents/{fileId}")]
+    public async Task<IActionResult> DownloadDocument(int id, string fileId, CancellationToken ct)
+    {
+        var result = await sender.Send(new DownloadApplicationDocumentQuery(id, fileId), ct);
+        return File(result.Content, result.ContentType, result.FileName);
     }
 }
 

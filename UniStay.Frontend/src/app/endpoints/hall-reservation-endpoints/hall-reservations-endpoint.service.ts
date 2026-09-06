@@ -33,6 +33,48 @@ export interface ReservationsPagedResult {
   totalPages: number;
 }
 
+interface HallReservationApiItem {
+  reservationId?: string | number;
+  ReservationId?: string | number;
+  id?: string | number;
+  Id?: string | number;
+  hallId?: string | number;
+  HallId?: string | number;
+  hallName?: string;
+  HallName?: string;
+  hallCapacity?: number;
+  HallCapacity?: number;
+  studentId?: string | number;
+  StudentId?: string | number;
+  studentUsername?: string;
+  StudentUsername?: string;
+  studentEmail?: string;
+  StudentEmail?: string;
+  fromDate?: string;
+  FromDate?: string;
+  toDate?: string;
+  ToDate?: string;
+  status?: ReservationStatus;
+  Status?: ReservationStatus;
+  createdAt?: string;
+  CreatedAt?: string;
+  createdAtUtc?: string;
+  CreatedAtUtc?: string;
+}
+
+interface HallReservationsApiResponse {
+  items?: HallReservationApiItem[];
+  Items?: HallReservationApiItem[];
+  totalCount?: number;
+  TotalCount?: number;
+  pageNumber?: number;
+  PageNumber?: number;
+  pageSize?: number;
+  PageSize?: number;
+  totalPages?: number;
+  TotalPages?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class HallReservationsEndpointService {
   private readonly apiUrl = `${MyConfig.baseUrl}/api/halls/reservations`;
@@ -44,10 +86,10 @@ export class HallReservationsEndpointService {
       .set('pageNumber', pageNumber)
       .set('pageSize', pageSize);
 
-    return this.http.get<any>(this.apiUrl, { params }).pipe(
+    return this.http.get<HallReservationsApiResponse>(this.apiUrl, { params }).pipe(
       map(response => {
-        let items: HallReservation[] = ((response.items ?? response.Items ?? []) as any[])
-          .map((item: any) => this.mapItem(item));
+        let items: HallReservation[] = (response.items ?? response.Items ?? [])
+          .map(item => this.mapItem(item));
         if (search.trim()) {
           const term = search.trim().toLowerCase();
           items = items.filter((item: HallReservation) =>
@@ -69,28 +111,28 @@ export class HallReservationsEndpointService {
   }
 
   getMyReservations(): Observable<HallReservation[]> {
-    return this.http.get<any>(`${this.apiUrl}/my`).pipe(
-      map(response => ((response.items ?? response.Items ?? []) as any[]).map((item: any) => this.mapItem(item)))
+    return this.http.get<HallReservationsApiResponse>(`${this.apiUrl}/my`).pipe(
+      map(response => (response.items ?? response.Items ?? []).map(item => this.mapItem(item)))
     );
   }
 
   getById(id: string | number): Observable<HallReservation> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(map(item => this.mapItem(item)));
+    return this.http.get<HallReservationApiItem>(`${this.apiUrl}/${id}`).pipe(map(item => this.mapItem(item)));
   }
 
   create(request: CreateHallReservationRequest): Observable<HallReservation> {
-    return this.http.post<any>(this.apiUrl, request).pipe(map(item => this.mapItem(item)));
+    return this.http.post<HallReservationApiItem>(this.apiUrl, request).pipe(map(item => this.mapItem(item)));
   }
 
   updateStatus(id: string | number, status: 'Active' | 'Rejected'): Observable<HallReservation> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/status`, { status }).pipe(map(item => this.mapItem(item)));
+    return this.http.put<HallReservationApiItem>(`${this.apiUrl}/${id}/status`, { status }).pipe(map(item => this.mapItem(item)));
   }
 
   cancel(id: string | number): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${id}/cancel`, {});
   }
 
-  private mapItem(item: any): HallReservation {
+  private mapItem(item: HallReservationApiItem): HallReservation {
     return {
       id: String(item.reservationId ?? item.ReservationId ?? item.id ?? item.Id ?? ''),
       hallId: String(item.hallId ?? item.HallId ?? ''),

@@ -20,8 +20,8 @@ export class InviteSendEndpointService {
   private apiUrl = 'http://localhost:5177/api';
   constructor(private http: HttpClient) {}
 
-  sendInvite(request: InviteRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/InviteFriendEndpoint`, request);
+  sendInvite(request: InviteRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/InviteFriendEndpoint`, request);
   }
 
   validateInviteToken(token: string): Observable<InviteValidationResult> {

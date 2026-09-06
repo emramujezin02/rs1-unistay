@@ -5,8 +5,8 @@ public sealed class DeleteEquipmentCommandHandler(IAppDbContext context, IAppCur
 {
     public async Task<Unit> Handle(DeleteEquipmentCommand request, CancellationToken ct)
     {
-        if (currentUser.UserId is null)
-            throw new UniStayBusinessRuleException("AUTH_REQUIRED", "User is not authenticated.");
+        if (!currentUser.IsAdmin && !currentUser.IsEmployee)
+            throw new UnauthorizedAccessException("Only admins and employees can delete equipment.");
 
         var equipment = await context.Equipment
             .FirstOrDefaultAsync(x => x.Id == request.Id, ct);

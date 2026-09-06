@@ -1,10 +1,16 @@
 namespace UniStay.Application.Modules.Communication.Chat.Queries.ListConversations;
 
-public sealed class ListChatConversationsQueryHandler(IAppDbContext context)
+public sealed class ListChatConversationsQueryHandler(IAppDbContext context, IAppCurrentUser currentUser)
     : IRequestHandler<ListChatConversationsQuery, IReadOnlyList<ListChatConversationsQueryDto>>
 {
     public async Task<IReadOnlyList<ListChatConversationsQueryDto>> Handle(ListChatConversationsQuery request, CancellationToken ct)
     {
+        var callerId = currentUser.UserId
+            ?? throw new UnauthorizedAccessException("You must be logged in.");
+
+        if (request.UserId != callerId)
+            throw new UnauthorizedAccessException("You can view only your own conversations.");
+
         var userExists = await context.Users.AnyAsync(x => x.Id == request.UserId, ct);
         if (!userExists)
             throw new UniStayNotFoundException("User not found.");

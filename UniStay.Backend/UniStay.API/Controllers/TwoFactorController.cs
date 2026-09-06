@@ -26,6 +26,7 @@ public sealed class TwoFactorController(ISender sender) : ControllerBase
 
     [HttpPost("send-code")]
     [AllowAnonymous]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("two-factor-send-code")]
     public async Task SendCode(SendTwoFactorCodeCommand command, CancellationToken ct)
     {
         await sender.Send(command, ct);
@@ -33,6 +34,7 @@ public sealed class TwoFactorController(ISender sender) : ControllerBase
 
     [HttpPost("verify")]
     [AllowAnonymous]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("two-factor-verify")]
     public async Task<LoginCommandDto> Verify(VerifyTwoFactorCommand command, CancellationToken ct)
     {
         return await sender.Send(command, ct);

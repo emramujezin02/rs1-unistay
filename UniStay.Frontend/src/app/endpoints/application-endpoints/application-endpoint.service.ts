@@ -131,6 +131,13 @@ export class ApplicationEndpointService {
     );
   }
 
+  downloadDocument(applicationId: string, fileId: string): Observable<Blob> {
+    return this.http.get(
+      `${this.apiUrl}/${encodeURIComponent(applicationId)}/documents/${encodeURIComponent(fileId)}`,
+      { responseType: 'blob' }
+    );
+  }
+
   private mapApplication(item: ApplicationApiItem): ApplicationListItem {
     return {
       applicationId: item.applicationId ?? item.ApplicationId ?? '',

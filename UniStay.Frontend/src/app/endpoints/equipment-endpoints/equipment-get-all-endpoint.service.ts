@@ -2,13 +2,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Equipment } from './equpiment-get-by-id-endpoint.service';
+
+export interface EquipmentFilters {
+  name?: string;
+  type?: string;
+  minQty?: number | null;
+  maxQty?: number | null;
+  availableOnly?: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class EquipmentGetAllEndpointService {
   private apiUrl = 'http://localhost:5177/api/EquipmentGetAllEndpoint';
   constructor(private http: HttpClient) {}
 
-  getAllEquipments(filters?: any): Observable<any[]> {
+  getAllEquipments(filters?: EquipmentFilters): Observable<Equipment[]> {
     let params = new HttpParams();
     if (filters) {
       if (filters.name) params = params.set('name', filters.name);
@@ -17,6 +26,6 @@ export class EquipmentGetAllEndpointService {
       if (filters.maxQty != null) params = params.set('maxQty', filters.maxQty);
       if (filters.availableOnly != null) params = params.set('availableOnly', filters.availableOnly);
     }
-    return this.http.get<any[]>(this.apiUrl, { params });
+    return this.http.get<Equipment[]>(this.apiUrl, { params });
   }
 }

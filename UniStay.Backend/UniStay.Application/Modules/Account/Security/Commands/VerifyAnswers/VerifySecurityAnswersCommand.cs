@@ -4,6 +4,6 @@ namespace UniStay.Application.Modules.Account.Security.Commands.VerifyAnswers;
 
 public sealed class VerifySecurityAnswersCommand : IRequest<VerifySecurityAnswersCommandDto>
 {
-    public required string Email { get; set; }
+    public string RecoveryContextId { get; set; } = string.Empty;
     public List<SecurityAnswerDto> Answers { get; set; } = new();
 }

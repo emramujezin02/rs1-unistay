@@ -1,6 +1,7 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Hall } from './hall-get-by-id-endpoint.service';
 
 @Injectable({ providedIn: 'root' })
 export class HallGetAllEndpointService {
@@ -8,7 +9,7 @@ export class HallGetAllEndpointService {
 
   constructor(private http: HttpClient) {}
 
-  getAllHalls(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}`);
+  getAllHalls(): Observable<Hall[]> {
+    return this.http.get<Hall[]>(`${this.apiUrl}`);
   }
 }

@@ -34,8 +34,12 @@ export class BedAssignmentListComponent implements OnInit {
         case 'fromDate':
         case 'toDate':
           return new Date(item[property]).getTime();
+        case 'bed':
+          return item.bedNumber;
+        case 'room':
+          return item.roomNumber;
         default:
-          return (item as any)[property] ?? '';
+          return '';
       }
     };
     this.dataSource.sort = sort;

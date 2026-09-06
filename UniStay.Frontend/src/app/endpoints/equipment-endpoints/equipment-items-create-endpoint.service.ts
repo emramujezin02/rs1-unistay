@@ -2,6 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface EquipmentItemCreatePayload {
+  serialNumber?: string;
+  isAvailable: boolean;
+  assignedAt?: string | null;
+  returnedAt?: string | null;
+  location?: string | null;
+  equipmentId: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class EquipmentItemCreateService {
 
@@ -9,7 +18,7 @@ export class EquipmentItemCreateService {
 
   constructor(private http: HttpClient) {}
 
-  createItem(equipmentId:number, payload: any): Observable<any> {
+  createItem(equipmentId:number, payload: EquipmentItemCreatePayload): Observable<object> {
     return this.http.post(`${this.url}/create/${equipmentId}`, payload);
   }
 }

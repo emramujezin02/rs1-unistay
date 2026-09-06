@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EquipmentItemCreateService } from '../../../../endpoints/equipment-endpoints/equipment-items-create-endpoint.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-equipment-item-create',
@@ -35,7 +36,8 @@ export class EquipmentItemCreateComponent implements OnInit {
     private fb: FormBuilder,
     private create: EquipmentItemCreateService,
     private route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -69,7 +71,7 @@ export class EquipmentItemCreateComponent implements OnInit {
 
       if (isAvailable) {
         control?.clearValidators();
-        control?.setValue(null); // 🔥 BITNO
+        control?.setValue(null); 
         control?.disable();
       } else {
         control?.setValidators(Validators.required);
@@ -102,12 +104,12 @@ export class EquipmentItemCreateComponent implements OnInit {
 
     this.create.createItem(this.equipmentId, payload).subscribe({
       next: () => {
-        alert('Item created successfully!');
+        this.snackBar.open('Item created successfully!', 'OK', { duration: 3000 });
         this.navigateToItemsList();
       },
       error: (err) => {
-        console.log("ERROR:", err.error); 
-        alert('Error creating item.');
+        console.error('Error creating item', err);
+        this.snackBar.open('Error creating item.', 'OK', { duration: 3000 });
       }
     });
   }

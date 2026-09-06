@@ -41,8 +41,12 @@ export class EmployeeStudentsComponent implements OnInit {
           return this.fullName(student);
         case 'status':
           return student.isEnabled ? 'active' : 'disabled';
+        case 'email':
+          return student.email ?? '';
+        case 'phone':
+          return student.phone ?? '';
         default:
-          return (student as any)[property] ?? '';
+          return '';
       }
     };
     this.dataSource.sort = sort;
@@ -82,7 +86,7 @@ export class EmployeeStudentsComponent implements OnInit {
   }
 
   roleLabel(student: UserDto): string {
-    return (student as any).role || student.roleName || '';
+    return student.roleName || '';
   }
 
   private loadStudents(): void {

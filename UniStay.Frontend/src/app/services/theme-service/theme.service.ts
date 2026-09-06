@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MyConfig } from '../../my-config';
 
 @Injectable({ providedIn: 'root' })
@@ -7,7 +8,10 @@ export class ThemeService {
 
   private currentTheme: 'light' | 'dark' = 'light';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar
+  ) {}
 
   initTheme() {
     const saved = localStorage.getItem('theme') as 'light' | 'dark';
@@ -33,7 +37,9 @@ export class ThemeService {
     }
 
     this.http.post(`${MyConfig.baseUrl}/api/users/theme`, { theme }).subscribe({
-      error: () => {}
+      error: () => {
+        this.snackBar.open('Unable to save theme preference.', 'OK', { duration: 3000 });
+      }
     });
 
   }

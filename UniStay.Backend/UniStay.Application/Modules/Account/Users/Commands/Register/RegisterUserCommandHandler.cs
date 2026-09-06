@@ -54,6 +54,15 @@ public sealed class RegisterUserCommandHandler(
 
         context.Users.Add(user);
 
+        context.TwoFactorSettings.Add(new TwoFactorSettingEntity
+        {
+            User = user,
+            IsEnabled = true,
+            RequiresTwoFactor = true,
+            EnabledAtUtc = timeProvider.GetUtcNow().UtcDateTime,
+            Method = "email"
+        });
+
         if (invite is not null)
         {
             invite.Used = true;

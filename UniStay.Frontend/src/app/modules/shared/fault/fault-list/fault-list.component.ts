@@ -6,6 +6,10 @@ import { FaultUpdateEndpointService } from '../../../../endpoints/fault-endpoint
 import { ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { trigger,transition,style,animate } from '@angular/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { Fault } from '../../../../endpoints/fault-endpoints/fault-get-by-id-endpoint.service';
 @Component({
   selector: 'app-fault-list',
   templateUrl: './fault-list.component.html',
@@ -23,9 +27,9 @@ import { trigger,transition,style,animate } from '@angular/animations';
   ]
 })
 export class FaultListComponent implements OnInit {
-  faults: any[] = [];
-  filteredFaults: any[] = [];
-  pagedFaults: any[] = [];
+  faults: Fault[] = [];
+  filteredFaults: Fault[] = [];
+  pagedFaults: Fault[] = [];
   readonly pageSizeOptions = [5, 10, 20];
   currentPage = 1;
   pageSize = 10;
@@ -54,7 +58,9 @@ export class FaultListComponent implements OnInit {
     private faultDeleteService: FaultDeleteEndpointService,
     private faultUpdateService:FaultUpdateEndpointService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +70,7 @@ export class FaultListComponent implements OnInit {
   loadFaults(): void {
     this.loading = true;
     this.faultGetAllService.getAllFaults().subscribe({
-      next: (res:any) => {
+      next: (res: Fault[]) => {
         this.faults = res;
         this.filteredFaults = [...res];
         this.currentPage = 1;
@@ -72,7 +78,7 @@ export class FaultListComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        alert('Error loading faults');
+        this.snackBar.open('Error loading faults', 'OK', { duration: 3000 });
         this.loading = false;
       }
     });
@@ -118,22 +124,27 @@ applyFilters() {
   }
 
   deleteFault(id: number): void {
-    console.log("ID I am sending: ",id);
-    if (confirm('Are you sure yout wand to delete this fault?')) {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Are you sure you want to delete this fault?' }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+
       this.faultDeleteService.deleteFault(id).subscribe({
         next: () => {
-          alert('Fault deleted');
+          this.snackBar.open('Fault deleted', 'OK', { duration: 3000 });
           this.loadFaults();
         },
         error: (err) => {
           console.error("Backend error: ",err);
-          alert('Error deleting');}
+          this.snackBar.open('Error deleting', 'OK', { duration: 3000 });}
       });
-    }
+    });
   }
 
   updateFault(id: number): void {
-    this.router.navigate(['../fault-update', id], { relativeTo: this.route });
+this.router.navigate(['../fault-add', id], { relativeTo: this.route });
   }
 
   addFault(): void {
@@ -196,7 +207,7 @@ applyFilters() {
 
 }
 
-compare(a: any, b: any, isAsc: boolean) {
+compare(a: string | number | boolean, b: string | number | boolean, isAsc: boolean) {
   if (a === b) return 0;
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }

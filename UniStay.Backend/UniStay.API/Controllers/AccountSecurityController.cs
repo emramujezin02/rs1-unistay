@@ -4,6 +4,7 @@ using UniStay.Application.Modules.Account.Security.Commands.SetAnswers;
 using UniStay.Application.Modules.Account.Security.Commands.VerifyAnswers;
 using UniStay.Application.Modules.Account.Security.Queries.GetAnswered;
 using UniStay.Application.Modules.Account.Security.Queries.GetQuestionsForUser;
+using UniStay.Application.Modules.Account.Security.Queries.GetRecoveryQuestions;
 using UniStay.Application.Modules.Account.Security.Queries.ListQuestions;
 
 namespace UniStay.API.Controllers;
@@ -20,17 +21,27 @@ public sealed class AccountSecurityController(ISender sender) : ControllerBase
     }
 
     [HttpGet("questions-for-user")]
-    [AllowAnonymous]
-    public async Task<IReadOnlyList<GetSecurityQuestionsForUserQueryDto>> GetQuestionsForUser([FromQuery] string email, CancellationToken ct)
+    [Authorize]
+    public async Task<IReadOnlyList<GetSecurityQuestionsForUserQueryDto>> GetQuestionsForUser(
+        CancellationToken ct)
     {
-        return await sender.Send(new GetSecurityQuestionsForUserQuery { Email = email }, ct);
+        return await sender.Send(new GetSecurityQuestionsForUserQuery(), ct);
+    }
+
+    [HttpGet("recovery-questions")]
+    [AllowAnonymous]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("password-reset-send")]
+    public async Task<IReadOnlyList<GetRecoverySecurityQuestionsQueryDto>> GetRecoveryQuestions([FromQuery] string recoveryContextId, CancellationToken ct)
+    {
+        return await sender.Send(new GetRecoverySecurityQuestionsQuery { RecoveryContextId = recoveryContextId }, ct);
     }
 
     [HttpGet("answered")]
-    [AllowAnonymous]
-    public async Task<IReadOnlyList<GetAnsweredSecurityQuestionsQueryDto>> GetAnsweredQuestions([FromQuery] string email, CancellationToken ct)
+    [Authorize]
+    public async Task<IReadOnlyList<GetAnsweredSecurityQuestionsQueryDto>> GetAnsweredQuestions(
+        CancellationToken ct)
     {
-        return await sender.Send(new GetAnsweredSecurityQuestionsQuery { Email = email }, ct);
+        return await sender.Send(new GetAnsweredSecurityQuestionsQuery(), ct);
     }
 
     [HttpPost("set")]

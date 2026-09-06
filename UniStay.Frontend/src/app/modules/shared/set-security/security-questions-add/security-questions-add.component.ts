@@ -1,6 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../../../../endpoints/auth-endpoints/account-security-endpoint.service';
+import { SecurityAnswer, SecurityQuestion } from '../../../../endpoints/auth-endpoints/account-security.models';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-security-questions-add',
@@ -10,62 +13,68 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, V
 })
 export class SecurityQuestionsAddComponent implements OnInit {
 
-  questions: any[] = [];
+  questions: SecurityQuestion[] = [];
   currentIndex = 0;
 
-  answers: { questionId: number, answer: string }[] = [];
+  answers: SecurityAnswer[] = [];
   form!: FormGroup;
 
   email: string = ''; 
-  
-  
+  isLoading = true;
+  loadError = '';
+  answeredQuestionsCount = 0;
+  totalQuestionsCount = 0;
   
 
-  constructor(private acct: AccountService, private fb: FormBuilder) { }
+  constructor(private acct: AccountService, private fb: FormBuilder, private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
   this.form = this.fb.group({
     answers: this.fb.array([], { validators: this.atLeastOneAnswerValidator })
   });
 
-  //this.email = localStorage.getItem('email') || '';
   this.email = localStorage.getItem('email')?.trim() || '';
-
-console.log("EMAIL KOJI SALJEM:", this.email);
-
-if (!this.email) {
-  alert("Email is not found in localStorage");
-  return;
-}
 
   this.loadAvailableQuestions();
 }
 
   private loadAvailableQuestions(): void {
-  this.acct.getAllQuestions()
-    .subscribe(allQuestions => {
+  this.isLoading = true;
+  this.loadError = '';
 
-      // ðŸ”¥ uzmi answered pitanja
-      this.acct.getAnsweredQuestions(this.email)
-        .subscribe(answered => {
+  forkJoin({
+    allQuestions: this.acct.getAllQuestions(),
+    answered: this.acct.getAnsweredQuestions()
+  }).subscribe({
+    next: ({ allQuestions, answered }) => {
+      const answeredIds = answered
+        .map(x => this.getQuestionId(x))
+        .filter(id => id > 0);
 
-          const answeredIds = answered.map(x => this.getQuestionId(x));
+      this.totalQuestionsCount = allQuestions.length;
+      this.answeredQuestionsCount = answeredIds.length;
+      this.questions = allQuestions.filter(q =>
+        !answeredIds.includes(this.getQuestionId(q))
+      );
 
-          // ðŸ”¥ FILTER â€” samo neodgovorena
-          this.questions = allQuestions.filter(q =>
-            !answeredIds.includes(this.getQuestionId(q))
-          );
-
-          this.currentIndex = 0;
-          // pripremi answers samo za filtrirana pitanja
-          this.answers = this.questions.map(q => ({
-            questionId: this.getQuestionId(q),
-            answer: ''
-          }));
-          this.buildAnswersForm();
-
-        });
-
+      this.currentIndex = 0;
+      this.answers = this.questions.map(q => ({
+        questionId: this.getQuestionId(q),
+        answer: ''
+      }));
+      this.buildAnswersForm();
+      this.isLoading = false;
+    },
+    error: () => {
+      this.questions = [];
+      this.answers = [];
+      this.totalQuestionsCount = 0;
+      this.answeredQuestionsCount = 0;
+      this.buildAnswersForm();
+      this.isLoading = false;
+      this.loadError = 'Unable to load security questions. Please try again later.';
+      this.snackBar.open(this.loadError, 'OK', { duration: 3000 });
+    }
     });
   }
 
@@ -96,10 +105,10 @@ if (!this.email) {
     this.acct.setSecurityAnswers(payload)
       .subscribe({
         next: () => {
-          alert('Save!');
+          this.snackBar.open('Saved!', 'OK', { duration: 3000 });
           this.loadAvailableQuestions();
         },
-        error: err => console.error(err)
+        error: () => this.snackBar.open('Unable to save security answers. Please try again later.', 'OK', { duration: 3000 })
       });
   }
 
@@ -107,9 +116,11 @@ if (!this.email) {
     return this.form.get('answers') as FormArray;
   }
 
-  get currentAnswerControl(): AbstractControl | null {
-    return this.answerControls.at(this.currentIndex) ?? null;
-  }
+get currentAnswerControl(): AbstractControl {
+  return this.answerControls.at(this.currentIndex);
+}
+
+
 
   private buildAnswersForm(): void {
     const controls = this.answers.map(answer =>
@@ -133,11 +144,35 @@ if (!this.email) {
     return hasAnswer ? null : { noAnswers: true };
   }
 
-  getQuestionId(question: any): number {
-    return question?.questionId ?? question?.QuestionId ?? question?.securityQuestionID ?? question?.securityQuestionsID;
+  getQuestionId(question: SecurityQuestion): number {
+    return question?.questionId ?? question?.QuestionId ?? question?.securityQuestionID ?? question?.securityQuestionsID ?? 0;
   }
 
-  getQuestionText(question: any): string {
+  getQuestionText(question: SecurityQuestion): string {
     return question?.question ?? question?.Question ?? question?.text ?? question?.Text ?? '';
+  }
+
+  get emptyTitle(): string {
+    if (this.totalQuestionsCount === 0) {
+      return 'No security questions are configured.';
+    }
+
+    if (this.answeredQuestionsCount >= this.totalQuestionsCount) {
+      return 'Security questions are set.';
+    }
+
+    return 'No unanswered security questions available.';
+  }
+
+  get emptyMessage(): string {
+    if (this.totalQuestionsCount === 0) {
+      return 'Please try again later.';
+    }
+
+    if (this.answeredQuestionsCount >= this.totalQuestionsCount) {
+      return 'You have answered all available security questions.';
+    }
+
+    return 'Refresh the page or try again later.';
   }
 }

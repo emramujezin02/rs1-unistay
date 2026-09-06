@@ -51,7 +51,35 @@ public sealed class EmailService(IConfiguration configuration) : IEmailService
 
     public Task SendPasswordResetTokenAsync(string toEmail, string resetToken, CancellationToken ct = default)
     {
-        var body = $"<h2>Password Reset</h2><p>Use this token to reset your password:</p><p><b>{resetToken}</b></p>";
-        return SendEmailAsync(toEmail, "Password Reset Request", body, ct);
+        var baseUrl = configuration["Frontend:BaseUrl"];
+
+        if (string.IsNullOrWhiteSpace(baseUrl))
+            baseUrl = "http://localhost:4200";
+
+        var resetLink =
+            $"{baseUrl.TrimEnd('/')}/password-recovery?token={WebUtility.UrlEncode(resetToken)}";
+
+        var body = $"""
+        <h2>Password Reset</h2>
+        <p>You requested to reset your UniStay password.</p>
+
+        <p>
+            <a href="{resetLink}">
+                Reset your password
+            </a>
+        </p>
+
+        <p>If the link does not work, you can enter this token manually:</p>
+
+        <p><b>{WebUtility.HtmlEncode(resetToken)}</b></p>
+
+        <p>This token is temporary and can only be used once.</p>
+        """;
+
+        return SendEmailAsync(
+            toEmail,
+            "Password Reset Request",
+            body,
+            ct);
     }
 }

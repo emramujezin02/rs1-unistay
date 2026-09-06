@@ -10,25 +10,44 @@ public sealed class VerifySecurityAnswersCommandHandler(
 {
     public async Task<VerifySecurityAnswersCommandDto> Handle(VerifySecurityAnswersCommand request, CancellationToken ct)
     {
-        var email = request.Email.Trim().ToLowerInvariant();
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email, ct)
-            ?? throw new UniStayNotFoundException("User not found.");
+        if (string.IsNullOrWhiteSpace(request.RecoveryContextId))
+            throw VerificationFailed();
 
+        var now = timeProvider.GetUtcNow().UtcDateTime;
+        var contextHash = tokenService.Hash(request.RecoveryContextId);
+        var recoveryContext = await context.PasswordRecoveryContexts
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.ContextHash == contextHash, ct);
+
+        if (recoveryContext is null
+            || recoveryContext.Consumed
+            || recoveryContext.ExpiresAtUtc < now
+            || recoveryContext.FailedAttempts >= recoveryContext.MaxAttempts)
+        {
+            throw VerificationFailed();
+        }
+
+        var user = recoveryContext.User;
+        var answers = request.Answers ?? [];
         var stored = await context.UserSecurityAnswers.Where(x => x.UserId == user.Id).ToListAsync(ct);
         if (stored.Count == 0)
-            throw new UniStayBusinessRuleException("NO_SECURITY_QUESTIONS", "No security questions set.");
+            await RegisterFailedAttemptAndThrow(recoveryContext, ct);
 
-        if (request.Answers.Count != stored.Count)
-            throw new UniStayBusinessRuleException("ANSWERS_COUNT_MISMATCH", "Answers count mismatch.");
+        if (answers.Count != stored.Count)
+            await RegisterFailedAttemptAndThrow(recoveryContext, ct);
 
-        foreach (var provided in request.Answers)
+        foreach (var provided in answers)
         {
-            var saved = stored.FirstOrDefault(x => x.SecurityQuestionId == provided.QuestionId)
-                ?? throw new UniStayBusinessRuleException("INVALID_QUESTION", "Invalid question id.");
+            if (string.IsNullOrWhiteSpace(provided.Answer))
+                await RegisterFailedAttemptAndThrow(recoveryContext, ct);
 
-            var result = hasher.VerifyHashedPassword(user, saved.AnswerHash, provided.Answer.Trim().ToLowerInvariant());
+            var saved = stored.FirstOrDefault(x => x.SecurityQuestionId == provided.QuestionId);
+            if (saved is null)
+                await RegisterFailedAttemptAndThrow(recoveryContext, ct);
+
+            var result = hasher.VerifyHashedPassword(user, saved!.AnswerHash, provided.Answer.Trim().ToLowerInvariant());
             if (result == PasswordVerificationResult.Failed)
-                throw new UniStayConflictException("Answers do not match.");
+                await RegisterFailedAttemptAndThrow(recoveryContext, ct);
         }
 
         var rawToken = tokenService.GenerateSecureToken(32);
@@ -36,13 +55,27 @@ public sealed class VerifySecurityAnswersCommandHandler(
         {
             UserId = user.Id,
             TokenHash = tokenService.Hash(rawToken),
-            ExpiresAtUtc = timeProvider.GetUtcNow().AddHours(1).UtcDateTime,
+            ExpiresAtUtc = now.AddHours(1),
             Used = false
         });
+        recoveryContext.Consumed = true;
 
         await context.SaveChangesAsync(ct);
         await emailService.SendPasswordResetTokenAsync(user.Email, rawToken, ct);
 
-        return new VerifySecurityAnswersCommandDto { Success = true, ResetToken = rawToken };
+        return new VerifySecurityAnswersCommandDto { Success = true };
     }
+
+    private async Task RegisterFailedAttemptAndThrow(PasswordRecoveryContextEntity recoveryContext, CancellationToken ct)
+    {
+        recoveryContext.FailedAttempts++;
+        if (recoveryContext.FailedAttempts >= recoveryContext.MaxAttempts)
+            recoveryContext.Consumed = true;
+
+        await context.SaveChangesAsync(ct);
+        throw VerificationFailed();
+    }
+
+    private static UniStayBusinessRuleException VerificationFailed() =>
+        new("SECURITY_ANSWERS_VERIFICATION_FAILED", "Verification failed.");
 }

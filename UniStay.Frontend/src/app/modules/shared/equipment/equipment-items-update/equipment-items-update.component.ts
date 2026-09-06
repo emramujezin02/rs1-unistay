@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EquipmentItemsUpdateService } from '../../../../endpoints/equipment-endpoints/equipment-items-update-endpoint.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-equipment-item-update',
@@ -37,7 +38,8 @@ export class EquipmentItemUpdateComponent implements OnInit {
     private fb: FormBuilder,
     private itemUpdateService: EquipmentItemsUpdateService,
     private route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +91,7 @@ export class EquipmentItemUpdateComponent implements OnInit {
     this.itemUpdateService.getRecord(this.itemId).subscribe({
       next: item => {
 
-        this.equipmentId = item.equipmentID;
+        this.equipmentId = item.equipmentID ?? 0;
 
         this.form.patchValue({
           serialNumber: item.serialNumber,
@@ -104,7 +106,7 @@ export class EquipmentItemUpdateComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        alert("Error loading item");
+        this.snackBar.open('Error loading item', 'OK', { duration: 3000 });
         this.loading = false;
       }
     });
@@ -141,7 +143,7 @@ export class EquipmentItemUpdateComponent implements OnInit {
     // validation
     if (!payload.isAvailable) {
       if (!payload.assignedAt || !payload.returnedAt || !payload.location) {
-        alert("Fill all fields for occupied item!");
+        this.snackBar.open('Fill all fields for occupied item!', 'OK', { duration: 3000 });
         return;
       }
     }
@@ -164,7 +166,7 @@ export class EquipmentItemUpdateComponent implements OnInit {
 
     this.itemUpdateService.updateItem(this.itemId, payload).subscribe({
       next: () => {
-        alert("Item updated successfully");
+        this.snackBar.open('Item updated successfully', 'OK', { duration: 3000 });
 
 
         const listRoute = this.router.url.startsWith('/admin')
@@ -174,8 +176,8 @@ export class EquipmentItemUpdateComponent implements OnInit {
         this.router.navigate([listRoute, this.equipmentId]);
       },
       error: (err) => {
-        console.log("ERROR:", err.error);
-        alert("Error updating item");
+        console.error('Error updating item', err);
+        this.snackBar.open('Error updating item', 'OK', { duration: 3000 });
       }
     });
   }

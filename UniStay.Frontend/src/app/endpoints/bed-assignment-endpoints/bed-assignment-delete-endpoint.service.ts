@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MyConfig } from '../../my-config';
 
+export interface UnassignBedResponse {
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,7 +15,7 @@ export class BedAssignDeleteService {
 
   constructor(private http: HttpClient) {}
 
-  unassign(assignmentId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${assignmentId}`);
+  unassign(assignmentId: number): Observable<UnassignBedResponse> {
+    return this.http.delete<UnassignBedResponse>(`${this.apiUrl}/${assignmentId}`);
   }
 }

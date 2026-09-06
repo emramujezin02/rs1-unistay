@@ -11,6 +11,8 @@ export interface Fault {
   resolvedAt?:string;
   priority?:string;
   reportedByUserID:number;
+  reportedByName?: string;
+  reportedByUserName?: string;
   roomID:number;
   status:string;
 }

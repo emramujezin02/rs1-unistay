@@ -6,6 +6,7 @@ import { MyInputTextType } from '../../shared/my-reactive-forms/my-input-text/my
 import { UserGetByIdEndpointService } from '../../../endpoints/user-endpoints/user-get-by-id-endpoint.service';
 import { ThemeService } from '../../../services/theme-service/theme.service';
 import { MyConfig } from '../../../my-config';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private zone: NgZone,
     private userGetByIdEndpoint: UserGetByIdEndpointService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private snackBar: MatSnackBar
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -39,14 +41,11 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const users = JSON.parse(localStorage.getItem('rememberedUsers') || '[]');
-    this.emails = users.map((x: any) => x.email);
+    const users = this.authService.getRememberedUsers();
+    this.emails = users.map(x => x.email);
 
     this.form.get('email')?.valueChanges.subscribe(value => {
       const val = (value || '').toLowerCase();
-
-      console.log("INPUT:", val);
-      console.log("ALL EMAILS:", this.emails);
 
       if (!val) {
         this.filteredEmails = [];
@@ -59,8 +58,6 @@ export class LoginComponent implements OnInit {
       this.filteredEmails = this.emails.filter(e =>
         e.toLowerCase().includes(val)
       );
-
-      console.log("FILTERED:", this.filteredEmails);
     });
   }
 
@@ -69,17 +66,11 @@ export class LoginComponent implements OnInit {
   }
 
   onEmailSelected(email: string) {
-    const users = JSON.parse(localStorage.getItem('rememberedUsers') || '[]');
-
-    const user = users.find((x: any) => x.email === email);
-
-    if (user) {
-      this.form.patchValue({
-        email: user.email,
-        password: user.password,
-        rememberMe:true
-      });
-    }
+    this.form.patchValue({
+      email,
+      password: '',
+      rememberMe:true
+    });
 
     this.showSuggestions = false;
   }
@@ -98,28 +89,25 @@ export class LoginComponent implements OnInit {
 
         const requiresTwoFactor = response.requiresTwoFactor ?? response.RequiresTwoFactor;
         if (requiresTwoFactor) {
-          const twoFactorUserId = response.twoFactorUserId ?? response.TwoFactorUserId ?? response.userId ?? response.UserId;
+          const twoFactorChallengeId = response.twoFactorChallengeId ?? response.TwoFactorChallengeId;
           const twoFactorEmail = response.email ?? response.Email ?? email;
+
+          if (!twoFactorChallengeId) {
+            this.snackBar.open('Two-factor login challenge was not issued.', 'OK', { duration: 3000 });
+            return;
+          }
 
           sessionStorage.setItem('rememberMe', rememberMe.toString());
           sessionStorage.setItem('2fa_fingerprint', fingerprint);
           if (rememberMe) {
-            let users = JSON.parse(localStorage.getItem('rememberedUsers') || '[]');
+            const users = this.authService.rememberEmail(email);
 
-            const exists = users.find((x: any) => x.email === email);
-
-            if (!exists) {
-              users.push({ email, password });
-              localStorage.setItem('rememberedUsers', JSON.stringify(users));
-            }
-
-            this.emails = users.map((x: any) => x.email);
+            this.emails = users.map(x => x.email);
             this.filteredEmails = this.emails;
 
-            console.log("✅ SAVED USERS:", users);
           }
 
-          sessionStorage.setItem('2fa_userId', twoFactorUserId.toString());
+          sessionStorage.setItem('2fa_challengeId', twoFactorChallengeId.toString());
           sessionStorage.setItem('2fa_email', twoFactorEmail);
 
           this.router.navigate(['/two-factor/two-factor-verify'], {
@@ -130,22 +118,14 @@ export class LoginComponent implements OnInit {
         }
 
         if (rememberMe) {
-          let users = JSON.parse(localStorage.getItem('rememberedUsers') || '[]');
+          const users = this.authService.rememberEmail(email);
 
-          const exists = users.find((x: any) => x.email === email);
-
-          if (!exists) {
-            users.push({ email, password });
-            localStorage.setItem('rememberedUsers', JSON.stringify(users));
-          }
-
-          this.emails = users.map((x: any) => x.email);
+          this.emails = users.map(x => x.email);
           this.filteredEmails = this.emails;
 
-          console.log("✅ SAVED USERS:", users);
         }
 
-        if (response.theme) {
+        if (response.theme === 'light' || response.theme === 'dark') {
           this.themeService.setTheme(response.theme);
         }
 
@@ -153,12 +133,9 @@ export class LoginComponent implements OnInit {
         const token = response.token ?? response.accessToken;
         const roleName = this.authService.normalizeRole(authInfo?.roleName ?? response.roleName);
 
-        localStorage.setItem('token', token);
+        this.authService.saveTokenPair(token, response.refreshToken);
         localStorage.setItem('id', response.userId.toString());
         localStorage.setItem('email', response.email ?? email);
-        if (response.refreshToken) {
-          localStorage.setItem('refreshToken', response.refreshToken);
-        }
 
         this.authService.setSession(token, roleName ?? '');
         if (roleName) {
@@ -176,7 +153,6 @@ export class LoginComponent implements OnInit {
   }
 
   onEmailFocus() {
-    console.log("🔥 EMAIL FOCUS OK");
     this.showSuggestions = true;
     this.filteredEmails = [...this.emails];
   }

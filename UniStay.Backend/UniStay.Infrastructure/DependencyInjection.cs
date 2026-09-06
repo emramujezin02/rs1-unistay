@@ -28,6 +28,11 @@ public static class DependencyInjection
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
+        services.AddOptions<TwoFactorOptions>()
+            .Bind(configuration.GetSection(TwoFactorOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
         // DbContext: InMemory for test environments; SQL Server otherwise
         services.AddDbContext<DatabaseContext>((sp, options) =>
         {

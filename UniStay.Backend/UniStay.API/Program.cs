@@ -6,7 +6,6 @@ using UniStay.Infrastructure.Hubs;
 using Serilog;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.FileProviders;
 
 public partial class Program
 {
@@ -110,6 +109,50 @@ public partial class Program
                         QueueLimit = 0
                     });
                 });
+
+                options.AddPolicy("invite-send", context =>
+                {
+                    var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                    return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(1),
+                        QueueLimit = 0
+                    });
+                });
+
+                options.AddPolicy("two-factor-send-code", context =>
+                {
+                    var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                    return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(1),
+                        QueueLimit = 0
+                    });
+                });
+
+                options.AddPolicy("two-factor-verify", context =>
+                {
+                    var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                    return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(1),
+                        QueueLimit = 0
+                    });
+                });
+
+                options.AddPolicy("password-reset-send", context =>
+                {
+                    var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                    return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 3,
+                        Window = TimeSpan.FromMinutes(1),
+                        QueueLimit = 0
+                    });
+                });
             });
 
             var app = builder.Build();
@@ -129,14 +172,6 @@ public partial class Program
 
             app.UseHttpsRedirection();
             app.UseCors("AllowAngularDev");
-
-            var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
-            Directory.CreateDirectory(uploadsPath);
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(uploadsPath),
-                RequestPath = "/uploads"
-            });
 
             app.UseRateLimiter();
 

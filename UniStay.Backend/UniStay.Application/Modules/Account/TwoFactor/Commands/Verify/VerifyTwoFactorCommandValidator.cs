@@ -4,7 +4,7 @@ public sealed class VerifyTwoFactorCommandValidator : AbstractValidator<VerifyTw
 {
     public VerifyTwoFactorCommandValidator()
     {
-        RuleFor(x => x.UserId).GreaterThan(0);
+        RuleFor(x => x.ChallengeId).NotEmpty().MaximumLength(256);
         RuleFor(x => x.Code).NotEmpty().MinimumLength(4).MaximumLength(100);
         RuleFor(x => x.Fingerprint).MaximumLength(256).When(x => x.Fingerprint is not null);
     }

@@ -8,14 +8,6 @@
 
     <form [formGroup]="form">
 
-      <!-- EMAIL -->
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput type="email"
-               formControlName="email"
-               placeholder="Enter your account email">
-      </mat-form-field>
-
       <!-- QUESTIONS -->
       <div *ngFor="let q of questions">
 
@@ -41,5 +33,4 @@
   </mat-card>
 
 </div>
-
 

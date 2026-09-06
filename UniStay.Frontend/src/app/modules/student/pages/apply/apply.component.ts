@@ -7,7 +7,6 @@ import { Subject, merge, switchMap, takeUntil, debounceTime } from 'rxjs';
 import { ApplicationEndpointService } from '../../../../endpoints/application-endpoints/application-endpoint.service';
 import { ApplicationFacadeService } from '../../../../endpoints/application-endpoints/application-facade.service';
 import { FileUploadEndpointService } from '../../../../endpoints/file-upload-endpoints/file-upload-endpoint.service';
-import { MyConfig } from '../../../../my-config';
 import { gpaEligibleValidator } from '../../../../core/validators/availability-validators';
 
 interface DocumentEntry {
@@ -175,7 +174,7 @@ export class ApplyComponent implements OnInit, OnDestroy {
         } else {
           doc.progress = 100;
           doc.uploading = false;
-          doc.uploadedUrl = `${MyConfig.baseUrl}${uploadEvent.url}`;
+          doc.uploadedUrl = uploadEvent.fileId || uploadEvent.url;
           this.saveDraft();
         }
 

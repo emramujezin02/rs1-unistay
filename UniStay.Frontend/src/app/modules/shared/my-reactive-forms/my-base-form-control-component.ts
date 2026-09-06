@@ -21,15 +21,15 @@ export abstract class MyBaseFormControlComponent {
     return errors ? Object.keys(errors) : [];
   }
 
-  getErrorMessage(errorKey: string, errorValue: any): string {
+  getErrorMessage(errorKey: string, errorValue: unknown): string {
     if (this.customMessages[errorKey]) {
       return this.customMessages[errorKey];
     }
 
-    const dynamicMessages: { [key: string]: (errorValue: any) => string } = {
+    const dynamicMessages: Record<string, (errorValue: unknown) => string> = {
       required: () => 'This field is required.',
-      min: (value: any) => `Minimum ${value.requiredLength} characters required. You entered ${value.actualLength}.`,
-      max: (value: any) => `Maximum ${value.requiredLength} characters allowed. You entered ${value.actualLength}.`,
+      min: (value: unknown) => this.lengthErrorMessage(value, 'Minimum', 'required'),
+      max: (value: unknown) => this.lengthErrorMessage(value, 'Maximum', 'allowed'),
       pattern: () => 'Invalid format.',
     };
 
@@ -38,6 +38,14 @@ export abstract class MyBaseFormControlComponent {
     }
 
     return `Validation error: ${errorKey}`;
+  }
+
+  private lengthErrorMessage(value: unknown, label: 'Minimum' | 'Maximum', suffix: 'required' | 'allowed'): string {
+    const error = value && typeof value === 'object'
+      ? value as { requiredLength?: unknown; actualLength?: unknown }
+      : {};
+
+    return `${label} ${error.requiredLength} characters ${suffix}. You entered ${error.actualLength}.`;
   }
 
   protected getControlName(): string {

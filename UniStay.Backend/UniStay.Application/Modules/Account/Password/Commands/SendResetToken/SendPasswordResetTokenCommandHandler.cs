@@ -5,13 +5,23 @@ public sealed class SendPasswordResetTokenCommandHandler(
     ISecurityTokenService tokenService,
     IEmailService emailService,
     TimeProvider timeProvider)
-    : IRequestHandler<SendPasswordResetTokenCommand, Unit>
+    : IRequestHandler<SendPasswordResetTokenCommand, SendPasswordResetTokenCommandDto>
 {
-    public async Task<Unit> Handle(SendPasswordResetTokenCommand request, CancellationToken ct)
+    private const string PublicMessage = "If an account with this email exists, password reset instructions have been sent.";
+
+    public async Task<SendPasswordResetTokenCommandDto> Handle(SendPasswordResetTokenCommand request, CancellationToken ct)
     {
         var email = request.Email.Trim().ToLowerInvariant();
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email, ct)
-            ?? throw new UniStayNotFoundException("User not found.");
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email, ct);
+        var recoveryContextId = tokenService.GenerateSecureToken(32);
+        if (user is null)
+        {
+            return new SendPasswordResetTokenCommandDto
+            {
+                Message = PublicMessage,
+                RecoveryContextId = recoveryContextId
+            };
+        }
 
         var rawToken = tokenService.GenerateSecureToken(32);
         context.PasswordResetTokens.Add(new PasswordResetTokenEntity
@@ -25,6 +35,10 @@ public sealed class SendPasswordResetTokenCommandHandler(
         await context.SaveChangesAsync(ct);
         await emailService.SendPasswordResetTokenAsync(user.Email, rawToken, ct);
 
-        return Unit.Value;
+        return new SendPasswordResetTokenCommandDto
+        {
+            Message = PublicMessage,
+            RecoveryContextId = recoveryContextId
+        };
     }
 }

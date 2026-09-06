@@ -1,12 +1,14 @@
 namespace UniStay.Application.Modules.Account.Security.Queries.GetQuestionsForUser;
 
-public sealed class GetSecurityQuestionsForUserQueryHandler(IAppDbContext context)
+public sealed class GetSecurityQuestionsForUserQueryHandler(IAppDbContext context, IAppCurrentUser currentUser)
     : IRequestHandler<GetSecurityQuestionsForUserQuery, IReadOnlyList<GetSecurityQuestionsForUserQueryDto>>
 {
     public async Task<IReadOnlyList<GetSecurityQuestionsForUserQueryDto>> Handle(GetSecurityQuestionsForUserQuery request, CancellationToken ct)
     {
-        var email = request.Email.Trim().ToLowerInvariant();
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email, ct)
+        var currentUserId = currentUser.UserId
+            ?? throw new UnauthorizedAccessException("User must be authenticated.");
+
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserId, ct)
             ?? throw new UniStayNotFoundException("User not found.");
 
         var questions = await context.UserSecurityAnswers

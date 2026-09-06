@@ -748,6 +748,53 @@ namespace UniStay.Infrastructure.Migrations
                     b.ToTable("InviteTokens", (string)null);
                 });
 
+            modelBuilder.Entity("UniStay.Domain.Entities.Identity.PasswordRecoveryContextEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Consumed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ContextHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContextHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PasswordRecoveryContexts", (string)null);
+                });
+
             modelBuilder.Entity("UniStay.Domain.Entities.Identity.PasswordResetTokenEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -993,6 +1040,53 @@ namespace UniStay.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("TwoFactorCodes", (string)null);
+                });
+
+            modelBuilder.Entity("UniStay.Domain.Entities.Identity.TwoFactorLoginChallengeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ChallengeHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("Consumed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeHash")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TwoFactorLoginChallenges", (string)null);
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Identity.TwoFactorSettingEntity", b =>
@@ -1636,6 +1730,17 @@ namespace UniStay.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("UniStay.Domain.Entities.Identity.PasswordRecoveryContextEntity", b =>
+                {
+                    b.HasOne("UniStay.Domain.Entities.Identity.UniStayUserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("UniStay.Domain.Entities.Identity.PasswordResetTokenEntity", b =>
                 {
                     b.HasOne("UniStay.Domain.Entities.Identity.UniStayUserEntity", "User")
@@ -1670,6 +1775,17 @@ namespace UniStay.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("UniStay.Domain.Entities.Identity.TwoFactorCodeEntity", b =>
+                {
+                    b.HasOne("UniStay.Domain.Entities.Identity.UniStayUserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UniStay.Domain.Entities.Identity.TwoFactorLoginChallengeEntity", b =>
                 {
                     b.HasOne("UniStay.Domain.Entities.Identity.UniStayUserEntity", "User")
                         .WithMany()

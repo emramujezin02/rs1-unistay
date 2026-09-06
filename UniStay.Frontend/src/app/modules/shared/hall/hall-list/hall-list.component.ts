@@ -6,6 +6,10 @@ import { HallUpdateEndpointService } from '../../../../endpoints/hall-endpoints/
 import { ViewChild } from '@angular/core';
 import { MatSort} from '@angular/material/sort';
 import { trigger,transition,style,animate } from '@angular/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { Hall } from '../../../../endpoints/hall-endpoints/hall-get-by-id-endpoint.service';
 
 
 @Component({
@@ -27,9 +31,9 @@ import { trigger,transition,style,animate } from '@angular/animations';
 })
 
 export class HallListComponent implements OnInit {
-  halls: any[] = [];
-  filteredHalls: any[] = [];
-  pagedHalls: any[] = [];
+  halls: Hall[] = [];
+  filteredHalls: Hall[] = [];
+  pagedHalls: Hall[] = [];
   readonly pageSizeOptions = [5, 10, 20];
   currentPage = 1;
   pageSize = 10;
@@ -57,13 +61,13 @@ export class HallListComponent implements OnInit {
   constructor(
     private hallGetAllService: HallGetAllEndpointService,
     private hallDeleteService: HallDeleteEndpointService,
-    private hallUpdateService:HallUpdateEndpointService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    console.log('HallListComponent ngOnInit');
     this.loadHalls();
   }
 
@@ -123,7 +127,7 @@ sortData() {
 
 }
 
-compare(a: any, b: any, isAsc: boolean) {
+compare(a: string | number | boolean, b: string | number | boolean, isAsc: boolean) {
   if (a === b) return 0;
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
@@ -131,7 +135,7 @@ compare(a: any, b: any, isAsc: boolean) {
   loadHalls(): void {
     this.loading = true;
     this.hallGetAllService.getAllHalls().subscribe({
-      next: (res:any) => {
+      next: (res: Hall[]) => {
         this.halls = res;
         this.filteredHalls = [...res];
         this.currentPage = 1;
@@ -139,7 +143,7 @@ compare(a: any, b: any, isAsc: boolean) {
         this.loading = false;
       },
       error: () => {
-        alert('Error loading halls');
+        this.snackBar.open('Error loading halls', 'OK', { duration: 3000 });
         this.loading = false;
       }
     });
@@ -169,22 +173,27 @@ compare(a: any, b: any, isAsc: boolean) {
   }
 
   deleteHall(id: number): void {
-    console.log("ID I am sending: ",id);
-    if (confirm('Are you sure you want to delete this hall?')) {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Are you sure you want to delete this hall?' }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+
       this.hallDeleteService.deleteHall(id).subscribe({
         next: () => {
-          alert('Hall deleted');
+          this.snackBar.open('Hall deleted', 'OK', { duration: 3000 });
           this.loadHalls();
         },
         error: (err) => {
           console.error("Backend error: ",err);
-          alert('Error deleting');}
+          this.snackBar.open('Error deleting', 'OK', { duration: 3000 });}
       });
-    }
+    });
   }
 
   updateHall(id: number): void {
-    this.router.navigate(['../hall-update', id], { relativeTo: this.route });
+    this.router.navigate(['../hall-add', id], { relativeTo: this.route });
   }
 
   addHall(): void {

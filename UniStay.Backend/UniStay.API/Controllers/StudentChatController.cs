@@ -22,13 +22,13 @@ public sealed class StudentChatController(
     [HttpGet("conversations")]
     public async Task<IActionResult> GetConversations(CancellationToken ct)
     {
-        var student = await GetCurrentStudentAsync(ct);
-        if (student is null)
+        var user = await GetCurrentUserAsync(ct);
+        if (user is null)
             return Forbid();
 
         var conversations = await sender.Send(new ListChatConversationsQuery
         {
-            UserId = student.Id
+            UserId = user.Id
         }, ct);
 
         return Ok(conversations);
@@ -37,13 +37,13 @@ public sealed class StudentChatController(
     [HttpGet("messages")]
     public async Task<IActionResult> GetMessages([FromQuery] int otherUserId, CancellationToken ct)
     {
-        var student = await GetCurrentStudentAsync(ct);
-        if (student is null)
+        var user = await GetCurrentUserAsync(ct);
+        if (user is null)
             return Forbid();
 
         var messages = await sender.Send(new ListChatMessagesQuery
         {
-            UserId = student.Id,
+            UserId = user.Id,
             OtherUserId = otherUserId
         }, ct);
 
@@ -53,14 +53,14 @@ public sealed class StudentChatController(
     [HttpGet("search-users")]
     public async Task<IActionResult> SearchUsers([FromQuery] string username, CancellationToken ct)
     {
-        var student = await GetCurrentStudentAsync(ct);
-        if (student is null)
+        var user = await GetCurrentUserAsync(ct);
+        if (user is null)
             return Forbid();
 
         var users = await sender.Send(new SearchChatUsersQuery
         {
             Username = username ?? string.Empty,
-            ExcludeUserId = student.Id
+            ExcludeUserId = user.Id
         }, ct);
 
         return Ok(users);
@@ -69,13 +69,13 @@ public sealed class StudentChatController(
     [HttpPost("send")]
     public async Task<IActionResult> Send([FromBody] StudentSendChatMessageRequest request, CancellationToken ct)
     {
-        var student = await GetCurrentStudentAsync(ct);
-        if (student is null)
+        var user = await GetCurrentUserAsync(ct);
+        if (user is null)
             return Forbid();
 
         var message = await sender.Send(new SendChatMessageCommand
         {
-            SenderUserId = student.Id,
+            SenderUserId = user.Id,
             ReceiverUserId = request.ReceiverUserId,
             Subject = request.Subject,
             MessageText = request.MessageText
@@ -109,14 +109,14 @@ public sealed class StudentChatController(
         });
     }
 
-    private async Task<UniStayUserEntity?> GetCurrentStudentAsync(CancellationToken ct)
+    private async Task<UniStayUserEntity?> GetCurrentUserAsync(CancellationToken ct)
     {
         if (!currentUser.IsAuthenticated || currentUser.UserId is null)
             return null;
 
         return await context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == currentUser.UserId.Value && x.IsEnabled && x.IsStudent, ct);
+            .FirstOrDefaultAsync(x => x.Id == currentUser.UserId.Value && x.IsEnabled, ct);
     }
 
     public sealed class StudentSendChatMessageRequest

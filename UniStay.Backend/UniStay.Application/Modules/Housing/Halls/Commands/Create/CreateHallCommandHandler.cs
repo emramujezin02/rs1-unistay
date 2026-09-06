@@ -2,11 +2,14 @@ using UniStay.Domain.Entities.Housing;
 
 namespace UniStay.Application.Modules.Housing.Halls.Commands.Create;
 
-public sealed class CreateHallCommandHandler(IAppDbContext context)
+public sealed class CreateHallCommandHandler(IAppDbContext context, IAppCurrentUser currentUser)
     : IRequestHandler<CreateHallCommand, int>
 {
     public async Task<int> Handle(CreateHallCommand request, CancellationToken ct)
     {
+        if (!currentUser.IsAdmin && !currentUser.IsEmployee)
+            throw new UnauthorizedAccessException("Only admins and employees can create halls.");
+
         var name = request.Name.Trim();
 
         var exists = await context.Halls

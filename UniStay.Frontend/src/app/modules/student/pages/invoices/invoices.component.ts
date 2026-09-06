@@ -3,6 +3,7 @@ import { loadStripe, Stripe, StripeCardElement } from '@stripe/stripe-js';
 import { GetInvoicesByUserIdEndpointService, Invoice} from '../../../../endpoints/invoice-enpoints/get-invoices-by-userid.service';
 import { GetInvoicePdfEndpointService} from '../../../../endpoints/invoice-enpoints/get-invoice-pdf-endpoint.service';
 import { CreatePaymentIntentEndpointService} from '../../../../endpoints/stripe-endpoints/create-payment-intent-endpoint.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const STRIPE_PUBLIC_KEY = 'pk_test_51Sh8EFHluAfQYHBx0Wty6mNnc6ZP50UAXG7MUtoG539oEzBFnfQA25kYKxt39IvMcsrYKh48OZVdjXJFyIQhUTKt00tnoPsA96';
 
@@ -27,7 +28,8 @@ export class InvoicesComponent implements OnInit {
   constructor(
     private getInvoicesByUserIdEndpoint: GetInvoicesByUserIdEndpointService,
     private createPaymentIntentEndpointService: CreatePaymentIntentEndpointService,
-    private getInvoicePdfService: GetInvoicePdfEndpointService
+    private getInvoicePdfService: GetInvoicePdfEndpointService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +52,7 @@ export class InvoicesComponent implements OnInit {
       .getByUserId(this.currentUserId)
       .subscribe({
         next: (data:Invoice[]) => this.invoices.set(data),
-        error: (err:any) => console.error('Error loading invoices', err)
+        error: (err: unknown) => console.error('Error loading invoices', err)
       });
   }
 
@@ -70,7 +72,6 @@ export class InvoicesComponent implements OnInit {
   }
 
   payInvoice(invoiceId: number): void {
-    console.log('Pay invoice:', invoiceId);
     this.createPaymentIntentEndpointService.createPaymentIntent(invoiceId).subscribe({
       next: async res => {
         this.clientSecret = res.clientSecret;
@@ -115,9 +116,9 @@ export class InvoicesComponent implements OnInit {
     });
 
     if (result.error) {
-      alert(result.error.message);
+      this.snackBar.open(result.error.message ?? 'Payment failed.', 'OK', { duration: 4000 });
     } else if (result.paymentIntent?.status === 'succeeded') {
-      alert('Payment successful!');
+      this.snackBar.open('Payment successful!', 'OK', { duration: 3000 });
 
       this.closePayment();
       this.loadInvoices();

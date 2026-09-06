@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { HallListComponent } from './hall-list/hall-list.component';
 import { HallAddComponent } from './hall-add/hall-add.component';
 import { HallRoutingModule } from './hall-routing.module';
-import { HallUpdateComponent } from './hall-update/hall-update.component';
 import { MaterialModule } from '../material/material';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatOptionModule } from '@angular/material/core';
@@ -18,8 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @NgModule({
   declarations: [
     HallListComponent,
-    HallAddComponent,
-    HallUpdateComponent
+    HallAddComponent
   ],
   imports: [
     CommonModule,
@@ -37,8 +35,7 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   exports: [
     HallListComponent,
-    HallAddComponent,
-    HallUpdateComponent
+    HallAddComponent
   ]
 })
 export class HallModule {}

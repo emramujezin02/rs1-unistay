@@ -1,10 +1,13 @@
 namespace UniStay.Application.Modules.Housing.Halls.Commands.Update;
 
-public sealed class UpdateHallCommandHandler(IAppDbContext context)
+public sealed class UpdateHallCommandHandler(IAppDbContext context, IAppCurrentUser currentUser)
     : IRequestHandler<UpdateHallCommand, Unit>
 {
     public async Task<Unit> Handle(UpdateHallCommand request, CancellationToken ct)
     {
+        if (!currentUser.IsAdmin && !currentUser.IsEmployee)
+            throw new UnauthorizedAccessException("Only admins and employees can update halls.");
+
         var hall = await context.Halls
             .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
 

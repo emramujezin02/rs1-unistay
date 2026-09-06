@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RoomGetAllEndpointService } from '../../../../endpoints/room-endpoints/room-get-all-endpoint.service';
-import { DEFAULT_ROOM_IMAGE_URL, mapRoomDtoToViewModel, normalizeRoomImageUrl } from '../../../../endpoints/room-endpoints/room.models';
+import { DEFAULT_ROOM_IMAGE_URL, mapRoomDtoToViewModel, normalizeRoomImageUrl, RoomListFilters, RoomViewModel } from '../../../../endpoints/room-endpoints/room.models';
 import { FavoritesService, FavoriteRoomDto } from '../../../../endpoints/favorite/favorite-endpoint.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -24,7 +24,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class RoomListComponent implements OnInit {
 
-  rooms: any[] = [];
+  rooms: RoomViewModel[] = [];
   readonly defaultRoomImageUrl = DEFAULT_ROOM_IMAGE_URL;
   gender = '';
   capacity?: number;
@@ -34,7 +34,7 @@ export class RoomListComponent implements OnInit {
   pageSize = 10;
   private readonly favoriteRoomIds = new Set<number>();
 
-  filters: any = {
+  filters: RoomListFilters = {
     floor: null,
     maxOccupancy: null,
     nearExit: false,
@@ -58,7 +58,7 @@ export class RoomListComponent implements OnInit {
   }
 
   loadRooms() {
-    const params: any = {};
+    const params: RoomListFilters = {};
 
     if (this.searchTerm.trim())
       params.q = this.searchTerm.trim();
@@ -85,7 +85,7 @@ export class RoomListComponent implements OnInit {
       }, err => console.error('error loading rooms', err));
   }
 
-  getRoomImage(room: any): string {
+  getRoomImage(room: RoomViewModel): string {
   return room.images?.length
     ? normalizeRoomImageUrl(room.images[0])
     : this.defaultRoomImageUrl;
@@ -123,11 +123,11 @@ export class RoomListComponent implements OnInit {
     return this.route.snapshot.queryParamMap.get('selecting') === 'true';
   }
 
-  isFavorite(room: any): boolean {
+  isFavorite(room: RoomViewModel): boolean {
     return this.favoriteRoomIds.has(room.roomID);
   }
 
-  toggleFavorite(room: any, event: Event) {
+  toggleFavorite(room: RoomViewModel, event: Event) {
     event.stopPropagation();
 
     if (this.isFavorite(room)) {

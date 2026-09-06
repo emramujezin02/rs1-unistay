@@ -29,11 +29,15 @@ public sealed class ChatHub : Hub
         return base.OnDisconnectedAsync(exception);
     }
 
-    public async Task Typing(int receiverId, int senderId)
+    public async Task Typing(int receiverId)
     {
+        var senderId = ResolveUserId();
+        if (!senderId.HasValue)
+            return;
+
         var connectionId = GetConnection(receiverId);
         if (connectionId is not null)
-            await Clients.Client(connectionId).SendAsync("UserTyping", senderId);
+            await Clients.Client(connectionId).SendAsync("UserTyping", senderId.Value);
     }
 
     public static string? GetConnection(int userId)
@@ -48,10 +52,6 @@ public sealed class ChatHub : Hub
 
     private int? ResolveUserId()
     {
-        var userIdFromQuery = Context.GetHttpContext()?.Request.Query["userId"].ToString();
-        if (int.TryParse(userIdFromQuery, out var queryUserId))
-            return queryUserId;
-
         var userIdFromClaim =
             Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
             ?? Context.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value

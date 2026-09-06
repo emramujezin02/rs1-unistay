@@ -15,9 +15,11 @@ public interface IAppDbContext
     DbSet<SecurityQuestionEntity> SecurityQuestions { get; }
     DbSet<UserSecurityAnswerEntity> UserSecurityAnswers { get; }
     DbSet<PasswordResetTokenEntity> PasswordResetTokens { get; }
+    DbSet<PasswordRecoveryContextEntity> PasswordRecoveryContexts { get; }
     DbSet<InviteTokenEntity> InviteTokens { get; }
     DbSet<TwoFactorSettingEntity> TwoFactorSettings { get; }
     DbSet<TwoFactorCodeEntity> TwoFactorCodes { get; }
+    DbSet<TwoFactorLoginChallengeEntity> TwoFactorLoginChallenges { get; }
     DbSet<BackupCodeEntity> BackupCodes { get; }
     DbSet<TrustedDeviceEntity> TrustedDevices { get; }
     DbSet<HallEntity> Halls { get; }

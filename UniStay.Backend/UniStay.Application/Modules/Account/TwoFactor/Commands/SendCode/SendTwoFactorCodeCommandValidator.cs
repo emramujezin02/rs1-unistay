@@ -4,6 +4,6 @@ public sealed class SendTwoFactorCodeCommandValidator : AbstractValidator<SendTw
 {
     public SendTwoFactorCodeCommandValidator()
     {
-        RuleFor(x => x.UserId).GreaterThan(0);
+        RuleFor(x => x.ChallengeId).MaximumLength(256).When(x => x.ChallengeId is not null);
     }
 }

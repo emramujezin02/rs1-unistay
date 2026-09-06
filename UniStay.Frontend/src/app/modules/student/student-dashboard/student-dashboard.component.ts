@@ -1,7 +1,7 @@
 import {Component, computed, OnDestroy, OnInit, signal} from '@angular/core';
 import { prepareRoute, routeTransition } from '../../../shared/animations/route-animations';
 import { NavigationEnd, Router } from '@angular/router';
-import { MyAuthService } from '../../../services/auth-services/my-auth.service';
+import { AuthenticatedUser, MyAuthService } from '../../../services/auth-services/my-auth.service';
 import { UserGetByIdEndpointService } from '../../../endpoints/user-endpoints/user-get-by-id-endpoint.service';
 import {filter, Observable, Subscription} from 'rxjs';
 import { ApplicationFacadeService } from '../../../endpoints/application-endpoints/application-facade.service';
@@ -30,7 +30,7 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private userGetByIdEndpoint: UserGetByIdEndpointService,
     private applicationFacade: ApplicationFacadeService
-  ) {console.log("Dashboard loaded");}
+  ) {}
 
   readonly navItems = signal<StudentNavItem[]>([
     { path: '/student/dashboard', icon: 'dashboard', label: 'Dashboard', requiresApproval: false },
@@ -43,7 +43,7 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
     { path: '/student/chat', icon: 'chat_bubble_outline', label: 'Chat', requiresApproval: false },
     { path: '/student/settings', icon: 'tune', label: 'Settings', requiresApproval: false }
   ]);
-  user$!: Observable<any>;
+  user$!: Observable<AuthenticatedUser | null>;
   private currentUrl = signal('');
 
   ngOnInit() {

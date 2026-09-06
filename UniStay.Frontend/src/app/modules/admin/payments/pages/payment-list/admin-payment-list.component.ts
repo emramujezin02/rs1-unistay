@@ -25,8 +25,12 @@ export class AdminPaymentListComponent implements OnInit {
         case 'issuedAt':
         case 'paidAt':
           return invoice[property] ? new Date(invoice[property] ?? '').getTime() : 0;
+        case 'invoiceId':
+          return invoice.invoiceId;
+        case 'totalAmount':
+          return invoice.totalAmount;
         default:
-          return (invoice as any)[property] ?? '';
+          return '';
       }
     };
     this.dataSource.sort = sort;

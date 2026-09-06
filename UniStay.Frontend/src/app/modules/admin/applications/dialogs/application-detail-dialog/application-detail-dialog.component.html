@@ -25,10 +25,10 @@
 
   <h3>{{ 'ADMIN.APPLICATIONS.DOCUMENTS_TITLE' | translate }}</h3>
   <p *ngIf="documents.length === 0">{{ 'ADMIN.APPLICATIONS.NO_DOCUMENTS' | translate }}</p>
-  <div class="document" *ngFor="let document of documents">
+  <button mat-stroked-button type="button" class="document" *ngFor="let document of documents" (click)="openDocument(document)">
     <mat-icon>insert_drive_file</mat-icon>
-    <span>{{ document }}</span>
-  </div>
+    <span>{{ document.name }}</span>
+  </button>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

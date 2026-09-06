@@ -4,6 +4,5 @@ public sealed class DisableTwoFactorCommandValidator : AbstractValidator<Disable
 {
     public DisableTwoFactorCommandValidator()
     {
-        RuleFor(x => x.UserId).GreaterThan(0);
     }
 }

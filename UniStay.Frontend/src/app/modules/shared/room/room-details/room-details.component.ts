@@ -4,8 +4,10 @@ import { FavoritesService } from '../../../../endpoints/favorite/favorite-endpoi
 import { ReviewService } from '../../../../endpoints/review-and-react/review-and-react-endpoint.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RoomGetByIdEndpointService } from '../../../../endpoints/room-endpoints/room-get-by-id-endpoint.service';
-import { DEFAULT_ROOM_IMAGE_URL, mapRoomDtoToViewModel } from '../../../../endpoints/room-endpoints/room.models';
+import { DEFAULT_ROOM_IMAGE_URL, mapRoomDtoToViewModel, RoomViewModel } from '../../../../endpoints/room-endpoints/room.models';
+import { RoomReview } from '../../../../endpoints/review-and-react/review-and-react.models';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-room-details',
@@ -25,13 +27,13 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class RoomDetailsComponent implements OnInit {
 
-  room: any;
+  room: RoomViewModel | null = null;
   selectedImage: string = DEFAULT_ROOM_IMAGE_URL;
   readonly defaultRoomImageUrl = DEFAULT_ROOM_IMAGE_URL;
   zoomed = false;
   currentIndex = 0;
   isFavorite = false;
-  reviews: any[] = [];
+  reviews: RoomReview[] = [];
   reviewForm = new FormGroup({
     comment: new FormControl('', {
       nonNullable: true,
@@ -57,7 +59,8 @@ export class RoomDetailsComponent implements OnInit {
     private router: Router,
     private roomGetByIdService: RoomGetByIdEndpointService,
     private favoriteService: FavoritesService,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -89,14 +92,15 @@ export class RoomDetailsComponent implements OnInit {
   applyForRoom() {
     if (!this.room || !this.isSelectionMode) return;
 
-    const queryParams: any = {
+    const queryParams: Record<string, string | number> = {
       roomId: this.room.roomID,
       roomNumber: this.room.roomNumber
     };
-    const roomType = this.room.roomType ?? this.room.type;
+    const roomWithLegacyType = this.room as RoomViewModel & { roomType?: string | null; type?: string | null };
+    const roomType = roomWithLegacyType.roomType ?? roomWithLegacyType.type;
 
     if (roomType) {
-      queryParams.roomType = roomType;
+      queryParams['roomType'] = roomType;
     }
 
     this.router.navigate(['/student/apply'], { queryParams });
@@ -142,9 +146,9 @@ export class RoomDetailsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFavorite = true;
-          alert('Added to favorites');
+          this.snackBar.open('Added to favorites', 'OK', { duration: 3000 });
         },
-        error: () => alert('Already in favorites')
+        error: () => this.snackBar.open('Already in favorites', 'OK', { duration: 3000 })
       });
   }
 
@@ -154,7 +158,7 @@ export class RoomDetailsComponent implements OnInit {
     this.favoriteService.remove(this.room.roomID)
       .subscribe(() => {
         this.isFavorite = false;
-        alert('Removed from favorites');
+        this.snackBar.open('Removed from favorites', 'OK', { duration: 3000 });
       });
   }
 
@@ -162,7 +166,7 @@ export class RoomDetailsComponent implements OnInit {
     this.favoriteService.getMy().subscribe({
       next: favorites => {
         this.isFavorite = favorites.some(favorite =>
-          (favorite.roomID ?? favorite.roomId ?? favorite.id) === this.room.roomID
+          (favorite.roomID ?? favorite.roomId ?? favorite.id) === this.room?.roomID
         );
       },
       error: () => {
@@ -182,7 +186,6 @@ export class RoomDetailsComponent implements OnInit {
 
   addReview() {
     if (!this.room) {
-      console.log('room not loaded');
       return;
     }
 
@@ -207,7 +210,7 @@ export class RoomDetailsComponent implements OnInit {
           });
           this.loadReviews();
         },
-        error: err => console.log('error:', err)
+        error: err => console.error('Error adding review', err)
       });
   }
 
@@ -235,11 +238,11 @@ export class RoomDetailsComponent implements OnInit {
         next: () => {
           this.loadReviews();
         },
-        error: err => console.log('erorr', err)
+        error: err => console.error('Error reacting to review', err)
       });
   }
 
-  private normalizeReview(review: any) {
+  private normalizeReview(review: RoomReview): RoomReview {
     const roomReviewID = review.roomReviewID ?? review.roomReviewId ?? review.RoomReviewID;
     const userReaction = review.userReaction ?? review.UserReaction;
 

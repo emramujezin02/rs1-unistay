@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TwoFactorService } from '../../../../endpoints/auth-endpoints/two-factor-endpoint.service';
-import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-two-factor-settings',
@@ -8,39 +10,53 @@ import { Router } from '@angular/router';
   standalone:false
 })
 export class TwoFactorSettingsComponent implements OnInit {
-  userId = Number(localStorage.getItem('id')) || 0;
   enabled = false;
   backupCodes: string[] = [];
 
-  constructor(private svc: TwoFactorService) {}
+  constructor(
+    private svc: TwoFactorService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     // optionally call backend to get current status
   }
 
   enable() {
-    this.svc.enable(this.userId).subscribe({
-      next: (res:any) => {
+    this.svc.enable().subscribe({
+      next: (res) => {
         this.enabled = true;
         this.backupCodes = res?.backupCodes || [];
-        alert('2FA enabled. Save backup codes.');
+        this.snackBar.open('2FA enabled. Save backup codes.', 'OK', { duration: 3000 });
       },
-      error: () => alert('Error enabling')
+      error: () => this.snackBar.open('Error enabling', 'OK', { duration: 3000 })
     });
   }
 
   disable() {
-    if(!confirm('Disable 2FA?')) return;
-    this.svc.disable(this.userId).subscribe({
-      next: () => { this.enabled = false; this.backupCodes = []; alert('2FA disabled'); },
-      error: () => alert('Error disabling')
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Disable 2FA?' }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.svc.disable().subscribe({
+        next: () => {
+          this.enabled = false;
+          this.backupCodes = [];
+          this.snackBar.open('2FA disabled', 'OK', { duration: 3000 });
+        },
+        error: () => this.snackBar.open('Error disabling', 'OK', { duration: 3000 })
+      });
     });
   }
 
   sendTestCode() {
-    this.svc.sendCode(this.userId).subscribe({
-      next: ()=> alert('Code sent to your email'),
-      error: ()=> alert('Error sending code')
+    this.svc.sendCode().subscribe({
+      next: ()=> this.snackBar.open('Code sent to your email', 'OK', { duration: 3000 }),
+      error: ()=> this.snackBar.open('Error sending code', 'OK', { duration: 3000 })
     });
   }
 }

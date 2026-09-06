@@ -3,10 +3,19 @@ import { Router } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
 import { AdminRoom } from '../../data/rooms.models';
 import { RoomsFacade } from '../../data/rooms.facade';
-//import { DEFAULT_ROOM_IMAGE_URL, norm } from '../../../../endpoints/room-endpoints/room.models';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DEFAULT_ROOM_IMAGE_URL, normalizeRoomImageUrl } from '../../../../../endpoints/room-endpoints/room.models';
+
+interface AdminRoomImageFallbacks extends AdminRoom {
+  Images?: string[];
+  roomImages?: { imageUrl?: string; ImageUrl?: string }[];
+  RoomImages?: { ImageUrl?: string }[];
+  imageUrl?: string;
+  ImageUrl?: string;
+}
 @Component({
   selector: 'app-admin-room-list',
   standalone: false,
@@ -34,7 +43,7 @@ readonly defaultRoomImageUrl = DEFAULT_ROOM_IMAGE_URL;
         case 'status':
           return room.availableBeds ?? 0;
         default:
-          return (room as any)[property] ?? '';
+          return '';
       }
     };
     this.dataSource.sort = sort;
@@ -43,10 +52,10 @@ readonly defaultRoomImageUrl = DEFAULT_ROOM_IMAGE_URL;
   constructor(
     public facade: RoomsFacade,
     private router: Router,
+    private dialog: MatDialog,
     private translate: TranslateService
   ) {
     effect(() => {
-        console.log('ROOM LIST DATA:', this.facade.rooms());
       this.dataSource.data = this.facade.rooms();
     });
   }
@@ -56,20 +65,21 @@ readonly defaultRoomImageUrl = DEFAULT_ROOM_IMAGE_URL;
   }
 
 firstRoomImage(room: AdminRoom): string {
+  const roomWithFallbacks = room as AdminRoomImageFallbacks;
   const image =
-    (room as any).images?.[0] ??
-    (room as any).Images?.[0] ??
-    (room as any).roomImages?.[0]?.imageUrl ??
-    (room as any).roomImages?.[0]?.ImageUrl ??
-    (room as any).RoomImages?.[0]?.ImageUrl ??
-    (room as any).imageUrl ??
-    (room as any).ImageUrl ??
+    roomWithFallbacks.images?.[0] ??
+    roomWithFallbacks.Images?.[0] ??
+    roomWithFallbacks.roomImages?.[0]?.imageUrl ??
+    roomWithFallbacks.roomImages?.[0]?.ImageUrl ??
+    roomWithFallbacks.RoomImages?.[0]?.ImageUrl ??
+    roomWithFallbacks.imageUrl ??
+    roomWithFallbacks.ImageUrl ??
     '';
 
   return normalizeRoomImageUrl(image);
 }
 
-getRoomImage(room: any): string {
+getRoomImage(room: AdminRoom): string {
   return room.images?.length
     ? normalizeRoomImageUrl(room.images[0])
     : this.defaultRoomImageUrl;
@@ -94,9 +104,13 @@ onImageError(event: Event): void {
 
   deleteRoom(room: AdminRoom): void {
     const message = this.translate.instant('ADMIN.ROOMS.DELETE_CONFIRM', { roomNumber: room.roomNumber });
-    if (window.confirm(message)) {
-      this.facade.deleteRoom(room.id);
-    }
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.facade.deleteRoom(room.id);
+      }
+    });
   }
 
   statusColor(room: AdminRoom): string {

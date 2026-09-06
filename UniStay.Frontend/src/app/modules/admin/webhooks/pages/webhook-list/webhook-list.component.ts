@@ -1,7 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { WebhookEndpointService } from '../../../../../endpoints/webhook-endpoints/webhook-endpoint.service';
 import {
   WEBHOOK_EVENT_OPTIONS,
@@ -31,6 +33,7 @@ export class WebhookListComponent implements OnInit {
     private webhookEndpoint: WebhookEndpointService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private translate: TranslateService
   ) {}
 
@@ -124,24 +127,28 @@ export class WebhookListComponent implements OnInit {
   }
 
   onDelete(id: string): void {
-    if (!window.confirm(this.t('DELETE_CONFIRM'))) {
-      return;
-    }
-
-    this.deletingId.set(id);
-    this.webhookEndpoint.delete(id).subscribe({
-      next: result => {
-        this.deletingId.set(null);
-        if (result.success) {
-          this.subscriptions.update(items => items.filter(item => item.id !== id));
-        }
-        this.openTranslatedSnack('DELETE_SUCCESS', 3000);
-      },
-      error: err => {
-        this.deletingId.set(null);
-        const message = err?.error?.detail ?? err?.error?.message ?? this.t('DELETE_ERROR');
-        this.snackBar.open(message, this.t('CLOSE'), { duration: 4000 });
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message: this.t('DELETE_CONFIRM') }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
       }
+
+      this.deletingId.set(id);
+      this.webhookEndpoint.delete(id).subscribe({
+        next: result => {
+          this.deletingId.set(null);
+          if (result.success) {
+            this.subscriptions.update(items => items.filter(item => item.id !== id));
+          }
+          this.openTranslatedSnack('DELETE_SUCCESS', 3000);
+        },
+        error: err => {
+          this.deletingId.set(null);
+          const message = err?.error?.detail ?? err?.error?.message ?? this.t('DELETE_ERROR');
+          this.snackBar.open(message, this.t('CLOSE'), { duration: 4000 });
+        }
+      });
     });
   }
 

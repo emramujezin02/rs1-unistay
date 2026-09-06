@@ -20,7 +20,7 @@ public sealed class LoginCommandDto
     /// </summary>
     public DateTime ExpiresAtUtc { get; set; }
     public bool RequiresTwoFactor { get; set; }
-    public int? TwoFactorUserId { get; set; }
+    public string? TwoFactorChallengeId { get; set; }
     public int UserId { get; set; }
     public string? Email { get; set; }
     public string? Theme { get; set; }

@@ -7,8 +7,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AutocompleteEndpointService, AutocompleteOption } from '../../../../endpoints/autocomplete/autocomplete-endpoint.service';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
-import { AutocompleteComponent } from '../../autocomplete/autocomplete.component';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Equipment } from '../../../../endpoints/equipment-endpoints/equpiment-get-by-id-endpoint.service';
 
 @Component({ selector:'app-equipment-add', 
   templateUrl:'./equipment-add.component.html',
@@ -50,7 +51,8 @@ export class EquipmentAddComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private autocompleteService:AutocompleteEndpointService,
-              private http:HttpClient
+              private http:HttpClient,
+              private snackBar: MatSnackBar
             ) {}
 
   ngOnInit(){
@@ -109,10 +111,13 @@ export class EquipmentAddComponent implements OnInit {
 
   load(){
     this.getById.getEquipmentById(this.id!).subscribe({
-      next: (d:any) => {
+      next: (d: Equipment) => {
         this.form.patchValue(d);
       },
-      error: ()=> { alert('Error loading'); this.router.navigate(['../equipment-list'], { relativeTo: this.route }); }
+      error: ()=> {
+        this.snackBar.open('Error loading', 'OK', { duration: 3000 });
+        this.router.navigate(['../equipment-list'], { relativeTo: this.route });
+      }
     });
   }
 
@@ -121,19 +126,25 @@ export class EquipmentAddComponent implements OnInit {
     const payload = this.form.value;
     if (this.isEdit){
       this.updateSvc.updateEquipment(this.id!, payload).subscribe({
-        next: ()=> { alert('Updated'); this.router.navigate(['../equipment-list'], { relativeTo: this.route }); },
-        error: ()=> alert('Error updating')
+        next: ()=> {
+          this.snackBar.open('Updated', 'OK', { duration: 3000 });
+          this.router.navigate([this.getEquipmentListRoute()]);
+        },
+        error: ()=> this.snackBar.open('Error updating', 'OK', { duration: 3000 })
       });
     } else {
       this.createSvc.createEquipment(payload).subscribe({
-        next: ()=> { alert('Created'); this.router.navigate(['../equipment-list'], { relativeTo: this.route }); },
-        error: ()=> alert('Error creating')
+        next: ()=> {
+          this.snackBar.open('Created', 'OK', { duration: 3000 });
+          this.router.navigate([this.getEquipmentListRoute()]);
+        },
+        error: ()=> this.snackBar.open('Error creating', 'OK', { duration: 3000 })
       });
     }
   }
 
   back() {
-    this.router.navigate(['../equipment-list'], { relativeTo: this.route });
+    this.router.navigate([this.getEquipmentListRoute()]);
   }
 
   private availableQuantityWithinQuantity(control: AbstractControl): ValidationErrors | null {
@@ -146,4 +157,18 @@ export class EquipmentAddComponent implements OnInit {
 
     return availableQuantity <= quantity ? null : { availableQuantityExceedsQuantity: true };
   }
+
+  private getEquipmentListRoute(): string {
+  const role = (localStorage.getItem('role') || '').toLowerCase();
+
+  if (role === 'admin') {
+    return '/admin/equipment/equipment-list';
+  }
+
+  if (role === 'employee') {
+    return '/employee/equipment/equipment-list';
+  }
+
+  return '/';
+}
 }

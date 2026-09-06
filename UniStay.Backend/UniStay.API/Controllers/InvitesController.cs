@@ -8,7 +8,8 @@ namespace UniStay.API.Controllers;
 public sealed class InvitesController(ISender sender) : ControllerBase
 {
     [HttpPost]
-    [AllowAnonymous]
+    [Authorize]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("invite-send")]
     public async Task<SendInviteCommandDto> Send(SendInviteCommand command, CancellationToken ct)
     {
         return await sender.Send(command, ct);

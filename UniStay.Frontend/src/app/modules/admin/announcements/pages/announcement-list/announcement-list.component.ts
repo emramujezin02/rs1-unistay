@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import {
   AnnouncementAudience,
   AnnouncementDto
@@ -47,6 +49,7 @@ export class AnnouncementListComponent implements OnInit {
     private announcementEndpoint: AnnouncementEndpointService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private translate: TranslateService
   ) {}
 
@@ -151,21 +154,23 @@ export class AnnouncementListComponent implements OnInit {
   }
 
   onDelete(announcement: AnnouncementDto): void {
-    const confirmed = window.confirm(this.t('ADMIN.ANNOUNCEMENTS.DELETE_CONFIRM', { title: announcement.title }));
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message: this.t('ADMIN.ANNOUNCEMENTS.DELETE_CONFIRM', { title: announcement.title }) }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
 
-    if (!confirmed) {
-      return;
-    }
-
-    this.announcementEndpoint.delete(announcement.announcementId).subscribe({
-      next: () => {
-        this.announcements.update(items =>
-          items.filter(item => item.announcementId !== announcement.announcementId)
-        );
-        this.totalCount.update(value => Math.max(value - 1, 0));
-        this.snackBar.open(this.t('ADMIN.ANNOUNCEMENTS.DELETE_SUCCESS'), this.t('ADMIN.ANNOUNCEMENTS.CLOSE'), { duration: 3000 });
-      },
-      error: () => this.snackBar.open(this.t('ADMIN.ANNOUNCEMENTS.DELETE_ERROR'), this.t('ADMIN.ANNOUNCEMENTS.CLOSE'), { duration: 3000 })
+      this.announcementEndpoint.delete(announcement.announcementId).subscribe({
+        next: () => {
+          this.announcements.update(items =>
+            items.filter(item => item.announcementId !== announcement.announcementId)
+          );
+          this.totalCount.update(value => Math.max(value - 1, 0));
+          this.snackBar.open(this.t('ADMIN.ANNOUNCEMENTS.DELETE_SUCCESS'), this.t('ADMIN.ANNOUNCEMENTS.CLOSE'), { duration: 3000 });
+        },
+        error: () => this.snackBar.open(this.t('ADMIN.ANNOUNCEMENTS.DELETE_ERROR'), this.t('ADMIN.ANNOUNCEMENTS.CLOSE'), { duration: 3000 })
+      });
     });
   }
 

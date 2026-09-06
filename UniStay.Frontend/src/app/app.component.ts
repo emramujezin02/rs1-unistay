@@ -1,6 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TestService } from './services/test.service';
 import { MyAuthService } from './services/auth-services/my-auth.service';
 import { ThemeService } from './services/theme-service/theme.service';
 import { FirebaseMessagingService } from './core/firebase/firebase-messaging.service';
@@ -20,7 +19,6 @@ export class AppComponent  {
   readonly prepareRoute = prepareRoute;
 
   constructor(
-    private testService: TestService,
     private authService: MyAuthService,
     private router: Router,
     private themeService:ThemeService,
@@ -49,7 +47,7 @@ toggleTheme(){
         this.authService.setLoggedInUser(null);
         this.router.navigate(['login']);
       },
-      error: (err: any) => console.error(err)
+      error: (err: unknown) => console.error(err)
     });
   }
 }

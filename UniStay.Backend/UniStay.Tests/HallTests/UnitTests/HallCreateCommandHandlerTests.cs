@@ -9,7 +9,7 @@ public class HallCreateCommandHandlerTests
     public async Task Should_Create_Hall()
     {
         await using var db = TestDatabaseContext.Create();
-        var handler = new CreateHallCommandHandler(db);
+        var handler = new CreateHallCommandHandler(db, new FakeAppCurrentUser(ApplicationTestDatabaseContext.AdminId, isAdmin: true));
         var command = new CreateHallCommand
         {
             Name = "Hall",

@@ -3,7 +3,7 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators }
 import { ActivatedRoute, Router } from '@angular/router';
 import { HallGetByIdEndpointService } from '../../../../endpoints/hall-endpoints/hall-get-by-id-endpoint.service';
 import { HallUpdateEndpointService } from '../../../../endpoints/hall-endpoints/hall-update-endpoint.service';
-import { HallCreateEndpointService } from '../../../../endpoints/hall-endpoints/hall-create-endpoint.service';
+import { HallCreateEndpointService, HallCreateRequest } from '../../../../endpoints/hall-endpoints/hall-create-endpoint.service';
 import { HallGetAllEndpointService } from '../../../../endpoints/hall-endpoints/hall-get-all-endpoint.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
@@ -51,7 +51,7 @@ export class HallAddComponent implements OnInit, OnDestroy {
   nameSuggestions:string[]=[];
   private draftSavedTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly destroy$ = new Subject<void>();
-  isAddMode = false;
+  isEditMode = false;
   loading = false;
     isLoginPage = false;
   currentLanguage: AppLanguage = 'bs';
@@ -90,9 +90,9 @@ export class HallAddComponent implements OnInit, OnDestroy {
     }, { validators: this.availableDateRangeValidator });
 
     this.hallId = Number(this.route.snapshot.paramMap.get('id'));
-    this.isAddMode = !!this.hallId;
+    this.isEditMode = !!this.hallId;
 
-    if (!this.isAddMode) {
+    if (!this.isEditMode) {
       this.restoreHallDraft();
     }
 
@@ -103,7 +103,7 @@ export class HallAddComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.saveHallDraft());
 
-    if (this.isAddMode) {
+    if (this.isEditMode) {
       this.loadHall();
     }
 
@@ -144,7 +144,11 @@ export class HallAddComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.hallGetByIdService.getHallById(this.hallId!).subscribe({
       next: (hall) => {
-        this.form.patchValue(hall);
+        this.form.patchValue({
+          ...hall,
+          availableFrom: this.toDateInputValue(hall.availableFrom),
+          availableTo: this.toDateInputValue(hall.availableTo)
+        });
         this.loading = false;
       },
       error: (err) => {
@@ -184,14 +188,14 @@ export class HallAddComponent implements OnInit, OnDestroy {
 
     this.loading = true;
 
-    if (this.isAddMode) {
+    if (this.isEditMode) {
       this.hallUpdateService.updateHall(this.hallId!, hallData).subscribe({
         next: () => {
           this.snackBar.open(
             this.languageService.instant('HALL.SUCCESS_UPDATE'),'OK',
             {duration:3000}
           );
-          this.router.navigate(['../hall-list'], { relativeTo: this.route });
+          this.router.navigate([this.getHallListRoute()]);
         },
         error: (err) => {
           console.error(err);
@@ -210,7 +214,7 @@ export class HallAddComponent implements OnInit, OnDestroy {
             this.languageService.instant('HALL.SUCCESS_ADD'),'OK',
             {duration:3000}
           );
-          this.router.navigate(['../hall-list'], { relativeTo: this.route });
+          this.router.navigate([this.getHallListRoute()]);
         },
         error: (err) => {
           console.error(err);
@@ -230,11 +234,11 @@ export class HallAddComponent implements OnInit, OnDestroy {
   }
 
   back(): void {
-    this.router.navigate(['../hall-list'], { relativeTo: this.route });
+    this.router.navigate([this.getHallListRoute()]);
   }
 
   private saveHallDraft(): void {
-    if (this.isAddMode) {
+    if (this.isEditMode) {
       return;
     }
 
@@ -279,7 +283,7 @@ export class HallAddComponent implements OnInit, OnDestroy {
     localStorage.removeItem(this.draftStorageKey);
   }
 
-  private getHallDraftValue(): any {
+  private getHallDraftValue(): Partial<HallCreateRequest> {
     return {
       name: this.form.value.name,
       capacity: this.form.value.capacity,
@@ -302,6 +306,24 @@ export class HallAddComponent implements OnInit, OnDestroy {
       this.draftSavedTimer = null;
     }, 2000);
   }
+
+  private toDateInputValue(value: string | null | undefined): string {
+    return value ? value.split('T')[0] : '';
+  }
+
+  private getHallListRoute(): string {
+  const role = (localStorage.getItem('role') || '').toLowerCase();
+
+  if (role === 'admin') {
+    return '/admin/hall/hall-list';
+  }
+
+  if (role === 'employee') {
+    return '/employee/hall/hall-list';
+  }
+
+  return '/';
+}
 
 }
 

@@ -12,11 +12,24 @@ public sealed class VerifyTwoFactorCommandHandler(
 {
     public async Task<LoginCommandDto> Handle(VerifyTwoFactorCommand request, CancellationToken ct)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId && x.IsEnabled, ct)
+        var now = timeProvider.GetUtcNow().UtcDateTime;
+        var challengeHash = tokenService.Hash(request.ChallengeId);
+
+        var challenge = await context.TwoFactorLoginChallenges
+            .FirstOrDefaultAsync(x => x.ChallengeHash == challengeHash, ct)
+            ?? throw new UniStayConflictException("Invalid or expired two-factor challenge.");
+
+        if (challenge.Consumed || challenge.ExpiresAtUtc < now || challenge.FailedAttempts >= challenge.MaxAttempts)
+        {
+            challenge.Consumed = true;
+            await context.SaveChangesAsync(ct);
+            throw new UniStayConflictException("Invalid or expired two-factor challenge.");
+        }
+
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == challenge.UserId && x.IsEnabled, ct)
             ?? throw new UniStayNotFoundException("User not found.");
 
         var codeHash = tokenService.Hash(request.Code);
-        var now = timeProvider.GetUtcNow().UtcDateTime;
 
         var code = await context.TwoFactorCodes
             .Where(x => x.UserId == user.Id && !x.Used && x.ExpiresAtUtc >= now)
@@ -28,12 +41,20 @@ public sealed class VerifyTwoFactorCommandHandler(
             : null;
 
         if (code is null && backup is null)
+        {
+            challenge.FailedAttempts++;
+            if (challenge.FailedAttempts >= challenge.MaxAttempts)
+                challenge.Consumed = true;
+
+            await context.SaveChangesAsync(ct);
             throw new UniStayConflictException("Invalid or expired code.");
+        }
 
         if (code is not null)
             code.Used = true;
         if (backup is not null)
             backup.Used = true;
+        challenge.Consumed = true;
 
         if (request.RememberMe)
         {

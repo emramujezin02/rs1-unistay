@@ -11,7 +11,7 @@
 
   <mat-card @formAnimation>
     <h2>
-  {{ isAddMode ? ('HALL.EDIT' | translate) : ('HALL.ADD' | translate) }}
+  {{ isEditMode ? ('HALL.EDIT' | translate) : ('HALL.ADD' | translate) }}
 </h2>
 
 
@@ -96,7 +96,7 @@
         </button>
 
         <button mat-raised-button color="primary" type="submit" class="submit-btn" [disabled]="loading" @fieldAnimation>
-          {{ isAddMode ? ('HALL.SAVE' | translate) : ('HALL.ADD' | translate) }}
+          {{ isEditMode ? ('HALL.SAVE' | translate) : ('HALL.ADD' | translate) }}
         </button>
       </div>
 

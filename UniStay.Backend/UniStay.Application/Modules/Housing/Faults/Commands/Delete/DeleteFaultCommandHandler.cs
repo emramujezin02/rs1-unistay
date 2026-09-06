@@ -14,6 +14,9 @@ public sealed class DeleteFaultCommandHandler(IAppDbContext context, IAppCurrent
         if (fault is null)
             throw new UniStayNotFoundException($"Fault with Id {request.Id} not found.");
 
+        if (!currentUser.IsAdmin && !currentUser.IsEmployee && fault.ReportedByUserId != currentUser.UserId.Value)
+            throw new UnauthorizedAccessException("You can delete only your own faults.");
+
         context.Faults.Remove(fault);
         await context.SaveChangesAsync(ct);
 

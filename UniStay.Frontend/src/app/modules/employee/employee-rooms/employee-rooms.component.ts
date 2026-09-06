@@ -39,8 +39,12 @@ export class EmployeeRoomsComponent implements OnInit {
           return room.occupiedBeds ?? 0;
         case 'availability':
           return room.availableBeds ?? 0;
+        case 'roomNumber':
+          return room.roomNumber ?? '';
+        case 'floor':
+          return room.floor ?? 0;
         default:
-          return (room as any)[property] ?? '';
+          return '';
       }
     };
     this.dataSource.sort = sort;

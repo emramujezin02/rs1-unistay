@@ -16,6 +16,7 @@ public static class DynamicDataSeeder
 
         await SeedUsersAsync(context);
         await SeedDemoStudentsAsync(context);
+        await SeedTwoFactorSettingsAsync(context);
         await SeedSecurityQuestionsAsync(context);
         await SeedHallsAsync(context);
         await SeedRoomsAsync(context);
@@ -741,5 +742,44 @@ public static class DynamicDataSeeder
 
         await context.SaveChangesAsync();
         Console.WriteLine("Dynamic seed: demo users added.");
+    }
+
+    private static async Task SeedTwoFactorSettingsAsync(DatabaseContext context)
+    {
+        var demoEmails = new[]
+        {
+        "admin@unistay.ba",
+        "student@unistay.ba",
+        "employee@unistay.ba"
+    };
+
+        var usersWithoutSettings = await context.Users
+            .Where(user =>
+                !demoEmails.Contains(user.Email) &&
+                !context.TwoFactorSettings.Any(setting => setting.UserId == user.Id))
+            .ToListAsync();
+
+        if (usersWithoutSettings.Count == 0)
+            return;
+
+        var now = DateTime.UtcNow;
+
+        var settings = usersWithoutSettings
+            .Select(user => new TwoFactorSettingEntity
+            {
+                UserId = user.Id,
+                IsEnabled = true,
+                RequiresTwoFactor = true,
+                EnabledAtUtc = now,
+                Method = "email",
+                CreatedAtUtc = now
+            })
+            .ToList();
+
+        context.TwoFactorSettings.AddRange(settings);
+
+        await context.SaveChangesAsync();
+
+        Console.WriteLine("Dynamic seed: two-factor settings added.");
     }
 }

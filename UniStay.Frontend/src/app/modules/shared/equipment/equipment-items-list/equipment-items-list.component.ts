@@ -1,12 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { EquipmentItemsGetAllService } from '../../../../endpoints/equipment-endpoints/equipment-items-gel-all-endpoint.service';
-import { EquipmentItemsUpdateService } from '../../../../endpoints/equipment-endpoints/equipment-items-update-endpoint.service';
+import { EquipmentItemRecord, EquipmentItemsGetAllService } from '../../../../endpoints/equipment-endpoints/equipment-items-gel-all-endpoint.service';
+import { EquipmentItemAssignPayload, EquipmentItemsUpdateService } from '../../../../endpoints/equipment-endpoints/equipment-items-update-endpoint.service';
 import { EquipmentGetOneService } from '../../../../endpoints/equipment-endpoints/equipment-items-get-one-endpoint.service';
 import { ViewChild } from '@angular/core';
 import { MatSort} from '@angular/material/sort'
 import { trigger,transition,style,animate } from '@angular/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+
+interface EquipmentItemAssignModalData {
+  itemId: number;
+  recordID: number;
+  assignedAt: string;
+  returnedAt: string;
+  location: string;
+}
 
 @Component({
   selector: 'app-equipment-items-list',
@@ -28,9 +39,9 @@ import { trigger,transition,style,animate } from '@angular/animations';
 export class EquipmentItemsListComponent implements OnInit {
 
   equipmentId!: number;
-  items: any[] = [];
-  filteredItems: any[] = [];
-  pagedItems: any[] = [];
+  items: EquipmentItemRecord[] = [];
+  filteredItems: EquipmentItemRecord[] = [];
+  pagedItems: EquipmentItemRecord[] = [];
   readonly pageSizeOptions = [5, 10, 20];
   currentPage = 1;
   pageSize = 10;
@@ -67,7 +78,9 @@ export class EquipmentItemsListComponent implements OnInit {
     private get: EquipmentItemsGetAllService,
     private update: EquipmentItemsUpdateService,
     private router:Router,
-    private getone:EquipmentGetOneService
+    private getone:EquipmentGetOneService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
 
   ) {}
 
@@ -76,7 +89,7 @@ export class EquipmentItemsListComponent implements OnInit {
     this.loadItems();
 
     this.getone.getOne(this.equipmentId).subscribe(eq => {
-      this.equipmentName = eq.name;
+      this.equipmentName = eq.name ?? '';
     });
   }
 
@@ -92,17 +105,17 @@ export class EquipmentItemsListComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        alert("Error loading equipment items");
+        this.snackBar.open('Error loading equipment items', 'OK', { duration: 3000 });
       }
     });
   }
 
-  toggleAvailability(item: any) {
+  toggleAvailability(item: EquipmentItemRecord) {
     const newStatus = !item.isAvailable;
 
     this.update.updateAvailability(item.recordID, newStatus).subscribe({
       next: () => this.loadItems(),
-      error: () => alert("Error updating availability")
+      error: () => this.snackBar.open('Error updating availability', 'OK', { duration: 3000 })
     });
   }
 
@@ -156,15 +169,17 @@ export class EquipmentItemsListComponent implements OnInit {
   }
 
   showModal = false;
-modalData: any = {
+modalData: EquipmentItemAssignModalData = {
   itemId: 0,
+  recordID: 0,
   assignedAt: '',
   returnedAt: '',
   location: ''
 };
 
-openAssignModal(item: any) {
+openAssignModal(item: EquipmentItemRecord) {
   this.modalData = {
+    itemId: item.recordID,
     recordID: item.recordID,
     assignedAt: '',
     returnedAt: '',
@@ -178,14 +193,12 @@ closeModal() {
 }
 
 confirmAssign() {
-  const payload = {
+  const payload: EquipmentItemAssignPayload = {
     equipmentRecordID: this.modalData.recordID,
     assignedAt: this.modalData.assignedAt ? new Date(this.modalData.assignedAt).toISOString() : null,
     returnedAt: this.modalData.returnedAt ? new Date(this.modalData.returnedAt).toISOString() : null,
     location: this.modalData.location,
   };
-
-  console.log("ASSIGN PAYLOAD:", payload);
 
   this.update.assignItem(payload).subscribe({
     next: () => {
@@ -194,26 +207,38 @@ confirmAssign() {
     },
     error: (err) => {
       console.error('Assign error', err);
-      alert('Error assigning item');
+      this.snackBar.open('Error assigning item', 'OK', { duration: 3000 });
     }
   });
 }
 
-releaseItem(item: any) {
-  if (!confirm("Are you sure you want to release this item?")) return;
+releaseItem(item: EquipmentItemRecord) {
+  this.dialog.open(ConfirmDialogComponent, {
+    data: { message: 'Are you sure you want to release this item?' }
+  }).afterClosed().subscribe(confirmed => {
+    if (!confirmed) {
+      return;
+    }
 
-  this.update.releaseItem(item.recordID).subscribe({
-    next: () => this.loadItems(),
-    error: () => alert("Error releasing item")
+    this.update.releaseItem(item.recordID).subscribe({
+      next: () => this.loadItems(),
+      error: () => this.snackBar.open('Error releasing item', 'OK', { duration: 3000 })
+    });
   });
 }
 
 delete(id:number) {
-  if (!confirm("Delete?")) return;
+  this.dialog.open(ConfirmDialogComponent, {
+    data: { message: 'Delete this equipment item?' }
+  }).afterClosed().subscribe(confirmed => {
+    if (!confirmed) {
+      return;
+    }
 
-  this.update.deleteRecord(id).subscribe({
-    next: () => this.loadItems(),
-    error: () => alert("Error deleting item")
+    this.update.deleteRecord(id).subscribe({
+      next: () => this.loadItems(),
+      error: () => this.snackBar.open('Error deleting item', 'OK', { duration: 3000 })
+    });
   });
 }
 
@@ -281,8 +306,10 @@ editItem(id: number) {
 
 
 
-compare(a: any, b: any, isAsc: boolean) {
+compare(a: string | number | boolean | undefined, b: string | number | boolean | undefined, isAsc: boolean) {
   if (a === b) return 0;
+  if (a === undefined) return isAsc ? -1 : 1;
+  if (b === undefined) return isAsc ? 1 : -1;
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 

@@ -20,7 +20,7 @@ export class HallUpdateEndpointService {
 
   constructor(private http: HttpClient) {}
 
-  updateHall(id:number,hall:any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, hall);
+  updateHall(id:number,hall: HallUpdateRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, hall);
   }
 }

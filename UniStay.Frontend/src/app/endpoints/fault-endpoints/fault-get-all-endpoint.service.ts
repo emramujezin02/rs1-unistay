@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Fault } from './fault-get-by-id-endpoint.service';
 
 @Injectable({ providedIn: 'root' })
 export class FaultGetAllEndpointService {
@@ -8,7 +9,7 @@ export class FaultGetAllEndpointService {
 
   constructor(private http: HttpClient) {}
 
-  getAllFaults(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}`);
+  getAllFaults(): Observable<Fault[]> {
+    return this.http.get<Fault[]>(`${this.apiUrl}`);
   }
 }

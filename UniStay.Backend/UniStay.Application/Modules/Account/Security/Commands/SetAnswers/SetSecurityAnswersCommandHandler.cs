@@ -1,11 +1,17 @@
 namespace UniStay.Application.Modules.Account.Security.Commands.SetAnswers;
 
-public sealed class SetSecurityAnswersCommandHandler(IAppDbContext context, IPasswordHasher<UniStayUserEntity> hasher)
+public sealed class SetSecurityAnswersCommandHandler(
+    IAppDbContext context,
+    IPasswordHasher<UniStayUserEntity> hasher,
+    IAppCurrentUser currentUser)
     : IRequestHandler<SetSecurityAnswersCommand, Unit>
 {
     public async Task<Unit> Handle(SetSecurityAnswersCommand request, CancellationToken ct)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, ct)
+        var currentUserId = currentUser.UserId
+            ?? throw new UnauthorizedAccessException("User must be authenticated.");
+
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == currentUserId, ct)
             ?? throw new UniStayNotFoundException("User not found.");
 
         foreach (var answer in request.Answers)

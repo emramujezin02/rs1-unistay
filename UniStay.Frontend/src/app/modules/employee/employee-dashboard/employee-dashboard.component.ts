@@ -115,7 +115,7 @@ export class EmployeeDashboardComponent implements OnInit {
     private authService: MyAuthService,
     private router: Router,
     private announcementEndpoint: AnnouncementEndpointService
-  ) {console.log("Dashboard loaded.");}
+  ) {}
 
   ngOnInit(): void {
     this.loadAnnouncements();

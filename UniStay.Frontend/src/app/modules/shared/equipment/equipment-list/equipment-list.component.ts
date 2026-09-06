@@ -2,17 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { EquipmentGetAllEndpointService } from '../../../../endpoints/equipment-endpoints/equipment-get-all-endpoint.service';
 import { EquipmentDeleteEndpointService } from '../../../../endpoints/equipment-endpoints/equipment-delete-endpoint.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EquipmentUpdateComponent } from '../equipment-update/equipment-update.component';
 import { ViewChild } from '@angular/core';
 import { MatSort} from '@angular/material/sort'
 import { trigger,transition,style,animate } from '@angular/animations';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { Equipment } from '../../../../endpoints/equipment-endpoints/equpiment-get-by-id-endpoint.service';
+import { EquipmentFilters } from '../../../../endpoints/equipment-endpoints/equipment-get-all-endpoint.service';
 
 @Component({
   selector: 'app-equipment-list',
   templateUrl: './equipment-list.component.html',
   styleUrls: ['./equipment-list.component.scss'],
   standalone:false,
-  animations: [ // NOVO
+  animations: [ 
     trigger('fadeIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(10px)' }),
@@ -24,9 +28,9 @@ import { trigger,transition,style,animate } from '@angular/animations';
   ]
 })
 export class EquipmentListComponent implements OnInit {
-  equipments: any[] = [];
-  filteredEquipment: any[] = [];
-  pagedEquipment: any[] = [];
+  equipments: Equipment[] = [];
+  filteredEquipment: Equipment[] = [];
+  pagedEquipment: Equipment[] = [];
   equipmentTypes: string[] = [];
   readonly pageSizeOptions = [5, 10, 20];
   currentPage = 1;
@@ -69,7 +73,9 @@ export class EquipmentListComponent implements OnInit {
     private equipmentGetAllservice: EquipmentGetAllEndpointService,
     private equipmentDeleteService: EquipmentDeleteEndpointService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ){}
 
   ngOnInit(): void {
@@ -77,10 +83,10 @@ export class EquipmentListComponent implements OnInit {
   }
 
 
-  loadEquipment(filters?: any): void {
+  loadEquipment(filters?: EquipmentFilters): void {
     this.loading = true;
     this.equipmentGetAllservice.getAllEquipments(filters).subscribe({
-      next:(res:any)=>{
+      next:(res: Equipment[])=>{
         this.equipments=res;
         this.filteredEquipment=[...res];
         if (!filters) {
@@ -91,7 +97,7 @@ export class EquipmentListComponent implements OnInit {
         this.loading=false;
       },
       error:()=>{
-        alert('Error loading equipments');
+        this.snackBar.open('Error loading equipment', 'OK', { duration: 3000 });
         this.loading=false;
       }
     });
@@ -128,20 +134,27 @@ export class EquipmentListComponent implements OnInit {
   }
 
   deleteEquipment(id:number):void{
-if (confirm('Are you sure yout wand to delete this equipment?')) {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message: 'Are you sure you want to delete this equipment?' }
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+
       this.equipmentDeleteService.deleteEquipment(id).subscribe({
         next: () => {
-          alert('Equipment deleted');
+          this.snackBar.open('Equipment deleted', 'OK', { duration: 3000 });
           this.loadEquipment();
         },
         error: (err) => {
           console.error("Backend error: ",err);
-          alert('Error deleting');}
+          this.snackBar.open('Error deleting', 'OK', { duration: 3000 });}
       });
-    }}
+    });
+  }
 
   updateEquipment(id:number):void{ 
-    this.router.navigate(['../equipment-update', id], { relativeTo: this.route });
+this.router.navigate(['../equipment-add', id], { relativeTo: this.route });
   }
 
   addEquipment(): void {
@@ -209,8 +222,10 @@ if (confirm('Are you sure yout wand to delete this equipment?')) {
 }
 
 
-  compare(a: any, b: any, isAsc: boolean) {
+  compare(a: string | number | boolean | undefined, b: string | number | boolean | undefined, isAsc: boolean) {
   if (a === b) return 0;
+  if (a === undefined) return isAsc ? -1 : 1;
+  if (b === undefined) return isAsc ? 1 : -1;
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 
@@ -254,7 +269,7 @@ if (confirm('Are you sure yout wand to delete this equipment?')) {
     this.pagedEquipment = this.filteredEquipment.slice(startIndex, startIndex + this.pageSize);
   }
 
-  private buildFilterParams(): any {
+  private buildFilterParams(): EquipmentFilters {
     const minQty = this.toNullableNumber(this.filters.minQty);
     const maxQty = this.toNullableNumber(this.filters.maxQty);
 
@@ -293,7 +308,7 @@ if (confirm('Are you sure yout wand to delete this equipment?')) {
     return Number.isNaN(numberValue) ? null : numberValue;
   }
 
-  private updateEquipmentTypes(equipment: any[]): void {
+  private updateEquipmentTypes(equipment: Equipment[]): void {
     this.equipmentTypes = Array.from(
       new Set(
         equipment

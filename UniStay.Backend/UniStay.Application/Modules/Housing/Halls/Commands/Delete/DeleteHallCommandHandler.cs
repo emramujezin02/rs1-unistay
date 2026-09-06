@@ -1,10 +1,13 @@
 namespace UniStay.Application.Modules.Housing.Halls.Commands.Delete;
 
-public sealed class DeleteHallCommandHandler(IAppDbContext context)
+public sealed class DeleteHallCommandHandler(IAppDbContext context, IAppCurrentUser currentUser)
     : IRequestHandler<DeleteHallCommand, Unit>
 {
     public async Task<Unit> Handle(DeleteHallCommand request, CancellationToken ct)
     {
+        if (!currentUser.IsAdmin && !currentUser.IsEmployee)
+            throw new UnauthorizedAccessException("Only admins and employees can delete halls.");
+
         var hall = await context.Halls
             .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
 

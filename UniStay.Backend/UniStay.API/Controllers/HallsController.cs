@@ -8,7 +8,6 @@ namespace UniStay.API.Controllers;
 
 [ApiController]
 [Authorize]
-[AllowAnonymous]
 [Route("[controller]")]
 [Route("api/halls")]
 public class HallsController(ISender sender) : ControllerBase

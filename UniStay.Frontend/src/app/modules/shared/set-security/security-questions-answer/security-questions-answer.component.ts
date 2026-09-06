@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../../../../endpoints/auth-endpoints/account-security-endpoint.service';
+import { AnsweredSecurityQuestion, SecurityQuestion } from '../../../../endpoints/auth-endpoints/account-security.models';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-security-questions-answer',
@@ -10,71 +12,49 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 })
 export class SecurityQuestionsAnswerComponent implements OnInit {
 
-  questions: any[] = [];
+  questions: SecurityQuestion[] = [];
   form!: FormGroup;
 
   constructor(
     private acct: AccountService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
-    console.log("ucitavanje komponenet");
     this.loadQuestions();
   }
 
 loadQuestions() {
-  const email = localStorage.getItem('email');
-
-  if (!email) {
-    alert("No email found");
-    return;
-  }
-
   this.acct.getAllQuestions().subscribe({
-    next: (all: any[]) => {
+    next: (all: SecurityQuestion[]) => {
 
-      this.acct.getAnsweredQuestions(email).subscribe({
-        next: (answered: any[]) => {
-
-          console.log("IZVRSAVA SE");
+      this.acct.getAnsweredQuestions().subscribe({
+        next: (answered: AnsweredSecurityQuestion[]) => {
 
           const answeredIds = answered.map(x =>
-            x.questionId ?? x.QuestionId ?? x.securityQuestionID
+            x.questionId ?? x.QuestionId ?? x.securityQuestionID ?? x.securityQuestionsID
           );
 
           this.questions = all.filter(q =>{
-            const id=q.questionId??q.QuestionId??q.securityQuestionID;
+            const id=q.questionId??q.QuestionId??q.securityQuestionID??q.securityQuestionsID;
             return !answeredIds.includes(id);}
           );
 
-          console.log("ANSWERED IDS:", answeredIds);
-console.log("FILTERED QUESTIONS:", this.questions);
-
-          const group: any = {};
+          const group: Record<string, unknown[]> = {};
 
           this.questions.forEach(q => {
             const id = this.getQuestionId(q);
             group['question_' + id] = ['', Validators.required];
           });
 
-          this.form = this.fb.group({email:[email,[Validators.required,Validators.email]],...group});
+          this.form = this.fb.group(group);
 
-          console.log("ALL QUESTIONS:",all);
-          console.log("ANSWERED QUESTIONS:",answered);
         },
         error: () => {
-          console.log("NE IZVRSAVA SE");
-          this.questions = all;
-
-          const group: any = {};
-
-          this.questions.forEach(q => {
-            const id = this.getQuestionId(q);
-            group['question_' + id] = ['', Validators.required];
-          });
-
-          this.form = this.fb.group({email:[email,[Validators.required,Validators.email]],...group});
+          this.questions = [];
+          this.form = this.fb.group({});
+          this.snackBar.open('Unable to load security question state.', 'OK', { duration: 3000 });
         }
       });
 
@@ -83,13 +63,14 @@ console.log("FILTERED QUESTIONS:", this.questions);
 }
 
   save() {
-    if (this.form.invalid) return alert("Fill all fields!");
+    if (this.form.invalid) {
+      this.snackBar.open('Fill all fields!', 'OK', { duration: 3000 });
+      return;
+    }
 
     const formValue = this.form.value;
-    const userId = Number(localStorage.getItem('id') || 0);
 
     const payload = {
-      userId,
       answers: this.questions.map(q => ({
         questionId: this.getQuestionId(q),
         answer: formValue['question_' + this.getQuestionId(q)]
@@ -98,19 +79,19 @@ console.log("FILTERED QUESTIONS:", this.questions);
 
     this.acct.setSecurityAnswers(payload).subscribe({
       next: () => {
-        alert("Security questions saved successfully!");
+        this.snackBar.open('Security questions saved successfully!', 'OK', { duration: 3000 });
       },
       error: (e) => {
-        alert(e?.error || "Error saving questions");
+        this.snackBar.open(e?.error || 'Error saving questions', 'OK', { duration: 3000 });
       }
     });
   }
 
-  getQuestionId(question: any): number {
-    return question?.questionId ?? question?.QuestionId ?? question?.securityQuestionID ?? question?.securityQuestionsID;
+  getQuestionId(question: SecurityQuestion | AnsweredSecurityQuestion): number {
+    return question?.questionId ?? question?.QuestionId ?? question?.securityQuestionID ?? question?.securityQuestionsID ?? 0;
   }
 
-  getQuestionText(question: any): string {
+  getQuestionText(question: SecurityQuestion): string {
     return question?.question ?? question?.Question ?? question?.text ?? question?.Text ?? '';
   }
 }

@@ -1,4 +1,3 @@
-// src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './modules/auth/login/login.component';
@@ -9,8 +8,9 @@ import { RoomListComponent } from './modules/shared/room/room-list/room-list.com
 import { PasswordRecoveryComponent } from './modules/shared/password-recovery/password-recovery.component';
 import { SecurityQuestionsAddComponent } from './modules/shared/set-security/security-questions-add/security-questions-add.component';
 import { SecurityQuestionsAnswerComponent } from './modules/shared/set-security/security-questions-answer/security-questions-answer.component';
+import { RoleGuard } from './auth-guards/role-guard.service';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'logout', component: LogoutComponent },
@@ -84,9 +84,24 @@ const routes: Routes = [
       import('./modules/shared/shared.module').then(m=>m.SharedModule)
   },
 
-  { path: 'student', loadChildren: () => import('./modules/student/student-module').then(m => m.StudentModule) },
-  { path: 'employee', loadChildren: () => import('./modules/employee/employee-module').then(m => m.EmployeeModule) },
-  { path: 'admin', loadChildren: () => import('./modules/admin/admin-module').then(m => m.AdminModule) },
+  {
+    path: 'student',
+    canActivate: [RoleGuard],
+    data: { roles: ['student'] },
+    loadChildren: () => import('./modules/student/student-module').then(m => m.StudentModule)
+  },
+  {
+    path: 'employee',
+    canActivate: [RoleGuard],
+    data: { roles: ['employee'] },
+    loadChildren: () => import('./modules/employee/employee-module').then(m => m.EmployeeModule)
+  },
+  {
+    path: 'admin',
+    canActivate: [RoleGuard],
+    data: { roles: ['admin'] },
+    loadChildren: () => import('./modules/admin/admin-module').then(m => m.AdminModule)
+  },
   { path: '**', redirectTo: '/login', pathMatch: 'full' }
 ];
 

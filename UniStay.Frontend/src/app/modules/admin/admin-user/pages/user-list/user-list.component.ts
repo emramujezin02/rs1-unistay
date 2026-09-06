@@ -3,10 +3,12 @@ import { FormControl } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { AdminUser } from '../../data/users.models';
 import { UsersFacade } from '../../data/users.facade';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-admin-user-list',
@@ -28,6 +30,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   constructor(
     public facade: UsersFacade,
+    private dialog: MatDialog,
     private translate: TranslateService
   ) {
     effect(() => {
@@ -55,9 +58,13 @@ export class UserListComponent implements OnInit, OnDestroy {
   deleteUser(user: AdminUser): void {
     const id = user.id ?? user.userID;
     const message = this.translate.instant('ADMIN.USERS.DELETE_CONFIRM', { username: user.username });
-    if (window.confirm(message)) {
-      this.facade.deleteUser(id);
-    }
+    this.dialog.open(ConfirmDialogComponent, {
+      data: { message }
+    }).afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.facade.deleteUser(id);
+      }
+    });
   }
 
   statusColor(user: AdminUser): string {

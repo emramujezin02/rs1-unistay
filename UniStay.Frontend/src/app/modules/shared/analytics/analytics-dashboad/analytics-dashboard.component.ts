@@ -7,7 +7,7 @@ import { trigger,transition,style,animate } from '@angular/animations';
   templateUrl: './analytics-dashboard.component.html',
   styleUrls: ['./analytics-dashboard.component.scss'],
   standalone:false,
-   animations: [ // NOVO
+   animations: [ 
     trigger('fadeIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(10px)' }),
@@ -30,13 +30,9 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
   constructor(private analyticsService: AnalyticsService) {}
 
 ngOnInit(): void {
-  const userId = Number(localStorage.getItem('id'));
 
-  if (!userId) {
-    return;
-  }
 
-  this.analyticsService.startConnection(userId);
+  this.analyticsService.startConnection();
 
   this.analyticsService.analytics$
     .subscribe(data => {

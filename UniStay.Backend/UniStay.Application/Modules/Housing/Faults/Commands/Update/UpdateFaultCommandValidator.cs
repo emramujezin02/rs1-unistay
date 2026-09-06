@@ -21,9 +21,5 @@ public sealed class UpdateFaultCommandValidator : AbstractValidator<UpdateFaultC
 
         RuleFor(x => x.Priority)
             .MaximumLength(FaultEntity.Constraints.PriorityMaxLength);
-
-        RuleFor(x => x)
-            .Must(x => x.IsResolved != true || x.ResolvedAtUtc.HasValue)
-            .WithMessage("ResolvedAtUtc is required when fault is resolved.");
     }
 }

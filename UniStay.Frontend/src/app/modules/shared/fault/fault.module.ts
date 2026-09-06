@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FaultListComponent } from './fault-list/fault-list.component';
-import { FaultUpdateComponent } from './fault-update/fault-update.component';
 import { FaultAddComponent } from './fault-add/fault-add.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FaultRoutingModule } from './fault-routing.module';
@@ -15,7 +14,6 @@ import { MatSortModule } from '@angular/material/sort';
 @NgModule({
   declarations: [
     FaultListComponent,
-    FaultUpdateComponent,
     FaultAddComponent
   ],
   imports: [
@@ -34,7 +32,6 @@ import { MatSortModule } from '@angular/material/sort';
 ],
   exports: [
     FaultListComponent, 
-    FaultUpdateComponent, 
     FaultAddComponent]
 })
 export class FaultModule {}

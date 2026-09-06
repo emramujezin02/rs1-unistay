@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Va
 import { CommonModule } from '@angular/common';
 import { WizardService } from '../../../../services/wizard-services/wizard.service';
 import {UserCreateEndpointService} from '../../../../endpoints/user-endpoints/user-create-endpoint.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class UserAddComponent {
   fb = inject(FormBuilder);
 
   userCreateService = inject(UserCreateEndpointService);
+  private snackBar = inject(MatSnackBar);
   currentStep = signal(1);
   showPassword = signal(false);
   showConfirmPassword = signal(false);
@@ -43,20 +45,6 @@ export class UserAddComponent {
     return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 
-  /*passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-    if (!value) {
-      return null;
-    }
-    const hasUpperCase = /[A-Z]/.test(value);
-    const hasLowerCase = /[a-z]/.test(value);
-    const hasNumeric = /[0-9]/.test(value);
-    const hasSpecial = /[^A-Za-z0-9]/.test(value);
-    const isValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecial && value.length >= 8;
-    return !isValid ? { passwordStrength: true } : null;
-  }*/
-
-  // FIX: Replaced this.fb with direct inject(FormBuilder) calls to resolve type inference errors.
   userForm = inject(FormBuilder).group({
     step1: inject(FormBuilder).group({
       firstName: ['', Validators.required],
@@ -98,29 +86,6 @@ export class UserAddComponent {
     }
   }
 
- /* passwordStrength = computed(() => {
-    const password = this.userForm.get('step4.password')?.value ?? '';
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[a-z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    return strength;
-  });
-
-  passwordCriteria = computed(() => {
-    const password = this.userForm.get('step4.password')?.value ?? '';
-
-    return {
-      length: password.length >= 8,
-      upper: /[A-Z]/.test(password),
-      lower: /[a-z]/.test(password),
-      number: /[0-9]/.test(password),
-      symbol: /[^A-Za-z0-9]/.test(password),
-    };
-  });*/
-
   nextStep() {
     if (this.isCurrentStepValid) {
       if (this.currentStep() < this.steps.length) {
@@ -140,7 +105,6 @@ export class UserAddComponent {
   }
 
   onSubmit() {
-    console.log("Radi");
     if (!this.userForm.valid) {
       this.userForm.markAllAsTouched();
       return;
@@ -161,20 +125,19 @@ export class UserAddComponent {
     };
 
     this.userCreateService.createUser(request).subscribe({
-      next: (res) => {
-        console.log('User created successfully!', res);
-        alert('User account created successfully!');
+      next: () => {
+        this.snackBar.open('User account created successfully!', 'OK', { duration: 3000 });
         this.closeWizard();
       },
       error: (err) => {
         console.error('Error creating user:', err);
 
         const message =
-          err.error?.message ||       // backend BadRequest { message: "..." }
-          err.error ||                // fallback
-          "Failed to create account."; // default
+          err.error?.message ||       
+          err.error ||                
+          "Failed to create account."; 
 
-        alert(message);
+        this.snackBar.open(message, 'OK', { duration: 3000 });
       }
     });
   }
@@ -185,7 +148,7 @@ export class UserAddComponent {
     setTimeout(() => {
       this.userForm.reset();
       this.currentStep.set(1);
-    }, 300); // Wait for modal to close
+    }, 300); 
   }
 
   togglePasswordVisibility() {

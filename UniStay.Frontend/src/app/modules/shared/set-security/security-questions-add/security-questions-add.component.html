@@ -5,6 +5,13 @@
     <p>Set recovery answers for your account.</p>
   </header>
 
+  <div class="security-container security-container--empty" *ngIf="isLoading; else loadedQuestions">
+    <mat-icon>hourglass_empty</mat-icon>
+    <h3>Loading security questions...</h3>
+    <p>Please wait.</p>
+  </div>
+
+  <ng-template #loadedQuestions>
   <form class="security-container" *ngIf="questions.length; else noQuestions" [formGroup]="form" (ngSubmit)="submit()">
     <div class="card">
       <span class="question-counter">
@@ -19,12 +26,13 @@
           placeholder="Enter your answer"
         />
       </ng-container>
+      
 
-      <div class="form-error" *ngIf="currentAnswerControl?.hasError('minlength') && currentAnswerControl?.touched">
+      <div class="form-error" *ngIf="currentAnswerControl.hasError('minlength') && currentAnswerControl.touched">
         Answer must be at least 2 characters.
       </div>
 
-      <div class="form-error" *ngIf="currentAnswerControl?.hasError('maxlength') && currentAnswerControl?.touched">
+      <div class="form-error" *ngIf="currentAnswerControl.hasError('maxlength') && currentAnswerControl.touched">
         Answer cannot exceed 500 characters.
       </div>
 
@@ -47,12 +55,13 @@
       Save answers
     </button>
   </form>
+  </ng-template>
 
   <ng-template #noQuestions>
     <div class="security-container security-container--empty">
       <mat-icon>verified_user</mat-icon>
-      <h3>No security questions available.</h3>
-      <p>You have already answered all available security questions.</p>
+      <h3>{{ loadError || emptyTitle }}</h3>
+      <p *ngIf="!loadError">{{ emptyMessage }}</p>
     </div>
   </ng-template>
 </section>

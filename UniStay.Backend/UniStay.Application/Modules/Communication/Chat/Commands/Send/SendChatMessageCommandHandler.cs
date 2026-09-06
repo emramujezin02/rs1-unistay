@@ -1,10 +1,19 @@
 namespace UniStay.Application.Modules.Communication.Chat.Commands.Send;
 
-public sealed class SendChatMessageCommandHandler(IAppDbContext context, TimeProvider timeProvider)
+public sealed class SendChatMessageCommandHandler(
+    IAppDbContext context,
+    TimeProvider timeProvider,
+    IAppCurrentUser currentUser)
     : IRequestHandler<SendChatMessageCommand, SendChatMessageCommandDto>
 {
     public async Task<SendChatMessageCommandDto> Handle(SendChatMessageCommand request, CancellationToken ct)
     {
+        var callerId = currentUser.UserId
+            ?? throw new UnauthorizedAccessException("You must be logged in.");
+
+        if (request.SenderUserId != callerId)
+            throw new UnauthorizedAccessException("Sender must match the authenticated user.");
+
         if (request.SenderUserId == request.ReceiverUserId)
             throw new UniStayConflictException("Sender and receiver must be different users.");
 

@@ -26,8 +26,10 @@ export class HallReservationListComponent implements OnInit {
             return new Date(item.fromDate).getTime();
           case 'created':
             return new Date(item.createdAt).getTime();
+          case 'status':
+            return item.status;
           default:
-            return (item as any)[property] ?? '';
+            return '';
         }
       };
       this.dataSource.sort = sort;

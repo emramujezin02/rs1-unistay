@@ -1,10 +1,13 @@
 namespace UniStay.Application.Modules.Housing.Equipment.Commands.Create;
 
-public sealed class CreateEquipmentCommandHandler(IAppDbContext context)
+public sealed class CreateEquipmentCommandHandler(IAppDbContext context, IAppCurrentUser currentUser)
     : IRequestHandler<CreateEquipmentCommand, int>
 {
     public async Task<int> Handle(CreateEquipmentCommand request, CancellationToken ct)
     {
+        if (!currentUser.IsAdmin && !currentUser.IsEmployee)
+            throw new UnauthorizedAccessException("Only admins and employees can create equipment.");
+
         var name = request.Name.Trim();
 
         var exists = await context.Equipment

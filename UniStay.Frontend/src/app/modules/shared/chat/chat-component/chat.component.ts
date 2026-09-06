@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ChatService } from '../../../../endpoints/message-endpoints/chat-service';
+import { ChatConversation, ChatService, ChatUserSearchResult } from '../../../../endpoints/message-endpoints/chat-service';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
@@ -9,6 +9,44 @@ interface ChatMessageViewModel {
   senderName: string;
   content: string;
   sentAt?: unknown;
+}
+
+interface ChatMessagePayload {
+  senderUserId?: unknown;
+  senderUserID?: unknown;
+  receiverUserId?: unknown;
+  receiverUserID?: unknown;
+  messageText?: string;
+  content?: string;
+  sentAt?: unknown;
+  SenderId?: unknown;
+  senderId?: unknown;
+  SenderUserId?: unknown;
+  SenderUserID?: unknown;
+  ReceiverId?: unknown;
+  receiverId?: unknown;
+  ReceiverUserId?: unknown;
+  ReceiverUserID?: unknown;
+  SenderName?: string;
+  senderName?: string;
+  SenderUsername?: string;
+  senderUsername?: string;
+  Content?: string;
+  MessageText?: string;
+  SentAt?: unknown;
+  sentAtUtc?: unknown;
+  SentAtUtc?: unknown;
+}
+
+interface ChatConversationPayload {
+  UserId?: unknown;
+  userId?: unknown;
+  OtherUserId?: unknown;
+  otherUserId?: unknown;
+  DisplayName?: string;
+  displayName?: string;
+  Username?: string;
+  username?: string;
 }
 
 @Component({
@@ -22,7 +60,7 @@ export class ChatComponent implements OnInit {
   receiverId = '';
   activeUserName = '';
 
-  conversations:any[] = [];
+  conversations: ChatConversation[] = [];
   messages:ChatMessageViewModel[] = [];
   messageForm = new FormGroup({
     message: new FormControl('', {
@@ -35,9 +73,9 @@ export class ChatComponent implements OnInit {
     })
   });
   search = '';
-  searchResults:any[]=[];
+  searchResults: ChatUserSearchResult[]=[];
   isTyping=false;
-  typingTimeout:any;
+  typingTimeout?: ReturnType<typeof setTimeout>;
 
   constructor(private chat: ChatService,private http:HttpClient) {}
 
@@ -47,11 +85,9 @@ const storedId=localStorage.getItem('id');
 
 if (!storedId) { console.error("❌ No 'id' in localStorage – login did not save userId!"); return; }
 
-    console.log("Sender ID ",this.senderId);
+    this.chat.startConnection();
 
-    this.chat.startConnection(this.senderId);
-
-    this.chat.getConversations(this.senderId)
+    this.chat.getConversations()
       .subscribe(res => this.conversations = res);
 
     this.chat.onMessageReceived((msg) => {
@@ -72,20 +108,16 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
 });
   }
 
-  openConversation(c:any) {
+  openConversation(c: ChatConversation) {
     this.receiverId = this.getConversationUserId(c);
     this.activeUserName = this.getConversationDisplayName(c);
     this.isTyping = false;
 
-    this.chat.getMessages(this.senderId, this.receiverId)
+    this.chat.getMessages(this.receiverId)
       .subscribe(res => this.messages = res.map(message => this.normalizeMessage(message)));
   }
 
   send() {
-
-    console.log("Button click detected.");
-    console.log("senderId:", this.senderId, "receiverId:", this.receiverId, "message:", this.messageControl.value); 
-    console.log("chat servis:", this.chat);
 
     if (this.messageForm.invalid) {
       this.messageForm.markAllAsTouched();
@@ -94,7 +126,7 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
 
     const outgoingText = this.messageControl.value.trim();
 
-    this.chat.sendMessage(this.senderId, this.receiverId, outgoingText)
+    this.chat.sendMessage(this.receiverId, outgoingText)
       .subscribe({next:(savedMessage)=>{
         this.messages.push(this.normalizeMessage(savedMessage, {
           senderId: this.senderId,
@@ -110,7 +142,7 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
 
   onTyping(){
     if(this.receiverId){
-      this.chat.sendTyping(this.receiverId,this.senderId);
+      this.chat.sendTyping(this.receiverId);
     }
   }
 
@@ -118,11 +150,11 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
     return this.messageForm.controls.message;
   }
 
-  isOwnMessage(message: any): boolean {
+  isOwnMessage(message: ChatMessageViewModel): boolean {
     return this.isSameUser(this.getMessageSenderId(message), this.senderId);
   }
 
-  isActiveConversation(conversation: any): boolean {
+  isActiveConversation(conversation: ChatConversation): boolean {
     return this.isSameUser(this.getConversationUserId(conversation), this.receiverId);
   }
 
@@ -146,7 +178,7 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
     return senderIsOtherPerson || (senderIsCurrentUser && receiverIsOtherPerson) || receiverIsCurrentUser;
   }
 
-  private normalizeMessage(message: any, fallback?: Partial<ChatMessageViewModel>): ChatMessageViewModel {
+  private normalizeMessage(message: ChatMessagePayload, fallback?: Partial<ChatMessageViewModel>): ChatMessageViewModel {
     const senderId = this.getMessageSenderId(message) ?? fallback?.senderId;
     const receiverId = this.getMessageReceiverId(message) ?? fallback?.receiverId;
 
@@ -159,7 +191,7 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
     };
   }
 
-  private getMessageSenderId(message: any): unknown {
+  private getMessageSenderId(message: ChatMessagePayload): unknown {
     return message?.senderId
       ?? message?.SenderId
       ?? message?.senderUserId
@@ -168,7 +200,7 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
       ?? message?.SenderUserID;
   }
 
-  private getMessageReceiverId(message: any): unknown {
+  private getMessageReceiverId(message: ChatMessagePayload): unknown {
     return message?.receiverId
       ?? message?.ReceiverId
       ?? message?.receiverUserId
@@ -177,7 +209,7 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
       ?? message?.ReceiverUserID;
   }
 
-  private getMessageSenderName(message: any): string {
+  private getMessageSenderName(message: ChatMessagePayload): string {
     return message?.senderName
       ?? message?.SenderName
       ?? message?.senderUsername
@@ -185,7 +217,7 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
       ?? '';
   }
 
-  private getMessageContent(message: any): string {
+  private getMessageContent(message: ChatMessagePayload): string {
     return message?.content
       ?? message?.Content
       ?? message?.messageText
@@ -193,14 +225,14 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
       ?? '';
   }
 
-  private getConversationUserId(conversation: any): string {
+  private getConversationUserId(conversation: ChatConversationPayload): string {
     return this.normalizeUserId(conversation?.userId
       ?? conversation?.UserId
       ?? conversation?.otherUserId
       ?? conversation?.OtherUserId);
   }
 
-  private getConversationDisplayName(conversation: any): string {
+  private getConversationDisplayName(conversation: ChatConversationPayload): string {
     return conversation?.displayName
       ?? conversation?.DisplayName
       ?? conversation?.username
@@ -235,14 +267,13 @@ if (!storedId) { console.error("❌ No 'id' in localStorage – login did not sa
 
   filteredConversations() {
     return this.conversations.filter(c =>
-      c.displayName.toLowerCase().includes(this.search.toLowerCase())
+      this.getConversationDisplayName(c).toLowerCase().includes(this.search.toLowerCase())
     );
   }
 
  
 
 searchNewUsers() {
-  console.log('Search value: ',this.search);
   if (this.search.length > 2) {
     this.chat.searchUsers(this.search).subscribe(res => {
       this.searchResults = res;
@@ -252,14 +283,14 @@ searchNewUsers() {
   }
 }
 
-startNewChat(user: any) {
+startNewChat(user: ChatUserSearchResult) {
   this.receiverId = this.getConversationUserId(user);
   this.activeUserName = this.getConversationDisplayName(user);
   this.messages = [];
   this.search = '';
   this.searchResults = [];
   
-  this.chat.getMessages(this.senderId, this.receiverId)
+  this.chat.getMessages(this.receiverId)
     .subscribe(res => this.messages = res.map(message => this.normalizeMessage(message)));
 }
 }
